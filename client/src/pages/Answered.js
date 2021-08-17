@@ -1,6 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import Navbar from '../components/Navbar'
 
 export default function Answered() {
     const [askedQuestions, setAskedQuestions] = useState([])
@@ -19,13 +20,14 @@ export default function Answered() {
 
     return (
         <>
+            <Navbar />
             {askedQuestions.map((q) => (
                 <>
-                <p>Name: {q.name}</p>
-                <p>Category: {q.category}</p>
-                <p>Question: {q.question}</p>
-                <p>Answer: {q.answer}</p>
-                <p>Time Wasted: {q.timeWasted}</p>
+                    <p>Name: {q.name}</p>
+                    <p>Category: {q.category}</p>
+                    <p>Question: {q.question}</p>
+                    <p>Answer: {q.answer}</p>
+                    <p>Time Wasted: {q.timeWasted}</p>
                 </>
             ))}
         </>

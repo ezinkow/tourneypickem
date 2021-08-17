@@ -1,17 +1,34 @@
 import React from 'react'
 import './App.css';
-import Header from './components/Header'
-import Body from './components/Body'
+import './CssReset.css'
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Answered from './components/Answered';
+import Home from './pages/Home';
+import Ask from './pages/Ask'
+import Answered from './pages/Answered'
 
 export default function App() {
 
   return (
-    <>
-      <Header />
-      <Body />
-      <Answered />
-    </>
+    <Router>
+      <>
+        <Switch>
+          <Route exact path="/">
+            <Home />
+          </Route>
+          <Route path="/ask">
+            <Ask />
+          </Route>
+          <Route path="/answered">
+            <Answered />
+          </Route>
+        </Switch>
+      </>
+    </Router>
   )
 }

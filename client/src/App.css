@@ -1,30 +1,50 @@
-.header {
-  background-color: gray;
+.askthisdadlogo {
+  width: 100%;
+  margin: auto;
+  display: block;
+}
+
+.headerFonts {
+  height: 60px;
+  width: 95%;
+  margin: auto;
+  display: block;
+
+}
+
+.homeImages{
+  width: 100%;
+}
+
+.dadKnows{
+  margin-top:-230px;
+  margin-left: -10px;
+  width: 120%;
+}
+
+.logoImage{
+  width:50%;
+}
+
+.dadImage{
+  width: 100%;
+  border: solid white;
+  border-width: 10px;
+  border-radius: 20px;
+  
+}
+
+.container {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.container{
-  margin: 0px 20px;
-}
-
-.baseballForm {
-  padding: 20px;
 }
 
 .hide {
-  display:none;
+  display: none;
 }
 
-.dadImage {
-  height:200px;
-}
-
-.body {
-  padding: 20px
-}
-
+/* .navbar {
+  display: flex;
+  margin: 50px;
+} */
