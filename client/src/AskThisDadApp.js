@@ -17,14 +17,14 @@ export default function App() {
     <Router>
       <>
         <Switch>
-          <Route exact path="/">
-            <Home />
-          </Route>
           <Route path="/ask">
             <Ask />
           </Route>
           <Route path="/answered">
             <Answered />
+          </Route>
+          <Route exact path="/">
+            <Home />
           </Route>
         </Switch>
       </>
