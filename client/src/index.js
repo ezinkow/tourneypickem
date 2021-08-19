@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import './CssReset.css'
 import AskThisDadApp from './AskThisDadApp';
 import reportWebVitals from './reportWebVitals';
 
