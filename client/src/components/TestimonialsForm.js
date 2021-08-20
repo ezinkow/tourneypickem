@@ -5,9 +5,8 @@ import Button from 'react-bootstrap/Button'
 import axios from 'axios'
 
 export default function () {
-
-    const [testimonial, submitTestimonial] = useState({})
-    const [name, setName] = useState({})
+    const [name, setName] = useState("")
+    const [testimonial, setTestimonial] = useState("")
     // const [question, setQuestion] = useState('')
 
     const handleNameChange = event => {
@@ -15,7 +14,7 @@ export default function () {
     };
 
     function handleTestimonialChange(event) {
-        submitTestimonial(event.target.value)
+        setTestimonial(event.target.value)
     }
 
     function handleSubmitClick(event) {
@@ -25,21 +24,25 @@ export default function () {
             name,
             testimonial
         })
+        setName("")
+        setTestimonial("")
+        console.log(name, testimonial)
     }
 
     return (
-        <div className="body">
-            <Form>
-                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                    <Form.Label>Name</Form.Label>
-                    <Form.Control type="Text" placeholder="Name" onChange={handleNameChange} />
-                </Form.Group>
-                <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
-                    <Form.Label>Enter your testimonial:</Form.Label>
-                    <Form.Control as="textarea" rows={5} onChange={handleTestimonialChange} />
-                </Form.Group>
-                <Button onClick={handleSubmitClick}>Submit</Button>
-            </Form>
+        <div className="testForm">
+                    <Form>
+                        <h3>Testimonials:</h3>
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                            <Form.Label>Name:</Form.Label>
+                            <Form.Control type="Text" placeholder="Name" value={name} onChange={handleNameChange} />
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                            <Form.Label>Enter your testimonial:</Form.Label>
+                            <Form.Control as="textarea" rows={5} placeholder="Testimonial" value={testimonial} onChange={handleTestimonialChange} />
+                        </Form.Group>
+                        <Button onClick={handleSubmitClick}>Submit</Button>
+                    </Form>
         </div>
     )
 }
