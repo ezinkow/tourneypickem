@@ -32,28 +32,38 @@ export default function AskQuestionForm() {
             category,
             question
         })
+        setName("")
+        setQuestion("")
+        setCategory("Category")
     }
     return (
         <>
-            <div className="body">
+            <div className="form">
                 <Form>
                     <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                         <Form.Label>Name</Form.Label>
-                        <Form.Control type="Text" placeholder="Name" onChange={handleNameChange} />
+                        <Form.Control type="Text" placeholder="Name" value={name} onChange={handleNameChange} />
                     </Form.Group>
                     <DropdownButton
                         title={category}
                         id="categoryDropdown"
+                        value={category}
                         onSelect={handleSelect}
                     >
-                        <Dropdown.Item eventKey="Home">Home</Dropdown.Item>
+                        <Dropdown.Item eventKey="Appliances">Appliances</Dropdown.Item>
                         <Dropdown.Item eventKey="Auto">Auto</Dropdown.Item>
-                        <Dropdown.Item eventKey="Finance">Finance</Dropdown.Item>
                         <Dropdown.Item eventKey="DIY">DIY</Dropdown.Item>
+                        <Dropdown.Item eventKey="Electric">Electric</Dropdown.Item>
+                        <Dropdown.Item eventKey="Finance">Finance</Dropdown.Item>
+                        <Dropdown.Item eventKey="Home">Home</Dropdown.Item>
+                        <Dropdown.Item eventKey="Insurance">Insurance</Dropdown.Item>
+                        <Dropdown.Item eventKey="Miscellanious">Miscellaneous</Dropdown.Item>
+                        <Dropdown.Item eventKey="Plumbing">Plumbing</Dropdown.Item>
+
                     </DropdownButton>
                     <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
                         <Form.Label>Enter your question:</Form.Label>
-                        <Form.Control as="textarea" rows={5} onChange={handleQuestionChange} />
+                        <Form.Control as="textarea" rows={5} value={question} placeholder="What's your question?" onChange={handleQuestionChange} />
                     </Form.Group>
                     <Button onClick={handleSubmitClick}>Submit</Button>
                 </Form>

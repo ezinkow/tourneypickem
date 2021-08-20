@@ -1,5 +1,5 @@
 .askthisdadlogo {
-  width: 25%;
+  width: 50%;
   margin: auto;
   display: block;
 }
@@ -9,6 +9,11 @@
   width: 95%;
   margin: auto;
   display: block;
+}
+
+.header{
+  border-radius: 20px;
+  margin-top: -20px;
 }
 
 .homeImages {
@@ -47,7 +52,7 @@
   margin: 50px;
 } */
 
-.testForm {
+.form {
   margin: 0px 100px 30px 100px;
 }
 
@@ -64,8 +69,22 @@
   padding: 10px;
 }
 
-.cards{
+.testimonialCards{
   margin: 0px 200px 0px 20px;
   border-radius: 200px;
   color: blue
 }
+
+.questionCards{
+  margin: 0px 200px 0px 20px;
+  border-radius: 200px;
+  color: red
+}
+
+.homeNavBar{
+  background-color: darkgray !important;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  border: solid black
+}
+
