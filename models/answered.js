@@ -1,5 +1,5 @@
 module.exports = function (sequelize, DataTypes) {
-    const Query = sequelize.define("Query", {
+    const Answered = sequelize.define("Answered", {
         name: {
             type: DataTypes.STRING,
             allowNull: false
@@ -14,8 +14,14 @@ module.exports = function (sequelize, DataTypes) {
             validate: {
                 len: [1]
             }
+        },
+        answer: {
+            type: DataTypes.STRING,
+        },
+        timeWasted: {
+            type: DataTypes.STRING,
         }
     });
 
-    return Query;
+    return Answered;
 };

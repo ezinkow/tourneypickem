@@ -1,14 +1,10 @@
 module.exports = function (sequelize, DataTypes) {
-    const Query = sequelize.define("Query", {
+    const Testimonial = sequelize.define("Testimonial", {
         name: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        category: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        question: {
+        testimonial: {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
@@ -17,5 +13,5 @@ module.exports = function (sequelize, DataTypes) {
         }
     });
 
-    return Query;
+    return Testimonial;
 };

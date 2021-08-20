@@ -22,6 +22,8 @@ if (process.env.NODE_ENV === 'production') {
 // // Routes
 // require("./client/routes/api-routes.js")(app);
 require("./routes/query-api-routes.js")(app);
+require("./routes/testimonial-api-routes.js")(app);
+require("./routes/answered-api-routes.js")(app);
 
 // // Here we introduce HTML routing to serve different HTML files
 // require("./client/routes/html-routes.js")(app);

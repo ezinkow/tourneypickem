@@ -10,6 +10,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from './pages/Home';
 import Ask from './pages/Ask'
 import Answered from './pages/Answered'
+import Testimonials from './pages/Testimonials';
 
 export default function App() {
 
@@ -22,6 +23,9 @@ export default function App() {
           </Route>
           <Route path="/answered">
             <Answered />
+          </Route>
+          <Route path="/testimonials">
+            <Testimonials />
           </Route>
           <Route exact path="/">
             <Home />
