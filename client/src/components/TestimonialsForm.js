@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import axios from 'axios'
 
-export default function () {
+export default function TestimonialsForm() {
     const [name, setName] = useState("")
     const [testimonial, setTestimonial] = useState("")
     // const [question, setQuestion] = useState('')

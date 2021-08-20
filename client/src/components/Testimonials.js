@@ -1,14 +1,15 @@
 import React from 'react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
+import Card from 'react-bootstrap/Card'
 
-export default function testimonials() {
+export default function Testimonials() {
     const [testimonials, setTestimonials] = useState({})
 
     useEffect(() => {
         async function fetchTestimonials() {
             try {
-                const response = await axios('api/queries')
+                const response = await axios('api/testimonials')
                 setTestimonials(response.data)
             } catch (e) {
                 console.log(e)
@@ -17,7 +18,22 @@ export default function testimonials() {
         fetchTestimonials()
     }, [])
 
+    useEffect(() => {
+        console.log(testimonials)
+    })
+
     return (
-        <p>test</p>
+        <div className="container cards">
+            {testimonials.length > 0 ? testimonials.map(testimonial =>
+                < Card style={{ width: '18rem' }}>
+                    <Card.Body>
+                        <Card.Title>"{testimonial.testimonial}"</Card.Title>
+                        <Card.Text>
+                            -{testimonial.name}
+                        </Card.Text>
+                    </Card.Body>
+                </Card>
+            ) : ""}
+        </div>
     )
 }

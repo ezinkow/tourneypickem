@@ -11,12 +11,12 @@
   display: block;
 }
 
-.homeImages{
+.homeImages {
   width: 100%;
 }
 
-.dadKnows{
-  margin-top:-230px;
+.dadKnows {
+  margin-top: -230px;
   margin-left: -10px;
   width: 120%;
 }
@@ -25,12 +25,11 @@
   width:100%;
 } */
 
-.dadImage{
+.dadImage {
   width: 100%;
   border: solid white;
   border-width: 10px;
   border-radius: 20px;
-  
 }
 
 .container {
@@ -48,7 +47,25 @@
   margin: 50px;
 } */
 
-.testForm{
+.testForm {
   margin: 0px 100px 30px 100px;
+}
 
+.carousel {
+  width: 500px;
+  height: 200px;
+  text-align: center;
+  margin: auto;
+}
+
+.carouselSub {
+  float: right;
+  width: 300px;
+  padding: 10px;
+}
+
+.cards{
+  margin: 0px 200px 0px 20px;
+  border-radius: 200px;
+  color: blue
 }
