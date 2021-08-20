@@ -21,9 +21,9 @@
   width: 120%;
 }
 
-.logoImage{
+/* .logoImage{
   width:100%;
-}
+} */
 
 .dadImage{
   width: 100%;
@@ -35,8 +35,8 @@
 
 .container {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  /* align-items: center;
+  justify-content: center; */
 }
 
 .hide {
