@@ -17,7 +17,7 @@ export default function App() {
     <Router>
       <>
         <Switch>
-          <Route path="/askthisdad.herokuapp.com/ask">
+          <Route path="/ask">
             <Ask />
           </Route>
           <Route path="/answered">
