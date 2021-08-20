@@ -2,7 +2,8 @@ import React from 'react'
 import Welcome from '../components/Welcome'
 import HomeNavbar from '../components/HomeNavbar'
 import HomeBody from '../components/HomeBody'
-import Testimonials from './Testimonials'
+import TestimonialsCards from '../components/TestimonialsCards'
+import TestimonialsForm from '../components/TestimonialsForm'
 
 export default function Home() {
 
@@ -11,7 +12,8 @@ export default function Home() {
         <div className='body'>
             <HomeNavbar />
             <HomeBody />
-            <Testimonials />
+            <TestimonialsForm />
+            <TestimonialsCards />
         </div>
     )
 }
