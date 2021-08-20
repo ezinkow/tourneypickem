@@ -1,5 +1,4 @@
 import React from 'react'
-import Welcome from '../components/Welcome'
 import Navbar from '../components/Navbar'
 import HomeBody from '../components/HomeBody'
 import TestimonialsCards from '../components/TestimonialsCards'
