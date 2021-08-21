@@ -32,9 +32,10 @@
 
 .dadImage {
   width: 100%;
-  border: solid white;
-  border-width: 10px;
-  border-radius: 20px;
+  margin: auto;
+  display: block
+  /* border: solid white; */
+  /* border-radius: 20px; */
 }
 
 .container {
@@ -53,7 +54,8 @@
 } */
 
 .form {
-  margin: 0px 100px 30px 100px;
+  margin: 0px 200px 30px 200px;
+  
 }
 
 .carousel {
@@ -61,6 +63,10 @@
   height: 200px;
   text-align: center;
   margin: auto;
+  border: solid black;
+  border-radius: 30px;
+  margin-bottom: 30px;
+  color: blue;
 }
 
 .carouselSub {
@@ -88,3 +94,32 @@
   border: solid black
 }
 
+.header{
+  width: 80%;
+  margin: auto;
+  display: block;
+  margin-top: -20px;
+  border-radius: 200px;
+}
+
+.about {
+  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  margin: 5px 200px 50px 200px;
+  text-align: justify;
+}
+
+.aboutImg {
+  margin: 0px 20px 2px 0px;
+  border-radius: 20px;
+  border: solid thick white;
+  width: 25%;
+}
+
+.askthisdad {
+  color: darkorange;
+  font-weight: bold;
+}
+
+.askLogoAbout {
+  width: 3%;
+}

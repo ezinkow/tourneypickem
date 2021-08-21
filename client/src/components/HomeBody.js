@@ -1,8 +1,7 @@
 import React from 'react'
 import scam from '../images/scam.png'
 import weirdmoles from '../images/weirdmoles.png'
-import dad from '../images/dad.jpg'
-import thisdadknows from '../images/thisdadknows.png'
+import dad from '../images/dad.png'
 import carissues from '../images/carissues.png'
 import toilettrouble from '../images/toilettrouble.png'
 
@@ -17,7 +16,6 @@ export default function HomeBody() {
                 </div>
                 <div className="col-4 homeCenter">
                     <img className="dadImage" src={dad} />
-                    <img className="dadKnows" src={thisdadknows} />
                 </div>
                 <div className="col-4 homeRight">
                     <img className="homeImages" src={carissues} />

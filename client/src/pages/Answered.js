@@ -1,35 +1,16 @@
 import React from 'react'
-import { useState, useEffect } from 'react'
-import axios from 'axios'
 import Navbar from '../components/Navbar'
+import AnsweredCards from '../components/AnsweredCards'
+import AnsweredHeader from '../images/answeredheader.png'
 
 export default function Answered() {
-    const [askedQuestions, setAskedQuestions] = useState([])
 
-    useEffect(() => {
-        async function fetchAskedQuestions() {
-            try {
-                const response = await axios('api/queries')
-                setAskedQuestions(response.data)
-            } catch (e) {
-                console.log(e)
-            }
-        }
-        fetchAskedQuestions()
-    }, [])
 
     return (
         <>
             <Navbar />
-            {askedQuestions.map((q) => (
-                <>
-                    <p>Name: {q.name}</p>
-                    <p>Category: {q.category}</p>
-                    <p>Question: {q.question}</p>
-                    <p>Answer: {q.answer}</p>
-                    <p>Time Wasted: {q.timeWasted}</p>
-                </>
-            ))}
+            <img src={AnsweredHeader} alt='answered' className="header" />
+            <AnsweredCards />
         </>
     )
 }
