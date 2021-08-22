@@ -15,19 +15,19 @@ export default function HomeNavbar() {
             <div className="row">
                 <div className="navbar">
                     <div className="col-2">
-                        <a href='/ask'><img src={ask} className="headerFonts" alt='ask!' /></a>
+                        <Link to='/ask'><img src={ask} className="headerFonts" alt='ask!' /></Link>
                     </div>
                     <div className="col-3">
-                        <a href='/testimonials'><img src={testimonials} className="headerFonts" alt='testimonials' /></a>
+                        <Link to='/testimonials'><img src={testimonials} className="headerFonts" alt='testimonials' /></Link>
                     </div>
                     <div className="col-2 logoImage">
-                        <a href='/'><img className="askthisdadlogo" src={askthisdad} alt='askthisdad' /></a>
+                        <Link to='/'><img className="askthisdadlogo" src={askthisdad} alt='askthisdad' /></Link>
                     </div>
                     <div className="col-2">
-                        <a href='/about'><img src={about} className="headerFonts" alt='askthisdad' /></a>
+                        <Link to='/about'><img src={about} className="headerFonts" alt='askthisdad' /></Link>
                     </div>
                     <div className="col-3">
-                        <a href='/answered'><img src={answered} className="headerFonts" alt='askthisdad' /></a>
+                        <Link to='/answered'><img src={answered} className="headerFonts" alt='askthisdad' /></Link>
                     </div>
                 </div>
             </div>
