@@ -25,4 +25,16 @@ module.exports = function (app) {
             })
     })
 
+    app.delete("/api/answered/:id", function(req, res) {
+        console.log("Question ID:");
+        console.log(req.params.id);
+        Answered.destroy({
+          where: {
+            id: req.params.id
+          }
+        }).then(function() {
+          res.end();
+        });
+      });
+
 }
