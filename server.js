@@ -13,13 +13,13 @@ const db = require("./models");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.get('/*', function(req, res) {
+app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, './client/public/index.html'), function(err) {
     if (err) {
       res.status(500).send(err)
     }
   })
-})
+});
 
 // Static directory to be served
 if (process.env.NODE_ENV === 'production') {
