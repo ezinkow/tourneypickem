@@ -1,10 +1,6 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
 import HomeBody from '../components/HomeBody'
-import TestimonialsCards from '../components/TestimonialsCards'
-import TestimonialsForm from '../components/TestimonialsForm'
-import AskQuestionForm from '../components/AskQuestionForm'
-import QuestionCards from '../components/QuestionCards'
 
 
 export default function Home() {
@@ -14,10 +10,6 @@ export default function Home() {
         <div className='body'>
             <Navbar />
             <HomeBody />
-            <AskQuestionForm />
-            <QuestionCards />
-            <TestimonialsForm />
-            <TestimonialsCards />
         </div>
     )
 }

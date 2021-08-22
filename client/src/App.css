@@ -67,6 +67,7 @@
   border-radius: 30px;
   margin-bottom: 30px;
   color: blue;
+  padding: 30px;
 }
 
 .carouselSub {
@@ -78,13 +79,15 @@
 .testimonialCards{
   margin: 0px 200px 0px 20px;
   border-radius: 200px;
-  color: blue
+  color: blue;
+  text-align: justify;
 }
 
 .questionCards{
   margin: 0px 200px 0px 20px;
   border-radius: 200px;
-  color: red
+  color: red;
+  text-align: justify;
 }
 
 .homeNavBar{
@@ -106,6 +109,7 @@
   font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   margin: 5px 200px 50px 200px;
   text-align: justify;
+  line-height: 1.5;
 }
 
 .aboutImg {
