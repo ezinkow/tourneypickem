@@ -1,5 +1,5 @@
 module.exports = function (sequelize, DataTypes) {
-    const Query = sequelize.define("Query", {
+    const Questions = sequelize.define("Questions", {
         name: {
             type: DataTypes.STRING,
             allowNull: false
@@ -17,5 +17,5 @@ module.exports = function (sequelize, DataTypes) {
         }
     });
 
-    return Query;
+    return Questions;
 };

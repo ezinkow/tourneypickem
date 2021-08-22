@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === 'production') {
 
 // // Routes
 // require("./client/routes/api-routes.js")(app);
-require("./routes/query-api-routes.js")(app);
+require("./routes/question-api-routes.js")(app);
 require("./routes/testimonial-api-routes.js")(app);
 require("./routes/answered-api-routes.js")(app);
 

@@ -3,7 +3,7 @@ CREATE DATABASE askthisdad;
 
 USE askthisdad;
 
-CREATE TABLE queries (
+CREATE TABLE questions (
     id INTEGER NOT NULL AUTO_INCREMENT,
     name VARCHAR(50) NOT NULL,
     category VARCHAR(100) NOT NULL,
