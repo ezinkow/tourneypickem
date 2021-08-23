@@ -13,24 +13,25 @@ const db = require("./models");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-// app.get('/*', function(req, res) {
-//   res.sendFile(path.join(__dirname, '/client/public/index.html'), function(err) {
-//     if (err) {
-//       res.status(500).send(err)
-//     }
-//   })
-// });
 
 // Static directory to be served
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));
 }
+app.get('/*', function (req, res) {
+  res.sendFile(path.join(__dirname, './client/build/index.html'), function (err) {
+      if (err) {
+          res.status(500).send(err)
+      }
+  })
+});
 
 // // Routes
 // require("./client/routes/api-routes.js")(app);
 require("./routes/question-api-routes.js")(app);
 require("./routes/testimonial-api-routes.js")(app);
 require("./routes/answered-api-routes.js")(app);
+// require("./routes/html-routes.js")(app);
 
 // // Here we introduce HTML routing to serve different HTML files
 // require("./client/routes/html-routes.js")(app);
