@@ -2,6 +2,7 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Card from 'react-bootstrap/Card'
+import speechBubble from '../images/speechbubble.png'
 
 export default function Testimonials() {
     const [questions, setQuestions] = useState({})
@@ -19,17 +20,20 @@ export default function Testimonials() {
     }, [])
 
     return (
-        <div className="container questionCards">
-            {questions.length > 0 ? questions.map(question =>
-                < Card style={{ width: '18rem' }}>
-                    <Card.Body>
-                        <Card.Title>"{question.question}"</Card.Title>
-                        <Card.Text>
-                            -{question.name}
-                        </Card.Text>
-                    </Card.Body>
-                </Card>
-            ) : ""}
-        </div>
+        <>
+            <div>
+                <div className='row'>
+                    {questions.length > 0 ? questions.map(question =>
+                        <div className='col-4 bubbleContainer'>
+                            <img src={speechBubble} alt="Speech Bubble" className="bubbleImg" />
+                            <div className='questionText'>
+                                <h5>"{question.question}"</h5>
+                                <p className='questionName'>-{question.name}</p>
+                            </div>
+                        </div>
+                    ) : ""}
+                </div>
+            </div>
+        </>
     )
 }

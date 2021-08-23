@@ -11,7 +11,7 @@
   display: block;
 }
 
-.header{
+.header {
   border-radius: 20px;
   margin-top: -20px;
 }
@@ -55,7 +55,6 @@
 
 .form {
   margin: 0px 200px 30px 200px;
-  
 }
 
 .carousel {
@@ -76,7 +75,7 @@
   padding: 10px;
 }
 
-.testimonialCards{
+.testimonialCards {
   margin: 0px 200px 0px 20px;
   border-radius: 200px;
   color: blue;
@@ -84,21 +83,21 @@
   padding: 50px;
 }
 
-.questionCards{
+.questionCards {
   margin: 0px 200px 0px 20px;
   border-radius: 200px;
   color: red;
   text-align: justify;
 }
 
-.homeNavBar{
+.homeNavBar {
   background-color: darkgray !important;
   margin-bottom: 20px;
   border-radius: 10px;
   border: solid black
 }
 
-.header{
+.header {
   width: 80%;
   margin: auto;
   display: block;
@@ -107,7 +106,7 @@
 }
 
 .about {
-  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   margin: 5px 200px 50px 200px;
   text-align: justify;
   line-height: 2;
@@ -127,4 +126,35 @@
 
 .askLogoAbout {
   width: 3%;
+}
+
+/* text over image
+*/
+
+.bubbleContainer {
+  position: relative;
+  display: flex;
+  text-align: center;
+  left: 30px;
+  top: 100%;
+  margin: 10px 20px 10px 50px;
+}
+
+.bubbleImg {
+  width: 120%;
+  height: 120%;
+}
+
+/* Centered text */
+
+.questionText {
+  position: absolute;
+  top: 30px;
+  left: 60px;
+  width: 90%;
+  text-align: justify;
+}
+
+.questionName {
+  text-align: center;
 }
