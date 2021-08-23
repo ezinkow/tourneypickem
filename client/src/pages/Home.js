@@ -1,6 +1,7 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
 import HomeBody from '../components/HomeBody'
+import QuestionCards from '../components/QuestionCards'
 
 
 export default function Home() {
@@ -10,6 +11,7 @@ export default function Home() {
         <div className='body'>
             <Navbar />
             <HomeBody />
+            <QuestionCards />
         </div>
     )
 }
