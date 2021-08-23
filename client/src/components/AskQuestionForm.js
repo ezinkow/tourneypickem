@@ -27,7 +27,7 @@ export default function AskQuestionForm() {
     function handleSubmitClick(event) {
         event.preventDefault()
         console.log(event.target)
-        axios.post('api/queries', {
+        axios.post('api/questions', {
             name,
             category,
             question

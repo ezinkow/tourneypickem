@@ -1,24 +1,24 @@
 // Requiring our models
-const {Query} = require("../models");
+const {Question} = require("../models");
 
 
 module.exports = function (app) {
 
-    app.get("/api/queries", function (req, res) {
-        Query.findAll({})
-            .then(function (dbQuery) {
-                res.json(dbQuery)
+    app.get("/api/questions", function (req, res) {
+        Question.findAll({})
+            .then(function (dbQuestion) {
+                res.json(dbQuestion)
             })
     })
 
-    app.post("/api/queries", function (req, res) {
-        Query.create({
+    app.post("/api/questions", function (req, res) {
+        Question.create({
             name: req.body.name,
             category: req.body.category,
             question: req.body.question
         })
-            .then(function (dbQuery) {
-                res.json(dbQuery)
+            .then(function (dbQuestion) {
+                res.json(dbQuestion)
             })
     })
 
