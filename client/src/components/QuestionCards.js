@@ -20,20 +20,16 @@ export default function Testimonials() {
     }, [])
 
     return (
-        <>
-            <div>
-                <div className='row'>
-                    {questions.length > 0 ? questions.map(question =>
-                        <div className='col-4 bubbleContainer'>
-                            <img src={speechBubble} alt="Speech Bubble" className="bubbleImg" />
-                            <div className='questionText'>
-                                <h5>"{question.question}"</h5>
-                                <p className='questionName'>-{question.name}</p>
-                            </div>
-                        </div>
-                    ) : ""}
+        <div className='row bubbles'>
+            {questions.length > 0 ? questions.map(question =>
+                <div className='col-3 bubbleContainer'>
+                    <img src={speechBubble} alt="Speech Bubble" className="bubbleImg" />
+                    <div className='questionText'>
+                        <h4>"{question.question}"</h4>
+                        <p className='questionName'>-{question.name}</p>
+                    </div>
                 </div>
-            </div>
-        </>
+            ) : ""}
+        </div>
     )
 }

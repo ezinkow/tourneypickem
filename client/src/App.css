@@ -142,7 +142,7 @@
 
 .bubbleImg {
   width: 120%;
-  height: 120%;
+  height: 100%;
 }
 
 /* Centered text */
@@ -157,4 +157,8 @@
 
 .questionName {
   text-align: center;
+}
+
+.bubbles{
+  margin-left: 100px;
 }
