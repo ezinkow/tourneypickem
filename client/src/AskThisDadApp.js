@@ -12,6 +12,7 @@ import Ask from './pages/Ask'
 import Answered from './pages/Answered'
 import Testimonials from './pages/Testimonials';
 import About from './pages/About';
+import PrivateDadPage from './pages/PrivateDadPage';
 
 export default function App() {
 
@@ -30,6 +31,9 @@ export default function App() {
           </Route>
           <Route path="/about">
             <About />
+          </Route>
+          <Route path="/privatedadpage">
+            <PrivateDadPage />
           </Route>
           <Route path="/testimonials">
             <Testimonials />

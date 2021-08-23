@@ -1,23 +1,26 @@
 import React from 'react'
 import Table from 'react-bootstrap/Table'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+
 
 export default function AnswerQuestions() {
-    const [answered, setAnswered] = useState({})
+    const [questions, setQuestions] = useState({})
 
     useEffect(() => {
-        async function fetchAnswered() {
+        async function fetchQuestions() {
             try {
-                const response = await axios('api/answered')
-                setAnswered(response.data)
+                const response = await axios('api/questions')
+                setQuestions(response.data)
             } catch (e) {
                 console.log(e)
             }
         }
-        fetchAnswered()
+        fetchQuestions()
     }, [])
 
     useEffect(() => {
-        console.log(answered)
+        console.log(questions)
     })
 
 
