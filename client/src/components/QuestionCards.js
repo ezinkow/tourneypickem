@@ -9,7 +9,7 @@ export default function Testimonials() {
     useEffect(() => {
         async function fetchQuestions() {
             try {
-                const response = await axios('api/queries')
+                const response = await axios('api/questions')
                 setQuestions(response.data)
             } catch (e) {
                 console.log(e)
