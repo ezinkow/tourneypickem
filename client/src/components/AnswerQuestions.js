@@ -67,14 +67,14 @@ export default function AnswerQuestions() {
 
 
     return (
-        <>
+        <div className='answerTable'>
             <Table striped bordered hover>
                 <thead>
                     <tr>
 
                         <th>Question</th>
                         <th>Name</th>
-                        <th>Select</th>
+                        <th>Answer</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -109,6 +109,6 @@ export default function AnswerQuestions() {
                     </Button>
                 </Modal.Footer>
             </Modal>
-        </>
+        </div>
     )
 }
