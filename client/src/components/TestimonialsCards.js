@@ -23,7 +23,7 @@ export default function Testimonials() {
     })
 
     return (
-        <div className='row bubbles'>
+        <div className='row bubbles testimonialContainer'>
             {testimonials.length > 0 ? testimonials.map(testimonial =>
                 <div className='col-3 bubbleContainer'>
                     <img src={speechBubble} alt="Speech Bubble" className="bubbleImgTest" />
