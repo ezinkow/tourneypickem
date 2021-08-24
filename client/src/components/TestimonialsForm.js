@@ -30,7 +30,7 @@ export default function TestimonialsForm() {
     }
 
     return (
-        <div className="form">
+        <div className="testimonialForm">
                     <Form>
                         <h3>Testimonials:</h3>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
