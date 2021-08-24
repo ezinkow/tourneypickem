@@ -53,9 +53,10 @@
   margin: 50px;
 } */
 
-.form {
+/* .form {
   margin: 0px 200px 30px 200px;
-}
+} */
+
 .testimonialForm {
   margin: 100px 200px 30px 200px;
 }
@@ -68,6 +69,7 @@
   border: solid black;
   border-radius: 30px;
   margin-bottom: 30px;
+  margin-top: 20px;
   color: blue;
   padding: 0px 50px 10px 50px;
 }
@@ -122,8 +124,22 @@
   width: 25%;
 }
 
+.aboutImg2 {
+  margin: 0px 0px 2px 20px;
+  border-radius: 20px;
+  border: solid thick white;
+  width: 25%;
+}
+
+.askImg {
+  width: 100%;
+  margin: 20px 20px 2px 0px;
+  border-radius: 20px;
+  border: solid thick white;
+}
+
 .askthisdad {
-  color: rgb(243,150,22);
+  color: rgb(243, 150, 22);
   font-weight: bold;
 }
 
@@ -161,7 +177,7 @@
   text-align: center;
 }
 
-.bubbles{
+.bubbles {
   margin-left: 100px;
 }
 
@@ -182,10 +198,10 @@
   height: 130%;
 }
 
-.testimonialContainer{
+.testimonialContainer {
   padding-bottom: 30px;
 }
 
-.answerTable{
+.answerTable {
   padding: 5px 50px 20px 50px;
 }
