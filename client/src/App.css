@@ -161,3 +161,20 @@
 .bubbles{
   margin-left: 100px;
 }
+
+.testimonialText {
+  position: absolute;
+  top: 30px;
+  left: 60px;
+  width: 75%;
+  text-align: justify;
+}
+
+.testimonialName {
+  text-align: center;
+}
+
+.bubbleImgTest {
+  width: 120%;
+  height: 130%;
+}

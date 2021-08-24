@@ -26,10 +26,10 @@ export default function Testimonials() {
         <div className='row bubbles'>
             {testimonials.length > 0 ? testimonials.map(testimonial =>
                 <div className='col-3 bubbleContainer'>
-                    <img src={speechBubble} alt="Speech Bubble" className="bubbleImg" />
-                    <div className='questionText'>
+                    <img src={speechBubble} alt="Speech Bubble" className="bubbleImgTest" />
+                    <div className='testimonialText'>
                         <h4>"{testimonial.testimonial}"</h4>
-                        <p className='questionName'>-{testimonial.name}</p>
+                        <p className='testimonialName'>-{testimonial.name}</p>
                     </div>
                 </div>
             ) : ""}
