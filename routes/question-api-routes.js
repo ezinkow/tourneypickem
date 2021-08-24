@@ -1,5 +1,5 @@
 // Requiring our models
-const {Question} = require("../models");
+const { Question } = require("../models");
 
 
 module.exports = function (app) {
@@ -16,6 +16,17 @@ module.exports = function (app) {
             name: req.body.name,
             category: req.body.category,
             question: req.body.question
+        })
+            .then(function (dbQuestion) {
+                res.json(dbQuestion)
+            })
+    })
+
+    app.get('/api/questions/:id', function (req, res) {
+        Question.findAll({
+            where: {
+                id: req.params.id
+            }
         })
             .then(function (dbQuestion) {
                 res.json(dbQuestion)

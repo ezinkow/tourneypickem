@@ -38,7 +38,7 @@ export default function Answered() {
                             Name: {answer.name}
                         </Card.Text>
                         <Card.Text>
-                            Time I wasted answering this question: {answer.timeWasted}
+                            Task I could have completed: {answer.timeWasted}
                         </Card.Text>
                     </Card.Body>
                 </Card>

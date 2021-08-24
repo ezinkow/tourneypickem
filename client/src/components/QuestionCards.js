@@ -1,7 +1,6 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import Card from 'react-bootstrap/Card'
 import speechBubble from '../images/speechbubble.png'
 
 export default function Testimonials() {
