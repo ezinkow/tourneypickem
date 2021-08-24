@@ -24,25 +24,29 @@ export default function Answered() {
 
     return (
         <div className="container answeredCards">
-            {answered.length > 0 ? answered.map(answer =>
-                < Card style={{ width: '18rem' }}>
-                    <Card.Body>
-                        <Card.Title>Question: {answer.question}</Card.Title>
-                        <Card.Title>
-                        Answer: {answer.answer}
-                        </Card.Title>
-                        <Card.Text>
-                            Category: {answer.category}
-                        </Card.Text>
-                        <Card.Text>
-                            Name: {answer.name}
-                        </Card.Text>
-                        <Card.Text>
-                            Task I could have completed: {answer.timeWasted}
-                        </Card.Text>
-                    </Card.Body>
-                </Card>
-            ) : ""}
+            <div className='row'>
+                {answered.length > 0 ? answered.map(answer =>
+                    <div className='col-3 answerCards'>
+                        < Card style={{ width: '18rem' }}>
+                            <Card.Body>
+                                <Card.Title>Question: {answer.question}</Card.Title>
+                                <Card.Title>
+                                    Answer: {answer.answer}
+                                </Card.Title>
+                                <Card.Text>
+                                    Category: {answer.category}
+                                </Card.Text>
+                                <Card.Text>
+                                    Name: {answer.name}
+                                </Card.Text>
+                                <Card.Text>
+                                    Task I could have completed: {answer.timeWasted}
+                                </Card.Text>
+                            </Card.Body>
+                        </Card>
+                    </div>
+                ) : ""}
+            </div>
         </div>
     )
 }

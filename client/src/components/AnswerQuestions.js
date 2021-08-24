@@ -15,13 +15,20 @@ export default function AnswerQuestions() {
 
     function handleClose(thisQuestion) {
         setShow(false);
-        axios.post('/api/answered',{
+        axios.post('/api/answered', {
             name: thisQuestion.name,
             category: thisQuestion.category,
             question: thisQuestion.question,
             answer,
             timeWasted
         })
+            .then(function (data) {
+                const questionToDelete = selectedQuestion[0].id
+                axios.delete(`api/questions/${questionToDelete}`)
+            })
+            .catch(e => {
+                console.error(e)
+            })
     }
 
     async function handleShow(id) {
@@ -33,7 +40,6 @@ export default function AnswerQuestions() {
             console.log(e)
         }
     }
-    console.log(selectedQuestion)
 
     useEffect(() => {
         async function fetchQuestions() {
@@ -47,22 +53,12 @@ export default function AnswerQuestions() {
         fetchQuestions()
     }, [])
 
-    useEffect(() => {
-        console.log(questions)
-    })
-
-    function handleAnswerClick() {
-        return (<p>test</p>)
-    }
-
     function handleAnswerChange(event) {
         setAnswer(event.target.value)
-        console.log(event.target.value)
     }
-    
+
     function handleTimeWastedChange(event) {
         setTimeWasted(event.target.value)
-        console.log(event.target.value)
     }
 
 
@@ -91,13 +87,13 @@ export default function AnswerQuestions() {
                 <Modal.Header closeButton>
                     <Modal.Body>{selectedQuestion.length > 0 ? selectedQuestion[0].question : ""}</Modal.Body>
                 </Modal.Header>
-                    <Modal.Body>-{selectedQuestion.length > 0 ? selectedQuestion[0].name : ""}</Modal.Body>
+                <Modal.Body>-{selectedQuestion.length > 0 ? selectedQuestion[0].name : ""}</Modal.Body>
                 <Modal.Body>
                     <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
                         <Form.Label>Answer:</Form.Label>
-                        <Form.Control as="textarea" rows={10} onChange={handleAnswerChange}/>
+                        <Form.Control as="textarea" rows={10} onChange={handleAnswerChange} />
                         <Form.Label>Task I could have completed instead of answering this question:</Form.Label>
-                        <Form.Control as="textarea" rows={3} onChange={handleTimeWastedChange}/>
+                        <Form.Control as="textarea" rows={3} onChange={handleTimeWastedChange} />
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>

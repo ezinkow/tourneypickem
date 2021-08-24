@@ -33,4 +33,16 @@ module.exports = function (app) {
             })
     })
 
+    app.delete("/api/questions/:id", function(req, res) {
+        console.log("Question ID:");
+        console.log(req.params.id);
+        Question.destroy({
+          where: {
+            id: req.params.id
+          }
+        }).then(function() {
+          res.end();
+        });
+      });
+
 }
