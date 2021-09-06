@@ -2,12 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import './CssReset.css'
-import AskThisDadApp from './AskThisDadApp';
+import RH5782App from './RH5782App';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>
-    <AskThisDadApp />
+    <RH5782App />
   </React.StrictMode>,
   document.getElementById('root')
 );

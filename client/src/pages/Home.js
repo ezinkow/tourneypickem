@@ -1,7 +1,7 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
 import HomeBody from '../components/HomeBody'
-import QuestionCards from '../components/QuestionCards'
+import WishApples from '../components/WishApples'
 
 
 export default function Home() {
@@ -11,7 +11,7 @@ export default function Home() {
         <div className='body'>
             <Navbar />
             <HomeBody />
-            <QuestionCards />
+            <WishApples />
         </div>
     )
 }

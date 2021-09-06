@@ -1,5 +1,5 @@
 {
-  "name": "askthisdad",
+  "name": "RHWishes5782",
   "version": "1.0.0",
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
   "main": "server.js",
@@ -29,5 +29,13 @@
   },
   "devDependencies": {
     "concurrently": "^6.2.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ezinkow/rh5782.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ezinkow/rh5782/issues"
+  },
+  "homepage": "https://github.com/ezinkow/rh5782#readme"
 }

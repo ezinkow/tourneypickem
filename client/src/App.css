@@ -1,155 +1,6 @@
-.askthisdadlogo {
-  width: 50%;
-  margin: auto;
-  display: block;
-}
-
-.headerFonts {
-  height: 60px;
-  width: 95%;
-  margin: auto;
-  display: block;
-}
-
-.header {
-  border-radius: 20px;
-  margin-top: -20px;
-}
-
-.homeImages {
-  width: 100%;
-}
-
-.dadKnows {
-  margin-top: -230px;
-  margin-left: -10px;
-  width: 120%;
-}
-
-/* .logoImage{
-  width:100%;
-} */
-
-.dadImage {
-  width: 100%;
-  margin: auto;
-  display: block
-  /* border: solid white; */
-  /* border-radius: 20px; */
-}
-
-.container {
-  display: flex;
-  /* align-items: center;
-  justify-content: center; */
-}
-
-.hide {
-  display: none;
-}
-
-/* .navbar {
-  display: flex;
-  margin: 50px;
-} */
-
-/* .form {
-  margin: 0px 200px 30px 200px;
-} */
-
-.testimonialForm {
-  margin: 100px 200px 30px 200px;
-}
-
-.carousel {
-  width: 500px;
-  height: 250px;
-  text-align: center;
-  margin: auto;
-  border: solid black;
-  border-radius: 30px;
-  margin-bottom: 30px;
-  margin-top: 20px;
-  color: blue;
-  padding: 0px 50px 10px 50px;
-}
-
-.carouselSub {
-  float: right;
-  width: 300px;
-  padding: 10px;
-}
-
-.testimonialCards {
-  margin: 0px 200px 0px 20px;
-  border-radius: 200px;
-  color: blue;
-  text-align: justify;
-  padding: 50px;
-}
-
-.questionCards {
-  margin: 0px 200px 0px 20px;
-  border-radius: 200px;
-  color: red;
-  text-align: justify;
-}
-
-.homeNavBar {
-  background-color: darkgray !important;
-  margin-bottom: 20px;
-  border-radius: 10px;
-  border: solid black
-}
-
-.header {
-  width: 80%;
-  margin: auto;
-  display: block;
-  margin-top: -20px;
-  border-radius: 200px;
-}
-
-.about {
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-  margin: 5px 200px 50px 200px;
-  text-align: justify;
-  line-height: 2;
-}
-
-.aboutImg {
-  margin: 0px 20px 2px 0px;
-  border-radius: 20px;
-  border: solid thick white;
-  width: 25%;
-}
-
-.aboutImg2 {
-  margin: 0px 0px 2px 20px;
-  border-radius: 20px;
-  border: solid thick white;
-  width: 25%;
-}
-
-.askImg {
-  width: 100%;
-  margin: 20px 20px 2px 0px;
-  border-radius: 20px;
-  border: solid thick white;
-}
-
-.askthisdad {
-  color: rgb(243, 150, 22);
-  font-weight: bold;
-}
-
-.askLogoAbout {
-  width: 1.5%;
-}
-
 /* text over image*/
 
-.bubbleContainer {
+.appleContainer {
   position: relative;
   display: flex;
   text-align: center;
@@ -158,55 +9,34 @@
   margin: 10px 20px 10px 50px;
 }
 
-.bubbleImg {
+/* .appleContainer {
+  position: relative;
+  display: flex;
+  text-align: center;
+  left: 30px;
+  top: 100%;
+  margin: 10px 20px 10px 50px;
+  padding-bottom: 60px;
+} */
+
+.appleImg {
   width: 120%;
   height: 100%;
 }
 
-/* Centered text */
-
-.questionText {
-  position: absolute;
-  top: 30px;
-  left: 60px;
-  width: 75%;
-  text-align: justify;
-}
-
-.questionName {
-  text-align: center;
-}
-
-.bubbles {
+.apples {
   margin-left: 100px;
 }
 
-.testimonialText {
+.wishText {
   position: absolute;
-  top: 30px;
-  left: 60px;
+  top: 200px;
+  left: 100px;
   width: 75%;
   text-align: justify;
 }
 
-.testimonialName {
+.wishName {
+  padding-top: 50px;
   text-align: center;
-}
-
-.bubbleImgTest {
-  width: 120%;
-  height: 140%;
-  padding-bottom: 50px;
-}
-
-.testimonialContainer {
-  padding-bottom: 30px;
-}
-
-.answerTable {
-  padding: 5px 50px 20px 50px;
-}
-
-.answerCards{
-  padding: 10px
 }

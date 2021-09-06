@@ -1,10 +1,10 @@
 module.exports = function (sequelize, DataTypes) {
-    const Testimonial = sequelize.define("Testimonial", {
+    const Wish = sequelize.define("Wish", {
         name: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        testimonial: {
+        wish: {
             type: DataTypes.TEXT,
             allowNull: false,
             validate: {
@@ -13,5 +13,5 @@ module.exports = function (sequelize, DataTypes) {
         }
     });
 
-    return Testimonial;
+    return Wish;
 };
