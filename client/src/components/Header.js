@@ -5,8 +5,8 @@ export default function Header() {
 
 
     return (
-        <div className="header">
-            <h1>Make A Wish For The New Year 5782<img src={basket} alt="Apple Basket" className="basketImg" /></h1>
+        <div className="header container">
+            <h1><img src={basket} alt="Apple Basket" className="basketImg" />Make A Wish For The New Year 5782<img src={basket} alt="Apple Basket" className="basketImg" /></h1>
         </div>
     )
 }
