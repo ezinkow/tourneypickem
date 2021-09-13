@@ -6,9 +6,9 @@ import RH5782App from './RH5782App';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <RH5782App />
-  </React.StrictMode>,
+    <React.StrictMode>
+      <RH5782App />
+    </React.StrictMode>,
   document.getElementById('root')
 );
 
