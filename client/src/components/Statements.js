@@ -28,7 +28,7 @@ export default function Statements() {
             <Table striped bordered hover size="sm">
                 <thead>
                     <tr>
-                        <th><h3>Date Said</h3></th>
+                        <th><h3>Date She Said It</h3></th>
                         <th><h3>Shit She Said</h3></th>
                     </tr>
                 </thead>
