@@ -1,10 +1,10 @@
 module.exports = function (sequelize, DataTypes) {
-    const Wish = sequelize.define("Wish", {
-        name: {
-            type: DataTypes.STRING,
+    const Statement = sequelize.define("Statement", {
+        when: {
+            type: DataTypes.TEXT,
             allowNull: false
         },
-        wish: {
+        statement: {
             type: DataTypes.TEXT,
             allowNull: false,
             validate: {
@@ -13,5 +13,5 @@ module.exports = function (sequelize, DataTypes) {
         }
     });
 
-    return Wish;
+    return Statement;
 };

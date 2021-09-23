@@ -1,6 +1,6 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
-import WishApples from '../components/WishApples'
+import Statements from '../components/Statements'
 
 
 export default function Home() {
@@ -9,7 +9,7 @@ export default function Home() {
     return (
         <div>
             <Navbar />
-            <WishApples />
+            <Statements />
         </div>
     )
 }

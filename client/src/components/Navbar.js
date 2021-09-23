@@ -1,5 +1,4 @@
 import React from 'react'
-import apples from '../images/apples.png'
 
 import {
     Link
@@ -15,12 +14,9 @@ export default function HomeNavbar() {
                         <Link to='/'><h3>Home</h3></Link>
                     </div>
                     <div className="col-4 navbar2">
-                        <img src={apples} alt='apples' className='applesImg'/>
-                        <img src={apples} alt='apples' className='applesImg'/>
-                        <img src={apples} alt='apples' className='applesImg'/>
                     </div>
                     <div className="col-4 navbar2">
-                        <Link to='/wish'><h3>Make A New Year's Wish</h3></Link>
+                        <Link to='/statement'><h3>New Ridiculous Shit She Said</h3></Link>
                     </div>
                 </div>
             </div>
