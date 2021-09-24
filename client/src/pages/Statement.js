@@ -1,14 +1,14 @@
 import React from 'react'
 import AskQuestionForm from '../components/StatementForm'
 import Navbar from '../components/Navbar.js'
-// import Header from '../components/Header.js'
+import Header from '../components/Header.js'
 
 export default function Ask() {
 
     return (
         <>
             <Navbar />
-            {/* <Header /> */}
+            <Header />
             <div className='container'>
                 <div className='row'>
                     <div className='col-4'>
