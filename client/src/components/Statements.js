@@ -35,7 +35,7 @@ export default function Statements() {
                 <tbody>
                     {statements.length > 0 ? statements.map(statement =>
                         <tr>
-                            <td>{statement.when}</td>
+                            <td>{statement.when.slice(5,7)}/{statement.when.slice(8,10)}/{statement.when.slice(0,4)}</td>
                             <td>{statement.statement}</td>
                         </tr>
                     ) : ""}

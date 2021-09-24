@@ -3,15 +3,18 @@ import { useState } from 'react'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import axios from 'axios'
+import DatePicker from 'react-date-picker'
 
 export default function StatementForm() {
-    const [when, setWhen] = useState('')
+    const [when, onChange] = useState(new Date())
     const [statement, setStatement] = useState('')
 
     const handleDateChange = event => {
-        setWhen(event.target.value);
-        console.log(event.target.value);
+        // setWhen(event.target.value);
+        console.log(event);
     };
+
+    console.log(when)
     
     function handleStatementChange(event) {
         setStatement(event.target.value)
@@ -25,7 +28,7 @@ export default function StatementForm() {
             when,
             statement
         })
-        setWhen("")
+        onChange("")
         setStatement("")
     }
     return (
@@ -33,8 +36,20 @@ export default function StatementForm() {
             <div className="form">
                 <Form>
                     <Form.Group className="mb-3">
-                        <Form.Label>Date</Form.Label>
-                        <Form.Control type="Text" placeholder="Date Said" value={when} onChange={handleDateChange} />
+                        <Form.Label>Date</Form.Label><br/>
+                        <DatePicker 
+                         calendarAriaLabel="Toggle calendar"
+                         clearAriaLabel="Clear value"
+                         dayAriaLabel="Day"
+                         monthAriaLabel="Month"
+                         nativeInputAriaLabel="Date"
+                         onChange={onChange}
+                         value={when}
+                         yearAriaLabel="Year"
+                         format="MM-dd-y"
+                         maxLength='10'
+                        />
+                        {/* <Form.Control type="Text" placeholder="Date Said" value={when} onChange={handleDateChange} /> */}
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
                         <Form.Label>Enter the Shit She Said:</Form.Label>
