@@ -1,10 +1,10 @@
-DROP DATABASE IF EXISTS smsils;
-CREATE DATABASE smsils;
+DROP DATABASE IF EXISTS template;
+CREATE DATABASE template;
 
-USE smsils;
+USE template;
 
 CREATE TABLE statements (
     id INTEGER NOT NULL AUTO_INCREMENT,
-    date TEXT NOT NULL,
-    statement TEXT NOT NULL,
+    name TEXT NOT NULL,
+    post TEXT NOT NULL,
 );

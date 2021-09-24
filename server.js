@@ -6,7 +6,6 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 const path = require('path')
-// require('dotenv').config({ path: path.resolve(__dirname, './server/.env') })
 
 // Requiring our models for syncing
 const db = require("./models");
@@ -19,8 +18,8 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));
 }
 
-// // Routes
-require("./routes/statement-api-routes.js")(app);
+// Routes
+require("./routes/template-api-routes.js")(app);
 
 // Starts the server to begin listening
 db.sequelize.sync({ force: false }).then(function() {

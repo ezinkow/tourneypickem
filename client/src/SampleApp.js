@@ -7,15 +7,15 @@ import {
 } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from './pages/Home';
-import Statement from './pages/Statement'
+import Post from './pages/Post'
 
 export default function App() {
 
   return (
       <Router>
         <Switch>
-          <Route path="/statement">
-            <Statement />
+          <Route path="/post">
+            <Post />
           </Route>
           <Route exact path="/">
             <Home />

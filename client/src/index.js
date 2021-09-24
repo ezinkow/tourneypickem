@@ -1,13 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import './CssReset.css'
-import SMSILSApp from './SMSILSApp';
+import SampleApp from './SampleApp';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
     <React.StrictMode>
-      <SMSILSApp />
+      <SampleApp />
     </React.StrictMode>,
   document.getElementById('root')
 );

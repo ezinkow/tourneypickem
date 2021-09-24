@@ -1,29 +1,31 @@
 // Requiring our models
-const { Statement } = require("../models");
+const { Post } = require("../models");
 
 
 module.exports = function (app) {
 
-    app.get("/api/statement", function (req, res) {
-        Statement.findAll({})
+    // Get everything in Posts table
+    app.get("/api/posts", function (req, res) {
+        Post.findAll({})
             .then(function (dbStatement) {
                 res.json(dbStatement)
             })
     })
 
-    app.post("/api/statement", function (req, res) {
-        console.log('req body', req.body.when)
-        Statement.create({
-            when: req.body.when,
-            statement: req.body.statement
+    // Post new post to post table
+    app.post("/api/post", function (req, res) {
+        Post.create({
+            name: req.body.name,
+            post: req.body.post
         })
             .then(function (dbStatement) {
                 res.json(dbStatement)
             })
     })
 
-    app.get('/api/statement/:id', function (req, res) {
-        Statement.findAll({
+    // Find post where id = __
+    app.get('/api/post/:id', function (req, res) {
+        Post.findAll({
             where: {
                 id: req.params.id
             }
@@ -33,10 +35,9 @@ module.exports = function (app) {
             })
     })
 
-    app.delete("/api/statement/:id", function(req, res) {
-        console.log("Statement ID:");
-        console.log(req.params.id);
-        Statement.destroy({
+    // Delete post
+    app.delete("/api/post/:id", function(req, res) {
+        Post.destroy({
           where: {
             id: req.params.id
           }

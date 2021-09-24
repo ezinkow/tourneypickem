@@ -1,10 +1,10 @@
 module.exports = function (sequelize, DataTypes) {
-    const Statement = sequelize.define("Statement", {
-        when: {
+    const Post = sequelize.define("Post", {
+        name: {
             type: DataTypes.TEXT,
             allowNull: false
         },
-        statement: {
+        post: {
             type: DataTypes.TEXT,
             allowNull: false,
             validate: {
@@ -13,5 +13,5 @@ module.exports = function (sequelize, DataTypes) {
         }
     });
 
-    return Statement;
+    return Post;
 };

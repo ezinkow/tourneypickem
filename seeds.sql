@@ -1,2 +1,2 @@
--- INSERT INTO questions (name, wish)
+-- INSERT INTO sample (name, post)
 -- VALUES ()
