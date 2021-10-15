@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import axios from 'axios'
 
-export default function StatementForm() {
+export default function PostForm() {
     const [name, setName] = useState('')
     const [post, setPost] = useState('')
 
