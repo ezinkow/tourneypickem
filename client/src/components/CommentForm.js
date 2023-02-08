@@ -4,29 +4,31 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import axios from 'axios'
 
-export default function PostForm() {
+export default function CommentForm() {
     const [name, setName] = useState('')
-    const [post, setPost] = useState('')
+    const [comment, setComment] = useState('')
 
     // Set Name
     const handleNameChange = event => {
         setName(event.target.value);
+        console.log(name)
     };
     
-    // Set Post
-    function handlePostChange(event) {
-        setPost(event.target.value)
+    // Set Comment
+    function handleCommentChange(event) {
+        setComment(event.target.value)
     }
 
-    // Send name and post to database and reset fields
+    // Send name and comment to database and reset fields
     function handleSubmitClick(event) {
         event.preventDefault()
-        axios.post('api/post', {
+        axios.post('api/comment', {
             name,
-            post
+            comment
         })
+        console.log("test")
         setName("")
-        setPost("")
+        setComment("")
     }
     return (
         <>
@@ -37,8 +39,8 @@ export default function PostForm() {
                         <Form.Control type="Text" placeholder="Name" value={name} onChange={handleNameChange} />
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
-                        <Form.Label>Post:</Form.Label>
-                        <Form.Control as="textarea" rows={5} value={post} placeholder="Post" onChange={handlePostChange} />
+                        <Form.Label>Comment:</Form.Label>
+                        <Form.Control as="textarea" rows={5} value={comment} placeholder="Comment" onChange={handleCommentChange} />
                     </Form.Group>
                     <Button onClick={handleSubmitClick}>Submit</Button>
                 </Form>

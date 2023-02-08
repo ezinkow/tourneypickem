@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import SampleApp from './SampleApp';
+import AmirAndDana from './AmirAndDana';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
-    <React.StrictMode>
-      <SampleApp />
+    <React.StrictMode className='body'>
+      <AmirAndDana />
     </React.StrictMode>,
   document.getElementById('root')
 );

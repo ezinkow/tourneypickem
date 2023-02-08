@@ -1,31 +1,31 @@
 // Requiring our models
-const { Post } = require("../models");
+const { Comment } = require("../models");
 
 
 module.exports = function (app) {
 
-    // Get everything in Posts table
-    app.get("/api/posts", function (req, res) {
-        Post.findAll({})
+    // Get everything in Comments table
+    app.get("/api/comments", function (req, res) {
+        Comment.findAll({})
             .then(function (dbStatement) {
                 res.json(dbStatement)
             })
-    })
+    });
 
-    // Post new post to post table
-    app.post("/api/post", function (req, res) {
-        Post.create({
+    // Post new comment to comment table
+    app.post("/api/comment", function (req, res) {
+        Comment.create({
             name: req.body.name,
-            post: req.body.post
+            comment: req.body.comment
         })
             .then(function (dbStatement) {
                 res.json(dbStatement)
             })
-    })
+    });
 
-    // Find post where id = __
-    app.get('/api/post/:id', function (req, res) {
-        Post.findAll({
+    // Find comment where id = __
+    app.get('/api/comment/:id', function (req, res) {
+        Comment.findAll({
             where: {
                 id: req.params.id
             }
@@ -33,11 +33,11 @@ module.exports = function (app) {
             .then(function (dbStatement) {
                 res.json(dbStatement)
             })
-    })
+    });
 
-    // Delete post
-    app.delete("/api/post/:id", function(req, res) {
-        Post.destroy({
+    // Delete comment
+    app.delete("/api/comment/:id", function(req, res) {
+        Comment.destroy({
           where: {
             id: req.params.id
           }

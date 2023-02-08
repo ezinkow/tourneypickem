@@ -4,13 +4,13 @@ import Comments from '../components/Comments'
 import Birkat from '../components/Birkat'
 
 
-export default function Home() {
+export default function BirkatPage() {
 
 
     return (
         <div>
             <Navbar />
-            <Comments />
+            <Birkat />
         </div>
     )
 }

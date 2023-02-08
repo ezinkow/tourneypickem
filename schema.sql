@@ -1,10 +1,10 @@
-DROP DATABASE IF EXISTS template;
-CREATE DATABASE template;
+DROP DATABASE IF EXISTS amiranddana;
+CREATE DATABASE amiranddana;
 
-USE template;
+USE amiranddana;
 
-CREATE TABLE statements (
+CREATE TABLE comments (
     id INTEGER NOT NULL AUTO_INCREMENT,
     name TEXT NOT NULL,
-    post TEXT NOT NULL,
+    comment TEXT NOT NULL,
 );

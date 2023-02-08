@@ -1,18 +1,18 @@
 import React from 'react'
-import PostForm from '../components/PostForm'
+import CommentForm from '../components/CommentForm'
 import Navbar from '../components/Navbar.js'
 
-export default function Ask() {
+export default function Comment() {
 
     return (
         <>
             <Navbar />
-            <div className='container'>
+            <div className='container commentForm'>
                 <div className='row'>
                     <div className='col-4'>
                     </div>
                     <div className='col-4'>
-                        <PostForm />
+                        <CommentForm />
                     </div>
                     <div className='col-4'>
                     </div>

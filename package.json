@@ -1,5 +1,5 @@
 {
-  "name": "smsils",
+  "name": "amiranddana",
   "version": "1.0.0",
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
   "main": "server.js",
@@ -16,25 +16,25 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.21.1",
-    "dotenv": "^10.0.0",
-    "express": "^4.17.1",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
     "if-env": "^1.0.4",
-    "mysql2": "^2.2.5",
-    "node": "^16.6.1",
-    "npm": "^7.19.1",
-    "sequelize": "^6.6.5",
-    "web-vitals": "^2.1.0"
+    "mysql2": "^3.1.0",
+    "node": "^18.13.0",
+    "npm": "^9.4.0",
+    "react": "^18.2.0",
+    "sequelize": "^6.28.0",
+    "web-vitals": "^3.1.1"
   },
   "devDependencies": {
     "concurrently": "^6.2.1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ezinkow/sample.git"
+    "url": "git+https://github.com/ezinkow/amiranddana.git"
   },
   "bugs": {
-    "url": "https://github.com/ezinkow/sample/issues"
+    "url": "https://github.com/ezinkow/amiranddana/issues"
   },
-  "homepage": "https://github.com/ezinkow/sample#readme"
+  "homepage": "https://github.com/ezinkow/amiranddana#readme"
 }
