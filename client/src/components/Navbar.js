@@ -10,20 +10,17 @@ export default function Navbar() {
     return (
         <div className="header">
             <div className="navbar">
-                <div className="col-1 logoImg">
+                <div className="col-2 logoImg">
                     <img src={logo} alt='logo' className='logoImg' />
                 </div>
                 <div className="col-3 navtext">
-                   <Link to='/birkat'><p>Birkat Hamazon</p></Link>
+                   <Link to='/birkat'><h4>Birkat Hamazon</h4></Link>
                 </div>
                 <div className="col-4 navtext">
-                    <Link to='/comment'><p>Leave a Comment!</p></Link>
+                    <Link to='/comment'><h4>Leave a Comment!</h4></Link>
                 </div>
                 <div className="col-3 navtext">
-                    <Link to='/comments'><p>Comments</p></Link>
-                </div>
-                <div className="col-1 logoImg">
-                    <img src={logo} alt='logo' className='logoImg' />
+                    <Link to='/comments'><h4>Comments</h4></Link>
                 </div>
             </div>
         </div>
