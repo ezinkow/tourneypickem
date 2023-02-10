@@ -8,26 +8,24 @@ import {
 export default function Navbar() {
 
     return (
-        // <div className="container navibar">
         <div className="header">
             <div className="navbar">
                 <div className="col-1 logoImg">
                     <img src={logo} alt='logo' className='logoImg' />
                 </div>
                 <div className="col-3 navtext">
-                   <Link to='/birkat'><h3>Birkat Hamazon</h3></Link>
+                   <Link to='/birkat'><p>Birkat Hamazon</p></Link>
                 </div>
                 <div className="col-4 navtext">
-                    <Link to='/comment'><h3>Leave a Comment!</h3></Link>
+                    <Link to='/comment'><p>Leave a Comment!</p></Link>
                 </div>
                 <div className="col-3 navtext">
-                    <Link to='/comments'><h3>Comments</h3></Link>
+                    <Link to='/comments'><p>Comments</p></Link>
                 </div>
                 <div className="col-1 logoImg">
                     <img src={logo} alt='logo' className='logoImg' />
                 </div>
             </div>
         </div>
-        // </div>
     )
 }
