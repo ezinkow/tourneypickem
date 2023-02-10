@@ -15,16 +15,16 @@ export default function Navbar() {
                         <img src={logo} alt='logo' className='logoImg' />
                     </div>
                     <div className="col-3 navtext">
-                        <Link to='/'><h4>Home</h4></Link>
+                        <Link to='/'><p>Home</p></Link>
                     </div>
                     <div className="col-2 navtext">
-                        <Link to='/birkat'><h4>Birkat Hamazon</h4></Link>
+                        <Link to='/birkat'><p>Birkat Hamazon</p></Link>
                     </div>
                     <div className="col-3 navtext">
-                        <Link to='/comment'><h4>Leave a Comment!</h4></Link>
+                        <Link to='/comment'><p>Leave a Comment!</p></Link>
                     </div>
                     <div className="col-3 navtext">
-                        <Link to='/comments'><h4>Comments</h4></Link>
+                        <Link to='/comments'><p>Comments</p></Link>
                     </div>
                     <div className="col-3">
                     </div>
