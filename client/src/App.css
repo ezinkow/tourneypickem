@@ -11,9 +11,9 @@
   }
 
 .logoImg{
-width:50px;
-height:50px;
-margin: 0px;
+width:100%;
+height:100%;
+margin-top: 10px;
 position:absolute;
 }
 
@@ -30,15 +30,15 @@ a:hover { text-decoration: none; }
 }
 
 .commentForm{
-    margin-top: 130px;
+    margin-top: 20px;
 }
 
 .birkatContainer{
-    margin-top:130px;
+    margin-top:20px;
 }
 
 .commentCards{
-    margin-top:70px;
+    margin-top:20px;
     display:flex;
 }
 
