@@ -11,6 +11,7 @@
 .logoImg{
 width:50px;
 height:50px;
+margin: 0px;
 }
 
 a:active { text-decoration: none; }
@@ -26,15 +27,15 @@ a:hover { text-decoration: none; }
 }
 
 .commentForm{
-    margin-top: 100px;
+    margin-top: 130px;
 }
 
 .birkatContainer{
-    margin-top:100px;
+    margin-top:130px;
 }
 
 .commentCards{
-    margin-top:50px;
+    margin-top:70px;
     display:flex;
 }
 
@@ -44,4 +45,8 @@ a:hover { text-decoration: none; }
 
 .body{
     background-color: #ebe8e2;
+}
+
+.mazel{
+    text-align: center;
 }

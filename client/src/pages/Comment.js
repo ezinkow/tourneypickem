@@ -9,12 +9,12 @@ export default function Comment() {
             <Navbar />
             <div className='container commentForm'>
                 <div className='row'>
-                    <div className='col-4'>
+                    <div className='col-3'>
                     </div>
-                    <div className='col-4'>
+                    <div className='col-6'>
                         <CommentForm />
                     </div>
-                    <div className='col-4'>
+                    <div className='col-3'>
                     </div>
                 </div>
             </div>
