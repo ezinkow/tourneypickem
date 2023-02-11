@@ -37,7 +37,7 @@ export default function Comments() {
                             </Card.Text>
                         </Card.Body>
                     </Card>
-            ) : ""}
+            ) : "No comments yet"}
         </Container >
     )
 }
