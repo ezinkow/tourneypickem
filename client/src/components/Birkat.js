@@ -1,7 +1,4 @@
 import React from 'react'
-import { useState, useEffect } from 'react'
-import axios from 'axios'
-import { Document, Page } from 'react-pdf';
 import Birkat1 from '../images/birkat-1.jpg'
 import Birkat2 from '../images/birkat-2.jpg'
 import Birkat3 from '../images/birkat-3.jpg'
