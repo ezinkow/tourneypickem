@@ -16,7 +16,8 @@ module.exports = function (app) {
     app.post("/api/comment", function (req, res) {
         Comment.create({
             name: req.body.name,
-            comment: req.body.comment
+            comment: req.body.comment,
+            hashtag: req.body.hashtag
         })
             .then(function (dbStatement) {
                 res.json(dbStatement)

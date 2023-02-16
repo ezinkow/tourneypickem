@@ -32,6 +32,7 @@ export default function Comments() {
                     <Card className='commentCard'>
                         <Card.Body>
                             <Card.Title>"{comment.comment}"</Card.Title>
+                            <Card.Title>"{comment.hashtag}"</Card.Title>
                             <Card.Text>
                                 -{comment.name}
                             </Card.Text>
