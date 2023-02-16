@@ -10,10 +10,10 @@ export default function Navbar() {
     return (
         <div className="header">
             <div className="navbar">
+                <div className="col-2 logoImg">
+                    <img src={logo} alt='logo' className='logoImg' />
+                </div>
                 <div className='container'>
-                    <div className="col-2 logoImg">
-                        <img src={logo} alt='logo' className='logoImg' />
-                    </div>
                     <div className="col-2">
                     </div>
                     <div className="col-5 navtext">
