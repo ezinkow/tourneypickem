@@ -7,6 +7,7 @@ import toast, { Toaster } from 'react-hot-toast';
 
 export default function CommentForm() {
     const [name, setName] = useState('')
+    const [nameToast, setNameToast] = useState('')
     const [comment, setComment] = useState('')
     const [hashtag, setHashtag] = useState('')
     const [modalIsOpen, setIsOpen] = useState('')
@@ -35,6 +36,7 @@ export default function CommentForm() {
     // Set Name
     const handleNameChange = event => {
         setName(event.target.value);
+        setNameToast(event.target.value);
     };
 
     // Send name and comment to database and reset fields
@@ -49,7 +51,7 @@ export default function CommentForm() {
         setComment("")
         setHashtag("")
         setName("")
-        toast.success("Comment submitted, now go party!!",
+        toast.success(`Thanks, ${nameToast}, comment submitted, now go party!!`,
             {
                 duration: 10000,
                 position: 'top-center',
