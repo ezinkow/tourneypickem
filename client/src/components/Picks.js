@@ -226,7 +226,7 @@ export default function Picks() {
                     <thead>
                         <tr>
                             <th>Game #</th>
-                            <th>Time</th>
+                            <th>Time (ET)</th>
                             <th>Underdog</th>
                             <th>Favorite</th>
                             <th>Line</th>
