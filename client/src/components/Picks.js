@@ -57,7 +57,6 @@ export default function Picks() {
     // Set Name
     const handleNameSelect = event => {
         setName(event);
-        console.log(event);
         setNameToast(event);
     };
 
@@ -86,32 +85,20 @@ export default function Picks() {
             fave: currentFavorite,
             lin: currentLine
         }
-        console.log(currentPickObj.pick)
         setCurrentPick(currentPick)
-        console.log(currentPick, currentGameId, currentPickObj)
         if (activePicks.length > 0) {
-            console.log('default')
             let findCurrentPick = activePicks.find(o => o.game === currentGameId)
-            console.log(findCurrentPick);
             if (findCurrentPick === undefined) {
                 activePicks.push(currentPickObj)
                 setPicks(activePicks)
-                let newArr = activePicks
-                console.log(picks)
             } else {
                 findCurrentPick.pick = currentPick
                 setPicks(activePicks)
-                console.log(picks)
             }
-            //setPicks(activePicks);
-            //console.log(picks)
         } else {
             activePicks.push(currentPickObj)
             setPicks(activePicks);
-            console.log(picks)
         }
-
-        // a function that takes activePicks (columns)
     }
 
     const tableGrid =
@@ -162,7 +149,6 @@ export default function Picks() {
         if (name != 'SELECT YOUR NAME IN DROPDOWN!') {
             event.preventDefault()
             setIsOpen(true);
-            console.log(event)
             for (let i = 0; i < picks.length; i++) {
                 const game_id = picks[i].game;
                 const pick = picks[i].pick
