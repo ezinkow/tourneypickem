@@ -8,7 +8,9 @@ export default function TodaysPicks() {
     return (
         <div>
             <Navbar />
-            <Picks />
+            <div className='=container'>
+                <Picks />
+            </div>
         </div>
     )
 }

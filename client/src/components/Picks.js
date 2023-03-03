@@ -189,7 +189,7 @@ export default function Picks() {
     }
 
     return (
-        <>
+        <div className='container'>
             <Toaster />
             <h3>Steps:</h3>
             <ul>
@@ -227,7 +227,7 @@ export default function Picks() {
             </div>
             <>
                 <h3>Picks:</h3>
-                <div className="table">
+                <div className="table picksTable">
                     <Table striped bordered hover size="sm">
                         <thead>
                             <tr>
@@ -249,7 +249,7 @@ export default function Picks() {
                     </Table>
                 </div>
             </>
-        </>
+        </div>
     )
 }
 

@@ -27,3 +27,12 @@ a:hover { text-decoration: none; }
 .body{
     background-color: #ebe8e2;
 }
+
+.dropdown-menu {
+    height: 70px;
+    overflow-y: scroll;
+  }
+
+  .picksTable{
+    width: 50%;
+  }
