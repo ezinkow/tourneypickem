@@ -16,6 +16,7 @@ export default function Picks() {
     const [thesePicks, setThesePicks] = useState([])
     const [currentPick, setCurrentPick] = useState([])
     const [modalIsOpen, setIsOpen] = useState('')
+    const todaysDate = '34'
 
     const customStyles = {
         content: {
@@ -30,7 +31,7 @@ export default function Picks() {
     useEffect(() => {
         async function fetchGames() {
             try {
-                const response = await axios('api/games')
+                const response = await axios(`api/games/${todaysDate}`)
                 setGames(response.data)
             } catch (e) {
                 console.log(e)
@@ -45,7 +46,6 @@ export default function Picks() {
                 const response = await axios('api/names')
                 const sortedList = response.data.sort((a, b) =>
                     a.name.localeCompare(b.name));
-                console.log(sortedList);
                 setNames(sortedList)
             } catch (e) {
                 console.log(e)
@@ -159,36 +159,49 @@ export default function Picks() {
 
     // Send name and picks to database and reset fields
     function handleSubmitClick(event) {
-        event.preventDefault()
-        setIsOpen(true);
-        console.log(event)
-        for (let i = 0; i < picks.length; i++) {
-            const game_id = picks[i].game;
-            const pick = picks[i].pick
-            axios.post('api/picks', {
-                name,
-                game_id,
-                pick
-            })
-        }
+        if (name != 'SELECT YOUR NAME IN DROPDOWN!') {
+            event.preventDefault()
+            setIsOpen(true);
+            console.log(event)
+            for (let i = 0; i < picks.length; i++) {
+                const game_id = picks[i].game;
+                const pick = picks[i].pick
+                axios.post('api/picks', {
+                    name,
+                    game_id,
+                    pick
+                })
+                setName("")
+                setPicks("")
+                toast.success(`Thanks, ${nameToast}, picks submitted.`,
+                    {
+                        duration: 10000,
+                        position: 'top-center',
+                        style: {
+                            border: '2px solid #713200',
+                            padding: '20px',
+                            marginTop: '100px',
+                            color: 'white',
+                            backgroundColor: 'rgb(60, 179, 113, 0.7)'
+                        },
+                        icon: '🏀',
+                        role: 'status',
+                        ariaLive: 'polite',
+                    });
+            }
+        } else {toast.error('Please select name in dropdown!',
+        {
+            duration: 5000,
+            position: 'top-center',
+            style: {
+                border: '2px solid #713200',
+                padding: '20px',
+                marginTop: '100px',
+                backgroundColor: 'rgb(255,0,0)',
+                color: 'rgb(255,255,255)'
+            },
+        });}
 
-        setName("")
-        setPicks("")
-        toast.success(`Thanks, ${nameToast}, picks submitted.`,
-            {
-                duration: 10000,
-                position: 'top-center',
-                style: {
-                    border: '2px solid #713200',
-                    padding: '20px',
-                    marginTop: '100px',
-                    color: 'white',
-                    backgroundColor: 'rgb(60, 179, 113, 0.7)'
-                },
-                icon: '🏀',
-                role: 'status',
-                ariaLive: 'polite',
-            });
     }
 
     return (
