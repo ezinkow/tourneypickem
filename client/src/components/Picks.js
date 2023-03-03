@@ -9,7 +9,7 @@ import Table from 'react-bootstrap/Table';
 
 export default function Picks() {
     const [name, setName] = useState('SELECT YOUR NAME IN DROPDOWN!')
-    const [names, setNames] = useState([])
+    const [names, setNames] = useState([''])
     const [games, setGames] = useState([])
     const [picks, setPicks] = useState([])
     const [nameToast, setNameToast] = useState('')
@@ -43,7 +43,10 @@ export default function Picks() {
         async function fetchNames() {
             try {
                 const response = await axios('api/names')
-                setNames(response.data)
+                const sortedList = response.data.sort((a, b) =>
+                    a.name.localeCompare(b.name));
+                console.log(sortedList);
+                setNames(sortedList)
             } catch (e) {
                 console.log(e)
             }
@@ -131,7 +134,7 @@ export default function Picks() {
                                 key='pick'
                                 value=''
                             >
-                                
+
                             </option>
                             <option
                                 key={game.underdog}
