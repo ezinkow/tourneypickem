@@ -19,7 +19,10 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // Routes
-require("./routes/comment-api-routes.js")(app);
+require("./routes/picks-api-routes.js")(app);
+require("./routes/picks34-api-routes.js")(app);
+require("./routes/games-api-routes.js")(app);
+require("./routes/names-api-routes.js")(app);
 
 // Starts the server to begin listening
 db.sequelize.sync({ force: false }).then(function() {

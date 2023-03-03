@@ -1,15 +1,14 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
-import Birkat from '../components/Birkat'
+import Picks from '../components/Picks'
 
-
-export default function BirkatPage() {
+export default function TodaysPicks() {
 
 
     return (
         <div>
             <Navbar />
-            <Birkat />
+            <Picks />
         </div>
     )
 }

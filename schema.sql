@@ -1,11 +1,10 @@
-DROP DATABASE IF EXISTS amiranddana;
-CREATE DATABASE amiranddana;
+/*DROP DATABASE IF EXISTS champweekpickem2023;
+CREATE DATABASE champweekpickem2023;
 
-USE amiranddana;
+USE champweekpickem2023;
 
-CREATE TABLE comments (
+CREATE TABLE picks (
     id INTEGER NOT NULL AUTO_INCREMENT,
     name TEXT NOT NULL,
-    comment TEXT NOT NULL,
-    hashtag TEXT NULL
+    game1 TEXT NOT NULL
 );

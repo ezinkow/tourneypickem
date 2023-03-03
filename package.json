@@ -1,5 +1,5 @@
 {
-  "name": "amiranddana",
+  "name": "champweek2023",
   "version": "1.0.0",
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
   "main": "server.js",
@@ -33,10 +33,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ezinkow/amiranddana.git"
+    "url": "git+https://github.com/ezinkow/champweek2023.git"
   },
   "bugs": {
-    "url": "https://github.com/ezinkow/amiranddana/issues"
+    "url": "https://github.com/ezinkow/champweek2023/issues"
   },
-  "homepage": "https://github.com/ezinkow/amiranddana#readme"
+  "homepage": "https://github.com/ezinkow/champweek2023#readme"
 }

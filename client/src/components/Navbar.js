@@ -1,5 +1,5 @@
 import React from 'react'
-import logo from '../images/logo.png'
+import banner from '../images/banner.jpg'
 
 import {
     Link
@@ -8,33 +8,17 @@ import {
 export default function Navbar() {
 
     return (
-        <div className="header">
+        <div className="header" style={{backgroundImage:`url(${banner})`, backgroundRepeat:'no-repeat', backgroundSize:'cover'}}>
             <div className="navbar">
-                <div className="col-2 logoImg">
-                    <img src={logo} alt='logo' className='logoImg' />
-                </div>
                 <div className='container'>
-                    <div className="col-2">
+                    <div className="col-5 navtext">
+                        <Link to='/'><h3>Home</h3></Link>
                     </div>
                     <div className="col-5 navtext">
-                        <Link to='/'><p>Home</p></Link>
-                    </div>
-                    <div className="col-5 navtext">
-                        <Link to='/birkat'><p>Birkat Hamazon</p></Link>
-                    </div>
-                    <div className="col-2">
-                    </div>
-                    <div className="col-5 navtext">
-                        <Link to='/comment'><p>Leave a Comment!</p></Link>
-                    </div>
-                    <div className="col-5 navtext">
-                        <Link to='/comments'><p>Comments</p></Link>
-                    </div>
+                        <Link to='/todayspicks'><h3>Todays Picks</h3></Link>
+                    </div>   
                 </div>
                 <br />
-                <div className="col-12">
-                    <p className='mazel'>MAZEL TOV AMIR AND DANA!!!</p>
-                </div>
             </div>
         </div>
     )
