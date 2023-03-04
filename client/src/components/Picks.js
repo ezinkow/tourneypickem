@@ -13,7 +13,6 @@ export default function Picks() {
     const [games, setGames] = useState([])
     const [picks, setPicks] = useState([])
     const [nameToast, setNameToast] = useState('')
-    const [thesePicks, setThesePicks] = useState([])
     const [currentPick, setCurrentPick] = useState([])
     const [modalIsOpen, setIsOpen] = useState('')
     const todaysDate = '34'
