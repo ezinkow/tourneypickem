@@ -147,48 +147,7 @@ export default function Picks() {
     // Send name and picks to database and reset fields
     function handleSubmitClick(event) {
 
-        toast.error('Come back later when games are ready to make your picks!',
-        {
-            duration: 5000,
-            position: 'top-center',
-            style: {
-                border: '2px solid #713200',
-                padding: '20px',
-                marginTop: '100px',
-                backgroundColor: 'rgb(255,0,0)',
-                color: 'rgb(255,255,255)'
-            },})
-
-        // if (name != 'SELECT YOUR NAME IN DROPDOWN!') {
-        //     event.preventDefault()
-        //     setIsOpen(true);
-        //     for (let i = 0; i < picks.length; i++) {
-        //         const game_id = picks[i].game;
-        //         const pick = picks[i].pick
-        //         axios.post('api/picks', {
-        //             name,
-        //             game_id,
-        //             pick
-        //         })
-        //         setName("")
-        //         setPicks("")
-        //         toast.success(`Thanks, ${nameToast}, picks submitted.`,
-        //             {
-        //                 duration: 10000,
-        //                 position: 'top-center',
-        //                 style: {
-        //                     border: '2px solid #713200',
-        //                     padding: '20px',
-        //                     marginTop: '100px',
-        //                     color: 'white',
-        //                     backgroundColor: 'rgb(60, 179, 113, 0.7)'
-        //                 },
-        //                 icon: '🏀',
-        //                 role: 'status',
-        //                 ariaLive: 'polite',
-        //             });
-        //     }
-        // } else {toast.error('Please select name in dropdown!',
+        // toast.error('Come back later when games are ready to make your picks!',
         // {
         //     duration: 5000,
         //     position: 'top-center',
@@ -198,8 +157,49 @@ export default function Picks() {
         //         marginTop: '100px',
         //         backgroundColor: 'rgb(255,0,0)',
         //         color: 'rgb(255,255,255)'
-        //     },
-        // });}
+        //     },})
+
+        if (name != 'SELECT YOUR NAME IN DROPDOWN!') {
+            event.preventDefault()
+            setIsOpen(true);
+            for (let i = 0; i < picks.length; i++) {
+                const game_id = picks[i].game;
+                const pick = picks[i].pick
+                axios.post('api/picks', {
+                    name,
+                    game_id,
+                    pick
+                })
+                setName("")
+                setPicks("")
+                toast.success(`Thanks, ${nameToast}, picks submitted.`,
+                    {
+                        duration: 10000,
+                        position: 'top-center',
+                        style: {
+                            border: '2px solid #713200',
+                            padding: '20px',
+                            marginTop: '100px',
+                            color: 'white',
+                            backgroundColor: 'rgb(60, 179, 113, 0.7)'
+                        },
+                        icon: '🏀',
+                        role: 'status',
+                        ariaLive: 'polite',
+                    });
+            }
+        } else {toast.error('Please select name in dropdown!',
+        {
+            duration: 5000,
+            position: 'top-center',
+            style: {
+                border: '2px solid #713200',
+                padding: '20px',
+                marginTop: '100px',
+                backgroundColor: 'rgb(255,0,0)',
+                color: 'rgb(255,255,255)'
+            },
+        });}
 
     }
 
