@@ -10,6 +10,7 @@ import Home from './pages/Home';
 import TodaysPicks from './pages/TodaysPicks';
 import TomorrowGames from './pages/TomorrowGames';
 import TwoDaysOut from './pages/TwoDaysOut';
+import PicksDisplay from './pages/PicksDisplay';
 
 export default function App() {
 
@@ -19,6 +20,7 @@ export default function App() {
         <Route path="/todayspicks" element={<TodaysPicks />} />
         <Route path="/tomorrowsgames" element={<TomorrowGames />} />
         <Route path="/twodaysout" element={<TwoDaysOut />} />
+        <Route path="/picksdisplay" element={<PicksDisplay />} />
         <Route path="/" element={<Home />} />
       </Routes>
     </Router>

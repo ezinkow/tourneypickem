@@ -7,7 +7,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Table from 'react-bootstrap/Table';
 
-export default function Picks() {
+export default function TodaysPicksAM() {
     const [name, setName] = useState('SELECT YOUR NAME IN DROPDOWN!')
     const [names, setNames] = useState([''])
     const [games, setGames] = useState([])
@@ -15,7 +15,7 @@ export default function Picks() {
     const [nameToast, setNameToast] = useState('')
     const [currentPick, setCurrentPick] = useState([])
     const [modalIsOpen, setIsOpen] = useState('')
-    const todaysDate = '34'
+    const todaysDate = '37a'
 
     const customStyles = {
         content: {
@@ -102,6 +102,7 @@ export default function Picks() {
 
     const tableGrid =
         games.map(game =>
+            // picks.map(pick =>
             <tr>
                 <>
                     <td key={game.id}>{game.id}</td>
@@ -135,6 +136,7 @@ export default function Picks() {
                             </option>
                         </select>
                     </td>
+                    {/* <td>{pick.pick}</td> */}
                 </>
             </tr>
             // )

@@ -51,7 +51,7 @@ export default function TomorrowsGames() {
     return (
         <div className='container'>
             <br></br>
-            <h3>Tomorrow's Games:</h3>
+            <h3>Tomorrow's Games ({tomorrowsMonth}/{tomorrowsDay}):</h3>
             <div className="table">
                 <Table striped bordered hover>
                     <thead>

@@ -26,25 +26,11 @@ module.exports = function (app) {
 
     // Find picks where id = __
     app.get('/api/picks/:id', function (req, res) {
-        Games.findAll({
-            where: {
-                id: req.params.id
-            }
-        })
+        Picks.findAll({})
             .then(function (dbpicks) {
                 res.json(dbpicks)
             })
+        console.log(req.params)
     })
-
-    // Delete picks
-    app.delete("/api/picks/:id", function (req, res) {
-        Picks.destroy({
-            where: {
-                id: req.params.id
-            }
-        }).then(function () {
-            res.end();
-        });
-    });
 
 }

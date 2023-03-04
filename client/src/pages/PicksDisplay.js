@@ -1,14 +1,14 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
-import TestComponent from '../components/TestComponent'
+import PicksToday from '../components/PicksDisplay'
 
-export default function TestPage() {
+export default function PicksDisplay() {
 
 
     return (
         <div>
             <Navbar />
-            <TestComponent />
+            <PicksToday />
         </div>
     )
 }

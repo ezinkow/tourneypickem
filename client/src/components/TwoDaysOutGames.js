@@ -52,7 +52,7 @@ export default function TwoDaysOutGames() {
     return (
         <div className='container'>
             <br></br>
-            <h3>In Two Days' Games:</h3>
+            <h3>In Two Days' Games ({twoDaysMonth}/{twoDaysDay}):</h3>
             <div className="table">
                 <Table striped bordered hover>
                     <thead>
