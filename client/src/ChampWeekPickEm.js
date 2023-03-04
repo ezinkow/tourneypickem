@@ -9,7 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from './pages/Home';
 import TodaysPicks from './pages/TodaysPicks';
 import TomorrowGames from './pages/TomorrowGames';
-import TestPage from './pages/TestPage';
+import TwoDaysOut from './pages/TwoDaysOut';
 
 export default function App() {
 
@@ -18,7 +18,7 @@ export default function App() {
       <Routes>
         <Route path="/todayspicks" element={<TodaysPicks />} />
         <Route path="/tomorrowsgames" element={<TomorrowGames />} />
-        <Route path="/testpage" element={<TestPage />} />
+        <Route path="/twodaysout" element={<TwoDaysOut />} />
         <Route path="/" element={<Home />} />
       </Routes>
     </Router>

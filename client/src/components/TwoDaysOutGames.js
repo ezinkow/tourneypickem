@@ -3,13 +3,13 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Table from 'react-bootstrap/Table';
 
-export default function TomorrowsGames() {
+export default function TwoDaysOutGames() {
     const [games, setGames] = useState([])
-    const tomorrow = new Date
-    const tomorrowsMonth = tomorrow.getMonth() + 1
-    const tomorrowsDay = tomorrow.getDate() + 1
-    const tomorrowsDate = tomorrowsMonth + '' + tomorrowsDay
-    
+    const twoDay = new Date
+    const twoDaysMonth = twoDay.getMonth() + 1
+    const twoDaysDay = twoDay.getDate() + 2
+    const twoDaysDate = twoDaysMonth + '' + twoDaysDay
+
     const customStyles = {
         content: {
             top: '50%',
@@ -23,8 +23,9 @@ export default function TomorrowsGames() {
     useEffect(() => {
         async function fetchGames() {
             try {
-                const response = await axios(`api/games/${tomorrowsDate}`)
+                const response = await axios(`api/games/${twoDaysDate}`)
                 setGames(response.data)
+                console.log(response.data)
             } catch (e) {
                 console.log(e)
             }
