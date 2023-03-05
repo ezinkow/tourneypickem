@@ -169,6 +169,7 @@ export default function Picks() {
                 })
                 setName("")
                 setPicks("")
+            }
                 toast.success(`Thanks, ${nameToast}, picks submitted.`,
                     {
                         duration: 10000,
@@ -184,7 +185,6 @@ export default function Picks() {
                         role: 'status',
                         ariaLive: 'polite',
                     });
-            }
         } else {toast.error('Please select name in dropdown!',
         {
             duration: 5000,
