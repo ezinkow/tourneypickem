@@ -1,6 +1,6 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
-import TwoDaysOutGames from '../components/InTheHoldGames'
+import TwoDaysOutGames from '../components/InTheHoleGames'
 
 export default function TwoDaysOut() {
 
