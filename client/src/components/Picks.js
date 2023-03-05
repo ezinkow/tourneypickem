@@ -167,36 +167,38 @@ export default function Picks() {
                     game_id,
                     pick
                 })
-                setName("")
-                setPicks("")
             }
-                toast.success(`Thanks, ${nameToast}, picks submitted.`,
-                    {
-                        duration: 10000,
-                        position: 'top-center',
-                        style: {
-                            border: '2px solid #713200',
-                            padding: '20px',
-                            marginTop: '100px',
-                            color: 'white',
-                            backgroundColor: 'rgb(60, 179, 113, 0.7)'
-                        },
-                        icon: '🏀',
-                        role: 'status',
-                        ariaLive: 'polite',
-                    });
-        } else {toast.error('Please select name in dropdown!',
-        {
-            duration: 5000,
-            position: 'top-center',
-            style: {
-                border: '2px solid #713200',
-                padding: '20px',
-                marginTop: '100px',
-                backgroundColor: 'rgb(255,0,0)',
-                color: 'rgb(255,255,255)'
-            },
-        });}
+            toast.success(`Thanks, ${nameToast}, picks submitted.`,
+                {
+                    duration: 10000,
+                    position: 'top-center',
+                    style: {
+                        border: '2px solid #713200',
+                        padding: '20px',
+                        marginTop: '100px',
+                        color: 'white',
+                        backgroundColor: 'rgb(60, 179, 113, 0.7)'
+                    },
+                    icon: '🏀',
+                    role: 'status',
+                    ariaLive: 'polite',
+                });
+            setName("")
+            setPicks("")
+        } else {
+            toast.error('Please select name in dropdown!',
+                {
+                    duration: 5000,
+                    position: 'top-center',
+                    style: {
+                        border: '2px solid #713200',
+                        padding: '20px',
+                        marginTop: '100px',
+                        backgroundColor: 'rgb(255,0,0)',
+                        color: 'rgb(255,255,255)'
+                    },
+                });
+        }
 
     }
 
