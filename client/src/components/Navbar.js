@@ -11,17 +11,20 @@ export default function Navbar() {
         <div className="header" style={{backgroundImage:`url(${banner})`, backgroundRepeat:'no-repeat', backgroundSize:'cover'}}>
             <div className="navbar">
                 <div className='container'>
-                    <div className="col-3 navtext">
+                    <div className="col-2 navtext">
                         <Link to='/'><h3>Home</h3></Link>
                     </div>
-                    <div className="col-3 navtext">
+                    <div className="col-2 navtext">
                         <Link to='/todayspicks'><h3>Todays Picks</h3></Link>
                     </div>   
-                    <div className="col-3 navtext">
-                        <Link to='/tomorrowsgames'><h3>Tomorrows Games</h3></Link>
+                    <div className="col-2 navtext">
+                        <Link to='/tomorrowsgames'><h3>On Deck</h3></Link>
                     </div>   
-                    <div className="col-3 navtext">
-                        <Link to='/twodaysout'><h3>In Two Days Games</h3></Link>
+                    <div className="col-2 navtext">
+                        <Link to='/twodaysout'><h3>In The Hole</h3></Link>
+                    </div>   
+                    <div className="col-2 navtext">
+                        <Link to='/standings'><h3>Standings</h3></Link>
                     </div>   
                 </div>
                 <br />

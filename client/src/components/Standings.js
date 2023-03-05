@@ -3,13 +3,9 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Table from 'react-bootstrap/Table';
 
-export default function TwoDaysOutGames() {
-    const [games, setGames] = useState([])
-    const twoDay = new Date
-    const twoDaysMonth = twoDay.getMonth() + 1
-    const twoDaysDay = twoDay.getDate() + 2
-    const twoDaysDate = twoDaysMonth + '' + twoDaysDay
-
+export default function Standings() {
+    const [standings, setStandings] = useState([])
+    
     const customStyles = {
         content: {
             top: '50%',
@@ -21,29 +17,26 @@ export default function TwoDaysOutGames() {
         },
     };
     useEffect(() => {
-        async function fetchGames() {
+        async function fetchStandings() {
             try {
-                const response = await axios(`api/games/${twoDaysDate}`)
-                setGames(response.data)
+                const response = await axios(`api/standings/`)
+                setStandings(response.data)
                 console.log(response.data)
             } catch (e) {
                 console.log(e)
             }
         }
-        fetchGames()
+        fetchStandings()
     }, [])
 
     const tableGrid =
-        games.map(game =>
+        standings.map(standing =>
             <tr>
                 <>
-                    <td key={game.id}>{game.id}</td>
-                    <td key={game.time}>{game.time}</td>
-                    <td key={game.underdog}>{game.underdog}</td>
-                    <td key={game.favorite}>{game.favorite}</td>
-                    <td key={game.line}>-{game.line}</td>
                     
-                   
+                    <td key={standing.rank}>{standing.rank}</td>
+                    <td key={standing.name}>{standing.name}</td>
+                    <td key={standing.points}>{standing.points}</td>
                 </>
             </tr>
         )
@@ -52,16 +45,13 @@ export default function TwoDaysOutGames() {
     return (
         <div className='container'>
             <br></br>
-            <h3>In Two Days' Games ({twoDaysMonth}/{twoDaysDay}):</h3>
             <div className="table">
                 <Table striped bordered hover>
                     <thead>
                         <tr>
-                            <th>Game #</th>
-                            <th>Time (ET)</th>
-                            <th>Underdog</th>
-                            <th>Favorite</th>
-                            <th>Line</th>
+                            <th>Rank</th>
+                            <th>Name</th>
+                            <th>Points</th>
                         </tr>
                     </thead>
                     <tbody>

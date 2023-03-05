@@ -1,15 +1,15 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
-import TomorrowsGames from '../components/TomorrowsGames'
+import TwoDaysOutGames from '../components/InTheHoldGames'
 
-export default function TomorrowGames() {
+export default function TwoDaysOut() {
 
 
     return (
         <div>
             <Navbar />
             <div className='=container'>
-                <TomorrowsGames />
+                <TwoDaysOutGames />
             </div>
         </div>
     )
