@@ -52,7 +52,7 @@ export default function InTheHoleGames() {
         <div className='container'>
             <br></br>
             {/* <h3>In The Hole ({inTheHoleMonth}/{inTheHoleDay}):</h3> */}
-            <h3>In The Hole (3/7):</h3>
+            <h3>In The Hole (3/8):</h3>
             <div className="table">
                 <Table striped bordered hover>
                     <thead>
