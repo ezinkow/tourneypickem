@@ -20,10 +20,8 @@ export default function Standings() {
         async function fetchStandings() {
             try {
                 const response = await axios(`api/standings/`)
-                const sortedList = response.data.sort((a, b) =>
-                    a.name.localeCompare(b.name));
+                const sortedList = response.data.sort( (a,b) => b.points - a.points );
                 setStandings(sortedList)
-                console.log(response.data)
             } catch (e) {
                 console.log(e)
             }
