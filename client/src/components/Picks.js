@@ -101,6 +101,7 @@ export default function Picks() {
             activePicks.push(currentPickObj)
             setPicks(activePicks);
         }
+        console.log(picks)
     }
 
     const tableGrid =
@@ -258,7 +259,7 @@ export default function Picks() {
                             {picks.length > 0 ? picks.map(thisPick =>
                                 <tr>
                                     <td key={thisPick.game}>{thisPick.game}</td>
-                                    <td key='matchup'>{thisPick.dog} vs {thisPick.fave} (-{thisPick.lin})</td>
+                                    <td key='matchup'>{thisPick.underdog} vs {thisPick.favorite} (-{thisPick.line})</td>
                                     <td key={thisPick.pick}>{thisPick.pick}</td>
                                 </tr>
                             ) : ""
