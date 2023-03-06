@@ -12,7 +12,6 @@ export default function PicksDisplay() {
         async function fetchPicks() {
             try {
                 const response = await axios(`api/picks/${todaysDate}`)
-                console.log(response.data)
                 setPicks(response.data)
             } catch (e) {
                 console.log(e)
