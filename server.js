@@ -20,7 +20,6 @@ if (process.env.NODE_ENV === 'production') {
 
 // Routes
 require("./routes/picks-api-routes.js")(app);
-require("./routes/picks34-api-routes.js")(app);
 require("./routes/games-api-routes.js")(app);
 require("./routes/names-api-routes.js")(app);
 require("./routes/standings-api-routes.js")(app);

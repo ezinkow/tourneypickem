@@ -11,6 +11,10 @@ module.exports = function (sequelize, DataTypes) {
         pick: {
             type: DataTypes.JSON,
             allowNull: true,
+        },
+        game_date: {
+            type: DataTypes.JSON,
+            allowNull: true,
         }
     });
 

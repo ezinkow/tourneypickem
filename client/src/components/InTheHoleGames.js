@@ -5,10 +5,10 @@ import Table from 'react-bootstrap/Table';
 
 export default function InTheHoleGames() {
     const [games, setGames] = useState([])
-    const inTheHOle = new Date
-    const inTheHOleMonth = inTheHOle.getMonth() + 1
-    const inTheHOleDay = inTheHOle.getDate() + 2
-    const inTheHOleDate = inTheHOleMonth + '' + inTheHOleDay
+    const inTheHole = new Date
+    const inTheHoleMonth = inTheHole.getMonth() + 1
+    const inTheHoleDay = inTheHole.getDate() + 2
+    const inTheHoleDate = inTheHoleMonth + '' + inTheHoleDay
 
     const customStyles = {
         content: {
@@ -23,7 +23,7 @@ export default function InTheHoleGames() {
     useEffect(() => {
         async function fetchGames() {
             try {
-                const response = await axios(`api/games/${inTheHOleDate}`)
+                const response = await axios(`api/games/${inTheHoleDate}`)
                 setGames(response.data)
             } catch (e) {
                 console.log(e)
@@ -51,7 +51,7 @@ export default function InTheHoleGames() {
     return (
         <div className='container'>
             <br></br>
-            {/* <h3>In The Hole ({inTheHOleMonth}/{inTheHOleDay}):</h3> */}
+            {/* <h3>In The Hole ({inTheHoleMonth}/{inTheHoleDay}):</h3> */}
             <h3>In The Hole (3/7):</h3>
             <div className="table">
                 <Table striped bordered hover>
