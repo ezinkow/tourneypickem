@@ -170,7 +170,7 @@ export default function Picks() {
             }
             toast.success(`Thanks, ${nameToast}, picks submitted.`,
                 {
-                    duration: 10000,
+                    duration: 10001,
                     position: 'top-center',
                     style: {
                         border: '2px solid #713200',
