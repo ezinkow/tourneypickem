@@ -53,7 +53,7 @@ export default function onDeckGames() {
         <div className='container'>
             <br></br>
             {/* <h3>On Deck ({onDeckMonth}/{onDeckDay}):</h3> */}
-            <h3>On Deck (3/6):</h3>
+            <h3>On Deck (3/7):</h3>
             <div className="table">
                 <Table striped bordered hover>
                     <thead>
