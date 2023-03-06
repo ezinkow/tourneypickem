@@ -219,7 +219,8 @@ export default function Picks() {
                 onSelect={handleNameSelect}
                 key='dropdown'>{namesList}
             </DropdownButton>
-            <h4> Name: {name} || Your last pick: {currentPick}</h4>
+            <h4> Name: {name}</h4>
+            <h5>Most Recent Pick: {currentPick}</h5>
             <div className="table">
                 <Table striped bordered hover>
                     <thead>
