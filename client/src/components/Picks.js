@@ -15,7 +15,7 @@ export default function Picks() {
     const [nameToast, setNameToast] = useState('')
     const [currentPick, setCurrentPick] = useState([])
     const [modalIsOpen, setIsOpen] = useState('')
-    const todaysDate = '35'
+    const todaysDate = '36'
 
     const customStyles = {
         content: {
@@ -70,23 +70,24 @@ export default function Picks() {
         )
 
     // Set Picks
-    const handleChange = (event, id, underdog, favorite, line) => {
+    const handleChange = (event, id, underdog, favorite, line, game_date) => {
         let activePicks = picks
         const currentPick = event.target.value
-        const currentGameId = id
+        // const currentGameId = id
         const currentUnderdog = underdog
         const currentFavorite = favorite
         const currentLine = line
         const currentPickObj = {
-            game: currentGameId,
+            game: id,
             pick: currentPick,
-            dog: currentUnderdog,
-            fave: currentFavorite,
-            lin: currentLine
+            underdog,
+            favorite,
+            line,
+            game_date
         }
         setCurrentPick(currentPick)
         if (activePicks.length > 0) {
-            let findCurrentPick = activePicks.find(o => o.game === currentGameId)
+            let findCurrentPick = activePicks.find(o => o.game === id)
             if (findCurrentPick === undefined) {
                 activePicks.push(currentPickObj)
                 setPicks(activePicks)
@@ -113,7 +114,7 @@ export default function Picks() {
                         <select
                             key={game.id}
                             value={game.id}
-                            onChange={() => { handleChange(event, game.id, game.underdog, game.favorite, game.line) }}
+                            onChange={() => { handleChange(event, game.id, game.underdog, game.favorite, game.line, game.game_date) }}
                         >
                             <option
                                 key='pick'

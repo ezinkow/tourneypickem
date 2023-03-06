@@ -24,13 +24,30 @@ module.exports = function (app) {
             })
     });
 
-    // Find picks where id = __
-    app.get('/api/picks/:id', function (req, res) {
-        Picks.findAll({})
+    // Find picks where date = __
+    app.get('/api/picks/:date', function (req, res) {
+        console.log('req params', req.params)
+        Picks.findAll({
+            where: {
+                game_date: req.params.date
+            }
+        })
             .then(function (dbpicks) {
                 res.json(dbpicks)
             })
         console.log(req.params)
     })
+
+    // // Find picks where id = __
+    // app.get('/api/picks/:id', function (req, res) {
+    //     Picks.findAll({}
+    //     )
+    //         .then(function (dbpicks) {
+    //             res.json(dbpicks)
+    //         })
+    //     console.log(req.params)
+    // })
+
+
 
 }

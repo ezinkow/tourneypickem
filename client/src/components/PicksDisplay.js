@@ -1,20 +1,18 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
-import Button from 'react-bootstrap/Button'
 import axios from 'axios'
-import toast, { Toaster } from 'react-hot-toast'
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
 import Table from 'react-bootstrap/Table';
 
 export default function PicksDisplay() {
     const [picks, setPicks] = useState([])
     const maxGameId = '2'
+    const todaysDate = '35'
 
     useEffect(() => {
         async function fetchPicks() {
             try {
-                const response = await axios(`api/picks/`)
+                const response = await axios(`api/picks/${todaysDate}`)
+                console.log(response.data)
                 setPicks(response.data)
             } catch (e) {
                 console.log(e)
@@ -26,7 +24,8 @@ export default function PicksDisplay() {
     return (
 
         <div className="table">
-            <h3>Picks:</h3>
+            <h1>come back later for everyones picks</h1>
+            {/* <h3>Picks:</h3>
             <div className="table picksTable">
                 <Table striped bordered hover size="sm">
                     <thead>
@@ -47,7 +46,7 @@ export default function PicksDisplay() {
                         }
                     </tbody>
                 </Table>
-            </div>
+            </div> */}
         </div>
     )
 }
