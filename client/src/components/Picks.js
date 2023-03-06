@@ -73,10 +73,6 @@ export default function Picks() {
     const handleChange = (event, id, underdog, favorite, line, game_date) => {
         let activePicks = picks
         const currentPick = event.target.value
-        // const currentGameId = id
-        const currentUnderdog = underdog
-        const currentFavorite = favorite
-        const currentLine = line
         const currentPickObj = {
             game: id,
             pick: currentPick,
@@ -85,14 +81,12 @@ export default function Picks() {
             line,
             game_date
         }
-        console.log(currentPickObj)
         setCurrentPick(currentPick)
         if (activePicks.length > 0) {
             let findCurrentPick = activePicks.find(o => o.game === id)
             if (findCurrentPick === undefined) {
                 activePicks.push(currentPickObj)
                 setPicks(activePicks)
-                console.log(activePicks)
             } else {
                 findCurrentPick.pick = currentPick
                 setPicks(activePicks)
@@ -101,7 +95,6 @@ export default function Picks() {
             activePicks.push(currentPickObj)
             setPicks(activePicks);
         }
-        console.log(picks)
     }
 
     const tableGrid =
