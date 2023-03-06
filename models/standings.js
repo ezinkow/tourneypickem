@@ -5,7 +5,7 @@ module.exports = function (sequelize, DataTypes) {
             allowNull: false
         },
         points: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.TEXT,
             allowNull: false
         },
         rank: {

@@ -17,7 +17,8 @@ module.exports = function (app) {
         Picks.create({
             name: req.body.name,
             game_id: req.body.game_id,
-            pick: req.body.pick
+            pick: req.body.pick,
+            game_date: req.body.game_date
         })
             .then(function (dbpicks) {
                 res.json(dbpicks)
