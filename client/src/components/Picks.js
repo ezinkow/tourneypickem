@@ -160,7 +160,6 @@ export default function Picks() {
                 const game_id = picks[i].game;
                 const pick = picks[i].pick
                 const game_date = picks[i].game_date
-                console.log(game_date)
                 axios.post('api/picks', {
                     name,
                     game_id,
