@@ -5,15 +5,15 @@ module.exports = function (sequelize, DataTypes) {
             allowNull: false
         },
         game_id: {
-            type: DataTypes.JSON,
+            type: DataTypes.INTEGER,
             allowNull: true,
         },
         pick: {
-            type: DataTypes.JSON,
+            type: DataTypes.TEXT,
             allowNull: true,
         },
         game_date: {
-            type: DataTypes.JSON,
+            type: DataTypes.INTEGER,
             allowNull: true,
         }
     });

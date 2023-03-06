@@ -23,6 +23,7 @@ module.exports = function (app) {
             .then(function (dbgames) {
                 res.json(dbgames)
             })
+            console.log(req.params)
     })
 }
 

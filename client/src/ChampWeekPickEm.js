@@ -11,6 +11,7 @@ import TodaysPicks from './pages/TodaysPicks';
 import OnDeckGames from './pages/OnDeckGames';
 import InTheHoleGames from './pages/InTheHoleGames';
 import PicksDisplay from './pages/PicksDisplay';
+import PicksDisplay36 from './pages/PicksDisplay36';
 import Standings from './pages/Standings';
 
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="/tomorrowsgames" element={<OnDeckGames />} />
         <Route path="/twodaysout" element={<InTheHoleGames />} />
         <Route path="/picksdisplay" element={<PicksDisplay />} />
+        <Route path="/picksdisplay36" element={<PicksDisplay36 />} />
         <Route path="/standings" element={<Standings />} />
         <Route path="/" element={<Home />} />
       </Routes>

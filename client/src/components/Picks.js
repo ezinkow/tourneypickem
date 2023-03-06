@@ -85,12 +85,14 @@ export default function Picks() {
             line,
             game_date
         }
+        console.log(currentPickObj)
         setCurrentPick(currentPick)
         if (activePicks.length > 0) {
             let findCurrentPick = activePicks.find(o => o.game === id)
             if (findCurrentPick === undefined) {
                 activePicks.push(currentPickObj)
                 setPicks(activePicks)
+                console.log(activePicks)
             } else {
                 findCurrentPick.pick = currentPick
                 setPicks(activePicks)
@@ -166,7 +168,8 @@ export default function Picks() {
                 axios.post('api/picks', {
                     name,
                     game_id,
-                    pick
+                    pick,
+                    game_date
                 })
             }
             toast.success(`Thanks, ${nameToast}, picks submitted.`,
