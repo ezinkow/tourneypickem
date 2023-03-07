@@ -15,7 +15,10 @@ export default function Navbar() {
                         <Link to='/'><h3>Home</h3></Link>
                     </div>
                     <div className="col-2 navtext">
-                        <Link to='/todayspicks'><h3>Todays Picks</h3></Link>
+                        <Link to='/todayspicksam'><h3>Todays Picks AM</h3></Link>
+                    </div>   
+                    <div className="col-2 navtext">
+                        <Link to='/todayspickspm'><h3>Todays Picks PM</h3></Link>
                     </div>   
                     <div className="col-2 navtext">
                         <Link to='/tomorrowsgames'><h3>On Deck</h3></Link>

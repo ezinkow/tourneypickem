@@ -7,7 +7,8 @@ import {
 } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from './pages/Home';
-import TodaysPicks from './pages/TodaysPicks';
+import TodaysPicksA from './pages/TodaysPicksAm';
+import TodaysPicksP from './pages/TodaysPicksPm';
 import OnDeckGames from './pages/OnDeckGames';
 import InTheHoleGames from './pages/InTheHoleGames';
 import PicksDisplay from './pages/PicksDisplay';
@@ -19,7 +20,8 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/todayspicks" element={<TodaysPicks />} />
+        <Route path="/todayspicksam" element={<TodaysPicksA />} />
+        <Route path="/todayspickspm" element={<TodaysPicksP />} />
         <Route path="/tomorrowsgames" element={<OnDeckGames />} />
         <Route path="/twodaysout" element={<InTheHoleGames />} />
         <Route path="/picksdisplay" element={<PicksDisplay />} />

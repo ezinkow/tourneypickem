@@ -9,7 +9,7 @@ export default function onDeckGames() {
     const onDeckMonth = onDeck.getMonth() + 1
     const onDeckDay = onDeck.getDate() + 1
     //const onDeckDate = onDeckMonth + '' + onDeckDay
-    const onDeckDate = '37a'
+    const onDeckDate = '38a'
     
     const customStyles = {
         content: {

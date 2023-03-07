@@ -7,7 +7,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Table from 'react-bootstrap/Table';
 
-export default function TodaysPicksAM() {
+export default function TodaysPicksAm() {
     const [name, setName] = useState('SELECT YOUR NAME IN DROPDOWN!')
     const [names, setNames] = useState([''])
     const [games, setGames] = useState([])
@@ -70,23 +70,20 @@ export default function TodaysPicksAM() {
         )
 
     // Set Picks
-    const handleChange = (event, id, underdog, favorite, line) => {
+    const handleChange = (event, id, underdog, favorite, line, game_date) => {
         let activePicks = picks
         const currentPick = event.target.value
-        const currentGameId = id
-        const currentUnderdog = underdog
-        const currentFavorite = favorite
-        const currentLine = line
         const currentPickObj = {
-            game: currentGameId,
+            game: id,
             pick: currentPick,
-            dog: currentUnderdog,
-            fave: currentFavorite,
-            lin: currentLine
+            underdog,
+            favorite,
+            line,
+            game_date
         }
         setCurrentPick(currentPick)
         if (activePicks.length > 0) {
-            let findCurrentPick = activePicks.find(o => o.game === currentGameId)
+            let findCurrentPick = activePicks.find(o => o.game === id)
             if (findCurrentPick === undefined) {
                 activePicks.push(currentPickObj)
                 setPicks(activePicks)
@@ -102,7 +99,6 @@ export default function TodaysPicksAM() {
 
     const tableGrid =
         games.map(game =>
-            // picks.map(pick =>
             <tr>
                 <>
                     <td key={game.id}>{game.id}</td>
@@ -114,7 +110,7 @@ export default function TodaysPicksAM() {
                         <select
                             key={game.id}
                             value={game.id}
-                            onChange={() => { handleChange(event, game.id, game.underdog, game.favorite, game.line) }}
+                            onChange={() => { handleChange(event, game.id, game.underdog, game.favorite, game.line, game.game_date) }}
                         >
                             <option
                                 key='pick'
@@ -136,7 +132,6 @@ export default function TodaysPicksAM() {
                             </option>
                         </select>
                     </td>
-                    {/* <td>{pick.pick}</td> */}
                 </>
             </tr>
             // )
@@ -164,41 +159,45 @@ export default function TodaysPicksAM() {
             for (let i = 0; i < picks.length; i++) {
                 const game_id = picks[i].game;
                 const pick = picks[i].pick
+                const game_date = picks[i].game_date
                 axios.post('api/picks', {
                     name,
                     game_id,
-                    pick
+                    pick,
+                    game_date
                 })
-                setName("")
-                setPicks("")
-                toast.success(`Thanks, ${nameToast}, picks submitted.`,
-                    {
-                        duration: 10000,
-                        position: 'top-center',
-                        style: {
-                            border: '2px solid #713200',
-                            padding: '20px',
-                            marginTop: '100px',
-                            color: 'white',
-                            backgroundColor: 'rgb(60, 179, 113, 0.7)'
-                        },
-                        icon: '🏀',
-                        role: 'status',
-                        ariaLive: 'polite',
-                    });
             }
-        } else {toast.error('Please select name in dropdown!',
-        {
-            duration: 5000,
-            position: 'top-center',
-            style: {
-                border: '2px solid #713200',
-                padding: '20px',
-                marginTop: '100px',
-                backgroundColor: 'rgb(255,0,0)',
-                color: 'rgb(255,255,255)'
-            },
-        });}
+            toast.success(`Thanks, ${nameToast}, picks submitted.`,
+                {
+                    duration: 10001,
+                    position: 'top-center',
+                    style: {
+                        border: '2px solid #713200',
+                        padding: '20px',
+                        marginTop: '100px',
+                        color: 'white',
+                        backgroundColor: 'rgb(60, 179, 113, 0.7)'
+                    },
+                    icon: '🏀',
+                    role: 'status',
+                    ariaLive: 'polite',
+                });
+            setName("")
+            setPicks("")
+        } else {
+            toast.error('Please select name in dropdown!',
+                {
+                    duration: 5000,
+                    position: 'top-center',
+                    style: {
+                        border: '2px solid #713200',
+                        padding: '20px',
+                        marginTop: '100px',
+                        backgroundColor: 'rgb(255,0,0)',
+                        color: 'rgb(255,255,255)'
+                    },
+                });
+        }
 
     }
 
@@ -219,7 +218,8 @@ export default function TodaysPicksAM() {
                 onSelect={handleNameSelect}
                 key='dropdown'>{namesList}
             </DropdownButton>
-            <h4> Name: {name} || Your last pick: {currentPick}</h4>
+            <h4> Name: {name}</h4>
+            <h5>Most Recent Pick: {currentPick}</h5>
             <div className="table">
                 <Table striped bordered hover>
                     <thead>
@@ -254,7 +254,7 @@ export default function TodaysPicksAM() {
                             {picks.length > 0 ? picks.map(thisPick =>
                                 <tr>
                                     <td key={thisPick.game}>{thisPick.game}</td>
-                                    <td key='matchup'>{thisPick.dog} vs {thisPick.fave} (-{thisPick.lin})</td>
+                                    <td key='matchup'>{thisPick.underdog} vs {thisPick.favorite} (-{thisPick.line})</td>
                                     <td key={thisPick.pick}>{thisPick.pick}</td>
                                 </tr>
                             ) : ""
@@ -266,4 +266,3 @@ export default function TodaysPicksAM() {
         </div>
     )
 }
-
