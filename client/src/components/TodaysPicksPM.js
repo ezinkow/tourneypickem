@@ -224,7 +224,7 @@ export default function TodaysPicksPm() {
                 <Table striped bordered hover>
                     <thead>
                         <tr>
-                            <th>Game #</th>
+                            <th>Game</th>
                             <th>Time (ET)</th>
                             <th>Underdog</th>
                             <th>Favorite</th>
