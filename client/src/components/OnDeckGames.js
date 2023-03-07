@@ -9,7 +9,7 @@ export default function onDeckGames() {
     const onDeckMonth = onDeck.getMonth() + 1
     const onDeckDay = onDeck.getDate() + 1
     //const onDeckDate = onDeckMonth + '' + onDeckDay
-    const onDeckDate = '37p'
+    const onDeckDate = '38a'
     
     const customStyles = {
         content: {
@@ -53,7 +53,7 @@ export default function onDeckGames() {
         <div className='container'>
             <br></br>
             {/* <h3>On Deck ({onDeckMonth}/{onDeckDay}):</h3> */}
-            <h3>On Deck (3/7 PM):</h3>
+            <h3>On Deck (3/8 AM):</h3>
             <div className="table">
                 <Table striped bordered hover>
                     <thead>
