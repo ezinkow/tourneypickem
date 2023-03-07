@@ -6,7 +6,7 @@ import Table from 'react-bootstrap/Table';
 export default function PicksDisplay() {
     const [picks, setPicks] = useState([])
     const maxGameId = '2'
-    const todaysDate = '35'
+    const todaysDate = '37a'
 
     useEffect(() => {
         async function fetchPicks() {
@@ -23,8 +23,7 @@ export default function PicksDisplay() {
     return (
 
         <div className="table">
-            <h1>come back later for everyones picks</h1>
-            {/* <h3>Picks:</h3>
+            <h3>Picks:</h3>
             <div className="table picksTable">
                 <Table striped bordered hover size="sm">
                     <thead>
@@ -45,7 +44,7 @@ export default function PicksDisplay() {
                         }
                     </tbody>
                 </Table>
-            </div> */}
+            </div>
         </div>
     )
 }
