@@ -255,7 +255,7 @@ export default function PicksPM() {
                                 <tr>
                                     <td key={thisPick.game}>{thisPick.game}</td>
                                     <td key='matchup'>{thisPick.underdog} vs {thisPick.favorite} (-{thisPick.line})</td>
-                                    <td key={thisPick.pick}>{thisPick.pick}</td>
+                                    <td key={thisPick.pick}>{thisPick.pick} (-{thisPick.line})</td>
                                 </tr>
                             ) : ""
                             }
