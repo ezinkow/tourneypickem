@@ -12,25 +12,25 @@ export default function Navbar() {
             <div className="navbar">
                 <div className='container'>
                     <div className="col-1 navtext">
-                        <Link to='/'><h3>Home</h3></Link>
+                        <Link to='/'><h5>Home</h5></Link>
                     </div>
                     <div className="col-1 navtext">
-                        <Link to='/picksam'><h3>Todays Picks AM</h3></Link>
+                        <Link to='/picksam'><h5>Todays Picks AM</h5></Link>
                     </div>
                     <div className="col-1 navtext">
-                        <Link to='/pickspm'><h3>Todays Picks PM</h3></Link>
+                        <Link to='/pickspm'><h5>Todays Picks PM</h5></Link>
                     </div>
                     <div className="col-1 navtext">
-                        <Link to='/tomorrowsgames'><h3>On Deck</h3></Link>
+                        <Link to='/tomorrowsgames'><h5>On Deck</h5></Link>
                     </div>
                     <div className="col-1 navtext">
-                        <Link to='/twodaysout'><h3>In The Hole</h3></Link>
+                        <Link to='/twodaysout'><h5>In The Hole</h5></Link>
                     </div>
                     <div className="col-1 navtext">
-                        <Link to='/standings'><h3>Standings</h3></Link>
+                        <Link to='/standings'><h5>Standings</h5></Link>
                     </div>
                     <div className="col-1 navtext">
-                        <Link to='/picksdisplay'><h3>Group Picks</h3></Link>
+                        <Link to='/picksdisplay'><h5>Group Picks</h5></Link>
                     </div>
                 </div>
                 <br />

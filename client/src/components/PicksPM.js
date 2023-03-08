@@ -15,7 +15,7 @@ export default function PicksPM() {
     const [nameToast, setNameToast] = useState('')
     const [currentPick, setCurrentPick] = useState([])
     const [modalIsOpen, setIsOpen] = useState('')
-    const todaysDate = '37p'
+    const todaysDate = '38p'
 
     const customStyles = {
         content: {
