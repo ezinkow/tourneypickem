@@ -240,7 +240,7 @@ export default function PicksPM() {
                 <Button onClick={handleSubmitClick}>Submit</Button>
             </div>
             <>
-                <h3>Picks:</h3>
+                <h3>Picks (selected {picks.length} out of {games.length}):</h3>
                 <div className="table picksTable">
                     <Table striped bordered hover size="sm">
                         <thead>
