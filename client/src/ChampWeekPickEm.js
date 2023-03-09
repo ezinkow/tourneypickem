@@ -26,7 +26,7 @@ export default function App() {
         <Route path="/picksam" element={<PicksA />} />
         <Route path="/tomorrowsgames" element={<OnDeckGames />} />
         <Route path="/twodaysout" element={<InTheHoleGames />} />
-        <Route path="/picksdisplay38" element={<PicksDisplay />} />
+        <Route path="/picksdisplay" element={<PicksDisplay />} />
         <Route path="/picksdisplay36" element={<PicksDisplay36 />} />
         <Route path="/standings" element={<Standings />} />
         <Route path="/" element={<Home />} />
