@@ -237,7 +237,7 @@ export default function PicksPM() {
                     </tbody>
                 </Table>
 
-                <Button onClick={handleSubmitClick}>Submit</Button>
+                {/* <Button onClick={handleSubmitClick}>Submit</Button> */}
             </div>
             <>
                 <h3>Picks:</h3>
