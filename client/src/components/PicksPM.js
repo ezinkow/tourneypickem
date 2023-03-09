@@ -15,7 +15,7 @@ export default function PicksPM() {
     const [nameToast, setNameToast] = useState('')
     const [currentPick, setCurrentPick] = useState([])
     const [modalIsOpen, setIsOpen] = useState('')
-    const todaysDate = '38p'
+    const todaysDate = '39p'
 
     const customStyles = {
         content: {
@@ -141,63 +141,63 @@ export default function PicksPM() {
     // Send name and picks to database and reset fields
     function handleSubmitClick(event) {
 
-        // toast.error('Come back later when games are ready to make your picks!',
-        // {
-        //     duration: 5000,
-        //     position: 'top-center',
-        //     style: {
-        //         border: '2px solid #713200',
-        //         padding: '20px',
-        //         marginTop: '100px',
-        //         backgroundColor: 'rgb(255,0,0)',
-        //         color: 'rgb(255,255,255)'
-        //     },})
+        toast.error('Come back later when games are ready to make your picks!',
+        {
+            duration: 5000,
+            position: 'top-center',
+            style: {
+                border: '2px solid #713200',
+                padding: '20px',
+                marginTop: '100px',
+                backgroundColor: 'rgb(255,0,0)',
+                color: 'rgb(255,255,255)'
+            },})
 
-        if (name != 'SELECT YOUR NAME IN DROPDOWN!') {
-            event.preventDefault()
-            setIsOpen(true);
-            for (let i = 0; i < picks.length; i++) {
-                const game_id = picks[i].game;
-                const pick = picks[i].pick
-                const game_date = picks[i].game_date
-                axios.post('api/picks', {
-                    name,
-                    game_id,
-                    pick,
-                    game_date
-                })
-            }
-            toast.success(`Thanks, ${nameToast}, picks submitted.`,
-                {
-                    duration: 10001,
-                    position: 'top-center',
-                    style: {
-                        border: '2px solid #713200',
-                        padding: '20px',
-                        marginTop: '100px',
-                        color: 'white',
-                        backgroundColor: 'rgb(60, 179, 113, 0.7)'
-                    },
-                    icon: '🏀',
-                    role: 'status',
-                    ariaLive: 'polite',
-                });
-            setName("")
-            setPicks("")
-        } else {
-            toast.error('Please select name in dropdown!',
-                {
-                    duration: 5000,
-                    position: 'top-center',
-                    style: {
-                        border: '2px solid #713200',
-                        padding: '20px',
-                        marginTop: '100px',
-                        backgroundColor: 'rgb(255,0,0)',
-                        color: 'rgb(255,255,255)'
-                    },
-                });
-        }
+        // if (name != 'SELECT YOUR NAME IN DROPDOWN!') {
+        //     event.preventDefault()
+        //     setIsOpen(true);
+        //     for (let i = 0; i < picks.length; i++) {
+        //         const game_id = picks[i].game;
+        //         const pick = picks[i].pick
+        //         const game_date = picks[i].game_date
+        //         axios.post('api/picks', {
+        //             name,
+        //             game_id,
+        //             pick,
+        //             game_date
+        //         })
+        //     }
+        //     toast.success(`Thanks, ${nameToast}, picks submitted.`,
+        //         {
+        //             duration: 10001,
+        //             position: 'top-center',
+        //             style: {
+        //                 border: '2px solid #713200',
+        //                 padding: '20px',
+        //                 marginTop: '100px',
+        //                 color: 'white',
+        //                 backgroundColor: 'rgb(60, 179, 113, 0.7)'
+        //             },
+        //             icon: '🏀',
+        //             role: 'status',
+        //             ariaLive: 'polite',
+        //         });
+        //     setName("")
+        //     setPicks("")
+        // } else {
+        //     toast.error('Please select name in dropdown!',
+        //         {
+        //             duration: 5000,
+        //             position: 'top-center',
+        //             style: {
+        //                 border: '2px solid #713200',
+        //                 padding: '20px',
+        //                 marginTop: '100px',
+        //                 backgroundColor: 'rgb(255,0,0)',
+        //                 color: 'rgb(255,255,255)'
+        //             },
+        //         });
+        // }
 
     }
 

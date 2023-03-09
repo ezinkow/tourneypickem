@@ -9,7 +9,7 @@ export default function InTheHoleGames() {
     const inTheHoleMonth = inTheHole.getMonth() + 1
     const inTheHoleDay = inTheHole.getDate() + 2
     //const inTheHoleDate = inTheHoleMonth + '' + inTheHoleDay
-    const inTheHoleDate = '39a'
+    const inTheHoleDate = '310p'
 
     const customStyles = {
         content: {
@@ -53,7 +53,7 @@ export default function InTheHoleGames() {
         <div className='container'>
             <br></br>
             {/* <h3>In The Hole ({inTheHoleMonth}/{inTheHoleDay}):</h3> */}
-            <h3>In The Hole (3/9 AM):</h3>
+            <h3>In The Hole (3/10 PM):</h3>
             <div className="table">
                 <Table striped bordered hover>
                     <thead>
