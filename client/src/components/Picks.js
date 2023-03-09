@@ -207,10 +207,10 @@ export default function Picks() {
             <h3>Steps:</h3>
             <ul>
                 <li>Select CORRECT name from drop down</li>
-                <li>Make your picks. Try to do them in order. You can always go back and change your pick</li>
+                <li>Make your picks</li>
                 <li>Picks will show up in the table down below</li>
-                <li>When ready, submit your picks. If you need to make a change, just reach out to me. DO NOT re-submit picks</li>
-                <li>The google doc will still house your picks and results</li>
+                <li>When ready, submit your picks. If you need to make a change, just reach out to me. Don't re-submit picks</li>
+                <li>The google doc will still be source of truth for picks and results</li>
             </ul>
             <DropdownButton
                 id="dropdown-basic-button"
