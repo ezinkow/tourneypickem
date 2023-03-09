@@ -11,9 +11,8 @@ export default function PicksDisplay() {
         async function fetchPicks() {
             try {
                 const response = await axios(`api/picks/${todaysDate}`)
-                const sortedList = response.data.sort((a, b) => (a.game_id > b.game_id) ? 1 : (a.game_id === b.game_id) ? ((a.name > b.name) ? 1 : -1) : -1 )
-                console.log(sortedList)
-                setPicks(response.data)
+                const sortedList = response.data.sort((a, b) => (a.game_id > b.game_id) ? 1 : (a.game_id === b.game_id) ? ((a.name > b.name) ? 1 : -1) : -1)
+                setPicks(sortedList)
             } catch (e) {
                 console.log(e)
             }
