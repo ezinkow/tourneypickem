@@ -10,6 +10,7 @@ import Home from './pages/Home';
 import PicksA from './pages/PicksAM';
 import PicksP from './pages/PicksPM';
 import Picks from './pages/Picks';
+import PicksTiebreak from './pages/PicksTieBreak';
 import OnDeckGames from './pages/OnDeckGames';
 import InTheHoleGames from './pages/InTheHoleGames';
 import PicksDisplay from './pages/PicksDisplay';
@@ -24,6 +25,7 @@ export default function App() {
         <Route path="/todayspicks" element={<Picks />} />
         <Route path="/pickspm" element={<PicksP />} />
         <Route path="/picksam" element={<PicksA />} />
+        <Route path="/pickstiebreak" element={<PicksTiebreak />} />
         <Route path="/tomorrowsgames" element={<OnDeckGames />} />
         <Route path="/twodaysout" element={<InTheHoleGames />} />
         <Route path="/picksdisplay" element={<PicksDisplay />} />
