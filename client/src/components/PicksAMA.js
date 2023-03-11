@@ -7,7 +7,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Table from 'react-bootstrap/Table';
 
-export default function Picks() {
+export default function PicksAMA() {
     const [name, setName] = useState('SELECT YOUR NAME IN DROPDOWN!')
     const [names, setNames] = useState([''])
     const [games, setGames] = useState([])
@@ -15,7 +15,7 @@ export default function Picks() {
     const [nameToast, setNameToast] = useState('')
     const [currentPick, setCurrentPick] = useState([])
     const [modalIsOpen, setIsOpen] = useState('')
-    const todaysDate = '37a'
+    const todaysDate = '311aa'
 
     const customStyles = {
         content: {
@@ -207,10 +207,10 @@ export default function Picks() {
             <h3>Steps:</h3>
             <ul>
                 <li>Select CORRECT name from drop down</li>
-                <li>Make your picks</li>
+                <li>Make your picks. Try to do them in order. You can always go back and change your pick</li>
                 <li>Picks will show up in the table down below</li>
-                <li>When ready, submit your picks. If you need to make a change, just reach out to me. Don't re-submit picks</li>
-                <li>The google doc will still be source of truth for picks and results</li>
+                <li>When ready, submit your picks. If you need to make a change, just reach out to me. DO NOT re-submit picks</li>
+                <li>The google doc will still house your picks and results</li>
             </ul>
             <DropdownButton
                 id="dropdown-basic-button"
@@ -240,7 +240,7 @@ export default function Picks() {
                 <Button onClick={handleSubmitClick}>Submit</Button>
             </div>
             <>
-                <h3>Picks:</h3>
+                <h3>Picks (selected {picks.length} out of {games.length}):</h3>
                 <div className="table picksTable">
                     <Table striped bordered hover size="sm">
                         <thead>

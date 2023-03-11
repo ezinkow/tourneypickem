@@ -9,7 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from './pages/Home';
 import PicksA from './pages/PicksAM';
 import PicksP from './pages/PicksPM';
-import Picks from './pages/Picks';
+import PicksAA from './pages/PicksAMA';
 import PicksTiebreak from './pages/PicksTieBreak';
 import OnDeckGames from './pages/OnDeckGames';
 import InTheHoleGames from './pages/InTheHoleGames';
@@ -22,7 +22,7 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/todayspicks" element={<Picks />} />
+        <Route path="/picksama" element={<PicksAA />} />
         <Route path="/pickspm" element={<PicksP />} />
         <Route path="/picksam" element={<PicksA />} />
         <Route path="/pickstiebreak" element={<PicksTiebreak />} />
