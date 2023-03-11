@@ -15,7 +15,7 @@ export default function PicksAM() {
     const [nameToast, setNameToast] = useState('')
     const [currentPick, setCurrentPick] = useState([])
     const [modalIsOpen, setIsOpen] = useState('')
-    const todaysDate = '310a'
+    const todaysDate = '311a'
 
     const customStyles = {
         content: {
@@ -237,7 +237,7 @@ export default function PicksAM() {
                     </tbody>
                 </Table>
 
-                <Button onClick={handleSubmitClick}>Submit</Button>
+                {/* <Button onClick={handleSubmitClick}>Submit</Button> */}
             </div>
             <>
                 <h3>Picks (selected {picks.length} out of {games.length}):</h3>
