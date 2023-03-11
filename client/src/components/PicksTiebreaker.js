@@ -256,7 +256,7 @@ export default function PicksAM() {
                         {tableGrid}
                         <tr>
                             <td>Tiebreaker: Big Ten Score</td>
-                            <td></td>
+                            <td>Put winning score first</td>
                             <td><input onChange={handleUScore} type="text" id="tiebreakeru" name="underdog score" size="10"/></td>
                             <td><input onChange={handleFScore} type="text" id="tiebreakerf" name="favorite score" size="10"/></td>
 
