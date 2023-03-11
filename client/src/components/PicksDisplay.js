@@ -5,7 +5,7 @@ import Table from 'react-bootstrap/Table';
 
 export default function PicksDisplay() {
     const [picks, setPicks] = useState([])
-    const todaysDate = '310p'
+    const todaysDate = '311a'
 
     useEffect(() => {
         async function fetchPicks() {
