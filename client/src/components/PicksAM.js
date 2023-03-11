@@ -237,7 +237,7 @@ export default function PicksAM() {
                     </tbody>
                 </Table>
 
-                {/* <Button onClick={handleSubmitClick}>Submit</Button> */}
+                <Button onClick={handleSubmitClick}>Submit</Button>
             </div>
             <>
                 <h3>Picks (selected {picks.length} out of {games.length}):</h3>
