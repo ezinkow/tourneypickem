@@ -178,7 +178,6 @@ export default function PicksAM() {
             }
             newArr.push(newObj)
             setPicks(newArr)
-            console.log(picks)
             for (let i = 0; i < picks.length; i++) {
                 const game_id = picks[i].game;
                 const pick = picks[i].pick
