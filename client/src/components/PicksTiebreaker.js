@@ -171,7 +171,10 @@ export default function PicksAM() {
             let newObj = {
                 game:'105',
                 pick: tiebreakScore,
-                game_date:'312'
+                game_date:'312',
+                favorite: 'null',
+                underdog: 'null',
+                line: 'null'
             }
             newArr.push(newObj)
             setPicks(newArr)
