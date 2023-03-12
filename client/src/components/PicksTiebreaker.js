@@ -169,9 +169,9 @@ export default function PicksAM() {
             let newArr = picks
             let tiebreakScore = uScore + "-" + fScore
             let newObj = {
-                game:'105',
+                game: '105',
                 pick: tiebreakScore,
-                game_date:'312',
+                game_date: '312',
                 favorite: 'null',
                 underdog: 'null',
                 line: 'null'
@@ -259,13 +259,11 @@ export default function PicksAM() {
                         <tr>
                             <td>Tiebreaker: Big Ten Score</td>
                             <td>Put winning score first</td>
-                            <td><input onChange={handleUScore} type="text" id="tiebreakeru" name="underdog score" size="10"/></td>
-                            <td><input onChange={handleFScore} type="text" id="tiebreakerf" name="favorite score" size="10"/></td>
-
+                            <td><input onChange={handleUScore} type="text" id="tiebreakeru" name="underdog score" size="10" /></td>
+                            <td><input onChange={handleFScore} type="text" id="tiebreakerf" name="favorite score" size="10" /></td>
                         </tr>
                     </tbody>
                 </Table>
-
                 <Button onClick={handleSubmitClick}>Submit</Button>
             </div>
             <>
