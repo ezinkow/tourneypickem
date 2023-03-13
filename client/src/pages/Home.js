@@ -14,8 +14,8 @@ export default function Home() {
                 <a href='https://docs.google.com/spreadsheets/d/1-i2MnFezvP7qIwiB6mRolqyz23JB7VOUEpbhhkXDF24/edit?usp=sharing' target="_blank">https://docs.google.com/spreadsheets/d/1-i2MnFezvP7qIwiB6mRolqyz23JB7VOUEpbhhkXDF24/edit?usp=sharing</a>
                 <br></br>
                 <br></br>
-                <Link to="/picksam"><h3>Make Today's AM Picks</h3></Link>
-                <Link to="/pickspm"><h3>Make Today's PM Picks</h3></Link>
+                <Link to="/pickstoday"><h3>Make Today's Picks</h3></Link>
+                <Link to="/pickstomorrow"><h3>See/Make Tomorrow's Picks</h3></Link>
                 <br></br>
                 <br></br>
                 <h5>Conference Tournament Schedules:</h5>

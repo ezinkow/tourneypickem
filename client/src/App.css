@@ -1,9 +1,6 @@
 .header{
     background-color: #89d5d2;
-    text-align: center;
-    color: green;
     overflow: hidden;
-    position: fixed; /* Set the navbar to fixed position */
     top: 0; /* Position the navbar at the top of the page */
     width: 100%; /* Full width */
     display: flex;
@@ -11,17 +8,20 @@
     height: 250px;
   }
 
-.banner{
-position:absolute;
-margin-left: -5px
-}
-
 a:active { text-decoration: none; }
 a:hover { text-decoration: none; }
 
 .navtext{
     text-decoration: none;
     margin-top: 100px;
+}
+
+.navbar{
+  margin-left: 300px;
+}
+
+.navitext{
+  margin-left: 300px;
 }
 
 .body{
