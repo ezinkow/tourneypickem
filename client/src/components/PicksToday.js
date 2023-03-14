@@ -6,6 +6,7 @@ import toast, { Toaster } from 'react-hot-toast'
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Table from 'react-bootstrap/Table';
+import Steps from './Steps'
 
 export default function PicksAM() {
     const [name, setName] = useState('SELECT YOUR NAME IN DROPDOWN!')
@@ -141,18 +142,6 @@ export default function PicksAM() {
     // Send name and picks to database and reset fields
     function handleSubmitClick(event) {
 
-        // toast.error('Come back later when games are ready to make your picks!',
-        // {
-        //     duration: 5000,
-        //     position: 'top-center',
-        //     style: {
-        //         border: '2px solid #713200',
-        //         padding: '20px',
-        //         marginTop: '100px',
-        //         backgroundColor: 'rgb(255,0,0)',
-        //         color: 'rgb(255,255,255)'
-        //     },})
-
         if (name != 'SELECT YOUR NAME IN DROPDOWN!') {
             event.preventDefault()
             setIsOpen(true);
@@ -204,14 +193,7 @@ export default function PicksAM() {
     return (
         <div className='container'>
             <Toaster />
-            <h3>Steps:</h3>
-            <ul>
-                <li>Select CORRECT name from drop down</li>
-                <li>Make your picks. Try to do them in order. You can always go back and change your pick</li>
-                <li>Picks will show up in the table down below</li>
-                <li>When ready, submit your picks. If you need to make a change, just reach out to me. DO NOT re-submit picks</li>
-                <li>The google doc will still house your picks and results</li>
-            </ul>
+            <Steps />
             <DropdownButton
                 id="dropdown-basic-button"
                 title='Name'

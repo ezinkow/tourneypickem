@@ -6,6 +6,7 @@ import toast, { Toaster } from 'react-hot-toast'
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Table from 'react-bootstrap/Table';
+import Steps from './Steps'
 
 export default function PicksPM() {
     const [name, setName] = useState('SELECT YOUR NAME IN DROPDOWN!')
@@ -192,14 +193,7 @@ export default function PicksPM() {
     return (
         <div className='container'>
             <Toaster />
-            <h3>Steps:</h3>
-            <ul>
-                <li>Select CORRECT name from drop down</li>
-                <li>Make your picks</li>
-                <li>Picks will show up in the table down below</li>
-                <li>When ready, submit your picks. If you need to make a change, just reach out to me. Don't re-submit picks</li>
-                <li>The google doc will still house your picks and results</li>
-            </ul>
+            <Steps />
             <DropdownButton
                 id="dropdown-basic-button"
                 title='Name'
@@ -225,7 +219,7 @@ export default function PicksPM() {
                     </tbody>
                 </Table>
 
-                <Button onClick={handleSubmitClick}>Submit</Button>
+                {/* <Button onClick={handleSubmitClick}>Submit</Button> */}
             </div>
             <>
                 <h3>Picks (selected {picks.length} out of {games.length}):</h3>

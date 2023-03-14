@@ -151,18 +151,6 @@ export default function PicksAM() {
     // Send name and picks to database and reset fields
     function handleSubmitClick(event) {
 
-        // toast.error('Come back later when games are ready to make your picks!',
-        // {
-        //     duration: 5000,
-        //     position: 'top-center',
-        //     style: {
-        //         border: '2px solid #713200',
-        //         padding: '20px',
-        //         marginTop: '100px',
-        //         backgroundColor: 'rgb(255,0,0)',
-        //         color: 'rgb(255,255,255)'
-        //     },})
-
         if (name != 'SELECT YOUR NAME IN DROPDOWN!') {
             event.preventDefault()
             setIsOpen(true);
