@@ -15,7 +15,7 @@ export default function PicksPM() {
     const [nameToast, setNameToast] = useState('')
     const [currentPick, setCurrentPick] = useState([])
     const [modalIsOpen, setIsOpen] = useState('')
-    const todaysDate = '311p'
+    const todaysDate = '315'
 
     const customStyles = {
         content: {
@@ -141,18 +141,6 @@ export default function PicksPM() {
     // Send name and picks to database and reset fields
     function handleSubmitClick(event) {
 
-        // toast.error('Come back later when games are ready to make your picks!',
-        // {
-        //     duration: 5000,
-        //     position: 'top-center',
-        //     style: {
-        //         border: '2px solid #713200',
-        //         padding: '20px',
-        //         marginTop: '100px',
-        //         backgroundColor: 'rgb(255,0,0)',
-        //         color: 'rgb(255,255,255)'
-        //     },})
-
         if (name != 'SELECT YOUR NAME IN DROPDOWN!') {
             event.preventDefault()
             setIsOpen(true);
@@ -207,9 +195,9 @@ export default function PicksPM() {
             <h3>Steps:</h3>
             <ul>
                 <li>Select CORRECT name from drop down</li>
-                <li>Make your picks. Try to do them in order. You can always go back and change your pick</li>
+                <li>Make your picks</li>
                 <li>Picks will show up in the table down below</li>
-                <li>When ready, submit your picks. If you need to make a change, just reach out to me. DO NOT re-submit picks</li>
+                <li>When ready, submit your picks. If you need to make a change, just reach out to me. Don't re-submit picks</li>
                 <li>The google doc will still house your picks and results</li>
             </ul>
             <DropdownButton
