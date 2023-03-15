@@ -13,6 +13,7 @@ export default function Steps() {
                 <li>Picks will show up in the table down below</li>
                 <li>When ready, submit your picks. If you need to make a change, just reach out to me. Don't re-submit picks</li>
                 <li>The google doc will still house your picks and results</li>
+                <li>If the line is a whole number, the underdog gets a half point (ex. -3 moves to -3.5)</li>
             </ul>
         </>
     )
