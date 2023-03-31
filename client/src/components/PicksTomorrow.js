@@ -20,8 +20,9 @@ export default function PicksTomorrow() {
     const date = new Date()
     const tomorrowDate = date.getDate() + 1
     const tomorrowMonth = date.getMonth() + 1
-    const tomorrowsDate = tomorrowMonth + '' + tomorrowDate
-
+    //const tomorrowsDate = tomorrowMonth + '' + tomorrowDate
+    const tomorrowsDate = '41'
+    
     const customStyles = {
         content: {
             top: '50%',
