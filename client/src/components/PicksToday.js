@@ -21,7 +21,7 @@ export default function PicksToday() {
     const date = new Date()
     const todayDate = date.getDate()
     const todayMonth = date.getMonth() + 1
-    const todaysDate = '41'
+    const todaysDate = '43'
 //    const todaysDate = todayMonth + '' + todayDate
 
 

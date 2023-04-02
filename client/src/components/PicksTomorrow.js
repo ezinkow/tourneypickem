@@ -21,7 +21,7 @@ export default function PicksTomorrow() {
     const tomorrowDate = date.getDate() + 1
     const tomorrowMonth = date.getMonth() + 1
     //const tomorrowsDate = tomorrowMonth + '' + tomorrowDate
-    const tomorrowsDate = '41'
+    const tomorrowsDate = '43'
     
     const customStyles = {
         content: {
