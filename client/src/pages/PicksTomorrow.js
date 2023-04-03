@@ -10,7 +10,7 @@ export default function TomorrowPicks() {
         <div>
             <Navbar />
             <div className='=container'>
-                <PicksTiebreaker />
+                <PicksTomorrow />
             </div>
         </div>
     )

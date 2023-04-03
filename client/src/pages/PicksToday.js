@@ -10,7 +10,7 @@ export default function TodaysPicks() {
         <div>
             <Navbar />
             <div className='=container'>
-                <PicksTiebreaker />
+                <PicksToday />
             </div>
         </div>
     )

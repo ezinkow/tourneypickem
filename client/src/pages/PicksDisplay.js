@@ -8,7 +8,7 @@ export default function PicksDisplay() {
     return (
         <div>
             <Navbar />
-            <AllPicks />
+            {/* <AllPicks /> */}
         </div>
     )
 }
