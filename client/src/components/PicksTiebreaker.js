@@ -17,7 +17,7 @@ export default function PicksAM() {
     const [nameToast, setNameToast] = useState('')
     const [currentPick, setCurrentPick] = useState([])
     const [modalIsOpen, setIsOpen] = useState('')
-    const todaysDate = '312'
+    const todaysDate = '43'
 
     const customStyles = {
         content: {
@@ -245,7 +245,7 @@ export default function PicksAM() {
                     <tbody>
                         {tableGrid}
                         <tr>
-                            <td>Tiebreaker: Big Ten Score</td>
+                            <td>Tiebreaker: Championship score</td>
                             <td>Put winning score first</td>
                             <td><input onChange={handleUScore} type="text" id="tiebreakeru" name="underdog score" size="10" /></td>
                             <td><input onChange={handleFScore} type="text" id="tiebreakerf" name="favorite score" size="10" /></td>

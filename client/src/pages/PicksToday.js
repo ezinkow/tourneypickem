@@ -1,6 +1,7 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
 import PicksToday from '../components/PicksToday'
+import PicksTiebreaker from '../components/PicksTiebreaker'
 
 export default function TodaysPicks() {
 
@@ -9,7 +10,7 @@ export default function TodaysPicks() {
         <div>
             <Navbar />
             <div className='=container'>
-                <PicksToday />
+                <PicksTiebreaker />
             </div>
         </div>
     )
