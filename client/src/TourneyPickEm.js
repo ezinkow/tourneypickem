@@ -11,12 +11,14 @@ import PicksToday from './pages/PicksToday';
 import PicksTomorrow from './pages/PicksTomorrow';
 import PicksDisplay from './pages/PicksDisplay';
 import Standings from './pages/Standings';
+import SignUp from './pages/SignUp';
 
 export default function App() {
 
   return (
     <Router>
       <Routes>
+      <Route path="/signup" element={<SignUp />} />
         <Route path="/pickstoday" element={<PicksToday />} />
         <Route path="/pickstomorrow" element={<PicksTomorrow />} />
         <Route path="/picksdisplay" element={<PicksDisplay />} />

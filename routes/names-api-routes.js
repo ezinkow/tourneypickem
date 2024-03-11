@@ -22,5 +22,15 @@ module.exports = function (app) {
             .then(function (dbnames) {
                 res.json(dbnames)
             })
-    })
+    });
+
+     //Submit name
+     app.post("/api/names", function (req, res) {
+        Names.create({
+            name: req.body.name
+        })
+            .then(function (dbpicks) {
+                res.json(dbpicks)
+            })
+    });
 }
