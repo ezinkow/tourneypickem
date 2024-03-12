@@ -1,10 +1,18 @@
 module.exports = function (sequelize, DataTypes) {
-    const Games = sequelize.define("Games", {
-        game_date: {
+    const Picksdisplays = sequelize.define("Picksdisplays", {
+        name: {
             type: DataTypes.TEXT,
-            allowNull: false,
+            allowNull: false
         },
-        time: {
+        game_id: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+        },
+        pick: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+        },
+        game_date: {
             type: DataTypes.TEXT,
             allowNull: true,
         },
@@ -15,20 +23,8 @@ module.exports = function (sequelize, DataTypes) {
         favorite: {
             type: DataTypes.TEXT,
             allowNull: true,
-        },
-        line: {
-            type: DataTypes.TEXT,
-            allowNull: true,
-        },
-        winner: {
-            type: DataTypes.TEXT,
-            allowNull: true,
-        },
-        status: {
-            type: DataTypes.TEXT,
-            allowNull: true,
         }
     });
 
-    return Games;
+    return Picksdisplays;
 };

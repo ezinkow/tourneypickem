@@ -7,10 +7,6 @@ module.exports = function (sequelize, DataTypes) {
         points: {
             type: DataTypes.TEXT,
             allowNull: false
-        },
-        rank: {
-            type: DataTypes.TEXT,
-            allowNull: false
         }
     });
 
