@@ -12,12 +12,12 @@ module.exports = function (app) {
             })
     });
 
-    // Find games where game_date = __
-    app.get('/api/games/:date', function (req, res) {
+    // Get game status
+    app.get('/api/games/:status', function (req, res) {
         console.log('req params', req.params)
         Games.findAll({
             where: {
-                game_date: req.params.date
+                status: req.params.status
             }
         })
             .then(function (dbgames) {

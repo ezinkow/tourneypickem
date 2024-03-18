@@ -1,6 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import Table from 'react-bootstrap/Table';
 
 export default function PicksDisplay() {
     const [picks, setPicks] = useState([])
@@ -10,13 +11,19 @@ export default function PicksDisplay() {
         async function fetchPicks() {
             try {
                 const response = await axios(`api/picksdisplay`)
-                let newArr = response.data
+                // console.log('response', response)
+                const newArr = response.data
                 for (let i = 0; i < newArr.length; i++) {
                     const thisPickSet = newArr[i];
                     const newPickArr = thisPickSet.pick.split(',')
                     newArr[i].pick = newPickArr
                 }
                 setPicks(newArr)
+                // console.log('thissss', picks)
+                // console.log('picks', response.data, picks)
+                // response.data.map(res => 
+                // console.log('respick', res.pick)
+                // )
             } catch (e) {
                 console.log(e)
             }
@@ -37,17 +44,28 @@ export default function PicksDisplay() {
         fetchGames()
     }, []);
 
+    // let pickSet = ""
+    // if (picks.length > 0) {
+    //     for (let i = 0; i < picks.length; i++) {
+    //         for (let j = 0; j < picks.length; j++) {
+    //             // const element = picks[j];
+    //             pickSet = picks[i].pick[j]
+    //             console.log('pickset', pickSet)
+    //         }
+    //     }
+    // }
+
     return (
 
         <div className="table">
             <h3>Picks:</h3>
             <div className="table-scroll">
-                <table className="table-main picksTable">
+                <table className='table-main picksTable'>
                     <thead>
                         <tr>
-                            <th className="fix-col" key='game id'>Name</th>
+                            <th className='fix-col' key='game id'>Name</th>
                             {games.length > 0 ? games.map(game =>
-                                <th key={game.id}>{game.underdog} vs {game.favorite} (-{game.line})</th>
+                                <th key={game.id}>{game.underdog} vs {game.favorite}</th>
                             ) : ""
                             }
                         </tr>
@@ -55,7 +73,7 @@ export default function PicksDisplay() {
                     <tbody>
                         {picks.length > 0 ? picks.map(thisPickSet =>
                             <tr>
-                                <th className="fix-col">{thisPickSet.name} ({thisPickSet.points})</th>
+                                <th className='fix-col'>{thisPickSet.name} ({thisPickSet.points})</th>
                                 <td key={thisPickSet.pick[0]}>{thisPickSet.pick[0]}</td>
                                 <td key={thisPickSet.pick[1]}>{thisPickSet.pick[1]}</td>
                                 <td key={thisPickSet.pick[2]}>{thisPickSet.pick[2]}</td>

@@ -16,27 +16,11 @@ export default function PicksTomorrow() {
     const [nameToast, setNameToast] = useState('')
     const [currentPick, setCurrentPick] = useState([])
     const [modalIsOpen, setIsOpen] = useState('')
-    
-    const date = new Date()
-    const tomorrowDate = date.getDate() + 1
-    const tomorrowMonth = date.getMonth() + 1
-    //const tomorrowsDate = tomorrowMonth + '' + tomorrowDate
-    const tomorrowsDate = '43'
-    
-    const customStyles = {
-        content: {
-            top: '50%',
-            left: '50%',
-            right: 'auto',
-            bottom: 'auto',
-            marginRight: '-50%',
-            transform: 'translate(-50%, -50%)',
-        },
-    };
+
     useEffect(() => {
         async function fetchGames() {
             try {
-                const response = await axios(`api/games/${tomorrowsDate}`)
+                const response = await axios(`api/games/t`)
                 setGames(response.data)
             } catch (e) {
                 console.log(e)

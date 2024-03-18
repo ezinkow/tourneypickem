@@ -12,6 +12,10 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.TEXT,
             allowNull: true,
         },
+        points: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+        },
         game_date: {
             type: DataTypes.TEXT,
             allowNull: true,

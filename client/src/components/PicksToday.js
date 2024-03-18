@@ -16,14 +16,6 @@ export default function PicksToday() {
     const [nameToast, setNameToast] = useState('')
     const [currentPick, setCurrentPick] = useState([])
     const [modalIsOpen, setIsOpen] = useState('')
-    
-    
-    const date = new Date()
-    const todayDate = date.getDate()
-    const todayMonth = date.getMonth() + 1
-    const todaysDate = '43'
-//    const todaysDate = todayMonth + '' + todayDate
-
 
     const customStyles = {
         content: {
@@ -38,7 +30,7 @@ export default function PicksToday() {
     useEffect(() => {
         async function fetchGames() {
             try {
-                const response = await axios(`api/games/${todaysDate}`)
+                const response = await axios(`api/games/y`)
                 setGames(response.data)
             } catch (e) {
                 console.log(e)
@@ -105,6 +97,14 @@ export default function PicksToday() {
         }
     }
 
+        //tiebreaker scores
+        const handleUScore = event => {
+            setUScore(event.target.value)
+        }
+        const handleFScore = event => {
+            setFScore(event.target.value)
+        }
+
     const tableGrid =
         games.map(game =>
             <tr>
@@ -163,6 +163,16 @@ export default function PicksToday() {
                     game_date
                 })
             }
+
+            // const totalTiebreakerScore = Number(uScore) + Number(fScore)
+            // const tiebreakerScore = uScore + '-' + fScore + ' (' + totalTiebreakerScore + ')'
+            // axios.post('api/picks', {
+            //     name,
+            //     game_id: 113,
+            //     pick:tiebreakerScore,
+            //     game_date: 'tb'
+            // })
+
             toast.success(`Thanks, ${nameToast}, picks submitted.`,
                 {
                     duration: 10001,
@@ -223,6 +233,12 @@ export default function PicksToday() {
                     </thead>
                     <tbody>
                         {tableGrid}
+                          {/* <tr>
+                        <td>Tiebreaker: Big Ten Score</td>
+                        <td>Enter scores to the right</td>
+                        <td><input onChange={handleUScore} type="text" id="tiebreakeru" name="underdog score" size="10" /></td>
+                        <td><input onChange={handleFScore} type="text" id="tiebreakerf" name="favorite score" size="10" /></td>
+                    </tr> */}
                     </tbody>
                 </Table>
 
