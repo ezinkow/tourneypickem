@@ -13,16 +13,4 @@ module.exports = function (app) {
             })
     })
 
-    // // Find picks_display where id = __
-    // app.get('/api/picks_display/:id', function (req, res) {
-    //     Picks.findAll({}
-    //     )
-    //         .then(function (dbpicks) {
-    //             res.json(dbpicks)
-    //         })
-    //     console.log(req.params)
-    // })
-
-
-
 }
