@@ -122,6 +122,7 @@ export default function PicksTomorrow() {
                             </option>
                         </select>
                     </td>
+                    <td key={game.value}>{game.value}</td>
                 </>
             </tr>
             // )
@@ -201,6 +202,7 @@ export default function PicksTomorrow() {
                             <th>Favorite</th>
                             <th>Line</th>
                             <th>Pick</th>
+                            <th>Points</th>
                         </tr>
                     </thead>
                     <tbody>
