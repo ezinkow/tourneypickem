@@ -96,14 +96,50 @@ export default function PicksToday() {
             activePicks.push(currentPickObj)
             setPicks(activePicks);
         }
-    }
+    };
 
         //tiebreaker scores
         const handleUScore = event => {
             setUScore(event.target.value)
-        }
+        };
         const handleFScore = event => {
             setFScore(event.target.value)
+        };
+
+        let dogPicks = []
+        let favePicks = []
+
+        const handleDogsChange = event => {
+            const gamesArr = games
+            for (let i = 0; i < games.length; i++) {
+                const thisDog = games[i].underdog;
+                const currentPickObj = {
+                    game: gamesArr[i].id,
+                    pick: thisDog,
+                    underdog: gamesArr[i].underdog,
+                    favorite: gamesArr[i].favorite,
+                    line: gamesArr[i].line,
+                    game_date: gamesArr[i].game_date
+                }
+                dogPicks.push(currentPickObj)
+            }
+            setPicks(dogPicks)
+        }
+        const handleFavesChange = event => {
+            const gamesArr = games
+            for (let i = 0; i < games.length; i++) {
+                const thisFave = games[i].favorite;
+                const currentPickObj = {
+                    game: gamesArr[i].id,
+                    pick: thisFave,
+                    underdog: gamesArr[i].underdog,
+                    favorite: gamesArr[i].favorite,
+                    line: gamesArr[i].line,
+                    game_date: gamesArr[i].game_date
+                }
+                favePicks.push(currentPickObj)
+            }
+            setPicks(favePicks)
         }
 
     const tableGrid =
@@ -221,6 +257,11 @@ export default function PicksToday() {
             </DropdownButton>
             <h4> Name: {name}</h4>
             <h5>Most Recent Pick: {currentPick}</h5>
+            <input type="checkbox" id="allUnderdogs" name="allUnderdogs" value="allUnderdogs" onChange={handleDogsChange}/>
+            <label for="allUnderdogs">Select All Underdogs</label><br/>
+            <input type="checkbox" id="allFavorites" name="allFavorites" value="allFavorites" onChange={handleFavesChange}/>
+            <label for="allFavorites">Select All Favorites</label><br/>
+            <p>These options will overwrite any picks previously selected picks and will work when selecting or deselecting</p>
             <div className="table">
                 <Table striped bordered hover>
                     <thead>
