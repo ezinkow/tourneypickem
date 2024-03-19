@@ -27,6 +27,10 @@ module.exports = function (sequelize, DataTypes) {
         status: {
             type: DataTypes.TEXT,
             allowNull: true,
+        },
+        value: {
+            type: DataTypes.TEXT,
+            allowNull: true,
         }
     });
 

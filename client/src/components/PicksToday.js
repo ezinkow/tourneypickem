@@ -32,6 +32,7 @@ export default function PicksToday() {
             try {
                 const response = await axios(`api/games/y`)
                 setGames(response.data)
+                console.log(response.data)
             } catch (e) {
                 console.log(e)
             }
@@ -140,6 +141,7 @@ export default function PicksToday() {
                             </option>
                         </select>
                     </td>
+                    <td key={game.value}>{game.value}</td>
                 </>
             </tr>
             // )
@@ -229,6 +231,7 @@ export default function PicksToday() {
                             <th>Favorite</th>
                             <th>Line</th>
                             <th>Pick</th>
+                            <th>Points</th>
                         </tr>
                     </thead>
                     <tbody>
