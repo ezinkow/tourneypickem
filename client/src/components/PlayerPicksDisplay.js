@@ -19,11 +19,6 @@ export default function PicksDisplay() {
                     newArr[i].pick = newPickArr
                 }
                 setPicks(newArr)
-                // console.log('thissss', picks)
-                // console.log('picks', response.data, picks)
-                // response.data.map(res => 
-                // console.log('respick', res.pick)
-                // )
             } catch (e) {
                 console.log(e)
             }
@@ -44,28 +39,17 @@ export default function PicksDisplay() {
         fetchGames()
     }, []);
 
-    // let pickSet = ""
-    // if (picks.length > 0) {
-    //     for (let i = 0; i < picks.length; i++) {
-    //         for (let j = 0; j < picks.length; j++) {
-    //             // const element = picks[j];
-    //             pickSet = picks[i].pick[j]
-    //             console.log('pickset', pickSet)
-    //         }
-    //     }
-    // }
-
     return (
 
         <div className="table">
             <h3>Picks:</h3>
             <div className="table-scroll">
-                <table className='table-main picksTable'>
-                    <thead>
+                <table className='table-main'>
+                    <thead className='table-head'>
                         <tr>
-                            <th className='fix-col' key='game id'>Name</th>
+                            <th className='fix-col name' key='game id'>Name</th>
                             {games.length > 0 ? games.map(game =>
-                                <th key={game.id}>{game.underdog} vs {game.favorite}</th>
+                                <th key={game.id} className='header-text'>{game.underdog} vs {game.favorite} (-{game.line})</th>
                             ) : ""
                             }
                         </tr>
@@ -73,7 +57,7 @@ export default function PicksDisplay() {
                     <tbody>
                         {picks.length > 0 ? picks.map(thisPickSet =>
                             <tr>
-                                <th className='fix-col'>{thisPickSet.name} ({thisPickSet.points})</th>
+                                <th className='fix-col name'>{thisPickSet.name} ({thisPickSet.points})</th>
                                 <td key={thisPickSet.pick[0]}>{thisPickSet.pick[0]}</td>
                                 <td key={thisPickSet.pick[1]}>{thisPickSet.pick[1]}</td>
                                 <td key={thisPickSet.pick[2]}>{thisPickSet.pick[2]}</td>

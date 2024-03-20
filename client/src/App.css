@@ -1,5 +1,4 @@
 .header{
-    background-color: #89d5d2;
     overflow: hidden;
     top: 0; /* Position the navbar at the top of the page */
     width: 100%; /* Full width */
@@ -33,10 +32,6 @@ a:hover { text-decoration: none; }
     width: 50%;
   }
 
-  .picksTable{
-    width: 50%;
-  }
-
   .fix-col {
     border-left: solid 1px rgb(75, 90, 102);
     border-right: solid 1px rgb(75, 90, 102);
@@ -57,19 +52,22 @@ a:hover { text-decoration: none; }
 .table-main thead th {
   background-color: rgb(203, 220, 233);
   border: none;
-  color: #336B6B;
+  color: black;
   padding: 10px;
   text-align: left;
   text-shadow: 1px 1px 1px #fff;
   white-space: nowrap;
+  margin-right: 50px;
 }
 
 .table-main tbody td {
-  border-bottom: solid 1px rgb(75, 90, 102);
+  border-bottom: solid 2px rgb(0, 140, 255);
   color: #333;
   padding: 10px;
   text-shadow: 1px 1px 1px #fff;
   white-space: nowrap;
+  margin: 50px;
+  margin-right: 50px;
 }
 
 .table {
@@ -77,11 +75,12 @@ a:hover { text-decoration: none; }
 }
 
 .table-scroll {
-  margin-left: 131px;
+  margin-left: 120px;
   overflow-x: scroll;
   overflow-y: visible;
   padding-bottom: 5px;
   width: 2000px;
+  
 } 
 
 .table-main .fix-col {
@@ -91,4 +90,16 @@ a:hover { text-decoration: none; }
   position: absolute;
   top: auto;
   width: 110px;
+}
+
+
+
+.table-head {
+  padding-bottom: 1000px;
+  background-color: blue;
+}
+
+.name {
+  width: 500px;
+  
 }
