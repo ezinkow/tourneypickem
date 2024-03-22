@@ -16,6 +16,8 @@ export default function PicksToday() {
     const [nameToast, setNameToast] = useState('')
     const [currentPick, setCurrentPick] = useState([])
     const [modalIsOpen, setIsOpen] = useState('')
+    const [isCheckedDogs, setIsCheckedDogs] = useState(false)
+    const [isCheckedFaves, setIsCheckedFaves] = useState(false)
 
     const customStyles = {
         content: {
@@ -98,18 +100,19 @@ export default function PicksToday() {
         }
     };
 
-        //tiebreaker scores
-        const handleUScore = event => {
-            setUScore(event.target.value)
-        };
-        const handleFScore = event => {
-            setFScore(event.target.value)
-        };
+    //tiebreaker scores
+    const handleUScore = event => {
+        setUScore(event.target.value)
+    };
+    const handleFScore = event => {
+        setFScore(event.target.value)
+    };
 
-        let dogPicks = []
-        let favePicks = []
+    let dogPicks = []
+    let favePicks = []
 
-        const handleDogsChange = event => {
+    const handleDogsChange = event => {
+        if (!isCheckedDogs) {
             const gamesArr = games
             for (let i = 0; i < games.length; i++) {
                 const thisDog = games[i].underdog;
@@ -124,8 +127,18 @@ export default function PicksToday() {
                 dogPicks.push(currentPickObj)
             }
             setPicks(dogPicks)
+            setIsCheckedDogs(!isCheckedDogs)
+            if (isCheckedFaves) {
+                setIsCheckedFaves(!isCheckedFaves)
+            }
+        } else {
+            setPicks([])
+            setIsCheckedDogs(!isCheckedDogs)
         }
-        const handleFavesChange = event => {
+    }
+
+    const handleFavesChange = event => {
+        if (!isCheckedFaves) {
             const gamesArr = games
             for (let i = 0; i < games.length; i++) {
                 const thisFave = games[i].favorite;
@@ -140,7 +153,15 @@ export default function PicksToday() {
                 favePicks.push(currentPickObj)
             }
             setPicks(favePicks)
+            setIsCheckedFaves(!isCheckedFaves)
+            if (isCheckedDogs) {
+                setIsCheckedDogs(!isCheckedDogs)
+            }
+        } else {
+            setPicks([])
+            setIsCheckedFaves(!isCheckedFaves)
         }
+    }
 
     const tableGrid =
         games.map(game =>
@@ -257,11 +278,11 @@ export default function PicksToday() {
             </DropdownButton>
             <h4> Name: {name}</h4>
             <h5>Most Recent Pick: {currentPick}</h5>
-            <input type="checkbox" id="allUnderdogs" name="allUnderdogs" value="allUnderdogs" onChange={handleDogsChange}/>
-            <label for="allUnderdogs">Select All Underdogs</label><br/>
-            <input type="checkbox" id="allFavorites" name="allFavorites" value="allFavorites" onChange={handleFavesChange}/>
-            <label for="allFavorites">Select All Favorites</label><br/>
-            <p>These options will overwrite any picks previously selected picks and will work when selecting or deselecting</p>
+            <input type="checkbox" id="allUnderdogs" name="allUnderdogs" value="allUnderdogs" checked={isCheckedDogs} onChange={handleDogsChange} />
+            <label for="allUnderdogs">Select All Underdogs</label><br />
+            <input type="checkbox" id="allFavorites" name="allFavorites" value="allFavorites" checked={isCheckedFaves} onChange={handleFavesChange} />
+            <label for="allFavorites">Select All Favorites</label><br />
+            <p>These options will overwrite any previous picks.</p>
             <div className="table">
                 <Table striped bordered hover>
                     <thead>
@@ -277,7 +298,7 @@ export default function PicksToday() {
                     </thead>
                     <tbody>
                         {tableGrid}
-                          {/* <tr>
+                        {/* <tr>
                         <td>Tiebreaker: Big Ten Score</td>
                         <td>Enter scores to the right</td>
                         <td><input onChange={handleUScore} type="text" id="tiebreakeru" name="underdog score" size="10" /></td>

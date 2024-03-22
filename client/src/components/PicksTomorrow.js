@@ -16,12 +16,25 @@ export default function PicksTomorrow() {
     const [nameToast, setNameToast] = useState('')
     const [currentPick, setCurrentPick] = useState([])
     const [modalIsOpen, setIsOpen] = useState('')
+    const [isCheckedDogs, setIsCheckedDogs] = useState(false)
+    const [isCheckedFaves, setIsCheckedFaves] = useState(false)
 
+    const customStyles = {
+        content: {
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+        },
+    };
     useEffect(() => {
         async function fetchGames() {
             try {
                 const response = await axios(`api/games/t`)
                 setGames(response.data)
+                console.log(response.data)
             } catch (e) {
                 console.log(e)
             }
@@ -85,42 +98,69 @@ export default function PicksTomorrow() {
             activePicks.push(currentPickObj)
             setPicks(activePicks);
         }
-    }
+    };
+
+    //tiebreaker scores
+    const handleUScore = event => {
+        setUScore(event.target.value)
+    };
+    const handleFScore = event => {
+        setFScore(event.target.value)
+    };
 
     let dogPicks = []
     let favePicks = []
 
     const handleDogsChange = event => {
-        const gamesArr = games
-        for (let i = 0; i < games.length; i++) {
-            const thisDog = games[i].underdog;
-            const currentPickObj = {
-                game: gamesArr[i].id,
-                pick: thisDog,
-                underdog: gamesArr[i].underdog,
-                favorite: gamesArr[i].favorite,
-                line: gamesArr[i].line,
-                game_date: gamesArr[i].game_date
+        if (!isCheckedDogs) {
+            const gamesArr = games
+            for (let i = 0; i < games.length; i++) {
+                const thisDog = games[i].underdog;
+                const currentPickObj = {
+                    game: gamesArr[i].id,
+                    pick: thisDog,
+                    underdog: gamesArr[i].underdog,
+                    favorite: gamesArr[i].favorite,
+                    line: gamesArr[i].line,
+                    game_date: gamesArr[i].game_date
+                }
+                dogPicks.push(currentPickObj)
             }
-            dogPicks.push(currentPickObj)
+            setPicks(dogPicks)
+            setIsCheckedDogs(!isCheckedDogs)
+            if (isCheckedFaves) {
+                setIsCheckedFaves(!isCheckedFaves)
+            }
+        } else {
+            setPicks([])
+            setIsCheckedDogs(!isCheckedDogs)
         }
-        setPicks(dogPicks)
     }
+
     const handleFavesChange = event => {
-        const gamesArr = games
-        for (let i = 0; i < games.length; i++) {
-            const thisFave = games[i].favorite;
-            const currentPickObj = {
-                game: gamesArr[i].id,
-                pick: thisFave,
-                underdog: gamesArr[i].underdog,
-                favorite: gamesArr[i].favorite,
-                line: gamesArr[i].line,
-                game_date: gamesArr[i].game_date
+        if (!isCheckedFaves) {
+            const gamesArr = games
+            for (let i = 0; i < games.length; i++) {
+                const thisFave = games[i].favorite;
+                const currentPickObj = {
+                    game: gamesArr[i].id,
+                    pick: thisFave,
+                    underdog: gamesArr[i].underdog,
+                    favorite: gamesArr[i].favorite,
+                    line: gamesArr[i].line,
+                    game_date: gamesArr[i].game_date
+                }
+                favePicks.push(currentPickObj)
             }
-            favePicks.push(currentPickObj)
+            setPicks(favePicks)
+            setIsCheckedFaves(!isCheckedFaves)
+            if (isCheckedDogs) {
+                setIsCheckedDogs(!isCheckedDogs)
+            }
+        } else {
+            setPicks([])
+            setIsCheckedFaves(!isCheckedFaves)
         }
-        setPicks(favePicks)
     }
 
     const tableGrid =
@@ -182,6 +222,16 @@ export default function PicksTomorrow() {
                     game_date
                 })
             }
+
+            // const totalTiebreakerScore = Number(uScore) + Number(fScore)
+            // const tiebreakerScore = uScore + '-' + fScore + ' (' + totalTiebreakerScore + ')'
+            // axios.post('api/picks', {
+            //     name,
+            //     game_id: 113,
+            //     pick:tiebreakerScore,
+            //     game_date: 'tb'
+            // })
+
             toast.success(`Thanks, ${nameToast}, picks submitted.`,
                 {
                     duration: 10001,
@@ -228,11 +278,11 @@ export default function PicksTomorrow() {
             </DropdownButton>
             <h4> Name: {name}</h4>
             <h5>Most Recent Pick: {currentPick}</h5>
-            <input type="checkbox" id="allUnderdogs" name="allUnderdogs" value="allUnderdogs" onChange={handleDogsChange}/>
-            <label for="allUnderdogs">Select All Underdogs</label><br/>
-            <input type="checkbox" id="allFavorites" name="allFavorites" value="allFavorites" onChange={handleFavesChange}/>
-            <label for="allFavorites">Select All Favorites</label><br/>
-            <p>These options will overwrite any picks previously selected picks and will work when selecting or deselecting</p>
+            <input type="checkbox" id="allUnderdogs" name="allUnderdogs" value="allUnderdogs" checked={isCheckedDogs} onChange={handleDogsChange} />
+            <label for="allUnderdogs">Select All Underdogs</label><br />
+            <input type="checkbox" id="allFavorites" name="allFavorites" value="allFavorites" checked={isCheckedFaves} onChange={handleFavesChange} />
+            <label for="allFavorites">Select All Favorites</label><br />
+            <p>These options will overwrite any previous picks.</p>
             <div className="table">
                 <Table striped bordered hover>
                     <thead>
@@ -248,6 +298,12 @@ export default function PicksTomorrow() {
                     </thead>
                     <tbody>
                         {tableGrid}
+                        {/* <tr>
+                        <td>Tiebreaker: Big Ten Score</td>
+                        <td>Enter scores to the right</td>
+                        <td><input onChange={handleUScore} type="text" id="tiebreakeru" name="underdog score" size="10" /></td>
+                        <td><input onChange={handleFScore} type="text" id="tiebreakerf" name="favorite score" size="10" /></td>
+                    </tr> */}
                     </tbody>
                 </Table>
 
