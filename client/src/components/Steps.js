@@ -13,6 +13,7 @@ export default function Steps() {
                 <li>Picks will show up in the table down below</li>
                 <li>Submit picks</li>
                 <li>You can resubmit one or all picks until deadline</li>
+                <li>REFRESH THE PAGE between Submits</li>
                 <li>If the line is a whole number, the underdog gets a half point (ex. -3 moves to -3.5)</li>
             </ul>
         </>
