@@ -49,7 +49,7 @@ export default function PicksDisplay() {
                         <tr>
                             <th className='fix-col name' key='game id'>Name</th>
                             {games.length > 0 ? games.map(game =>
-                                <th key={game.id} className='header-text'>{game.underdog} vs {game.favorite} (-{game.line})</th>
+                                <th key={game.id} className='header-text'>({game.id}) {game.underdog} vs {game.favorite} (-{game.line})</th>
                             ) : ""
                             }
                         </tr>

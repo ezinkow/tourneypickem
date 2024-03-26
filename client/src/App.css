@@ -103,3 +103,7 @@ a:hover { text-decoration: none; }
   width: 500px;
   
 }
+
+.inputs{
+  display:inline-block
+}

@@ -278,10 +278,12 @@ export default function PicksTomorrow() {
             </DropdownButton>
             <h4> Name: {name}</h4>
             <h5>Most Recent Pick: {currentPick}</h5>
-            <input type="checkbox" id="allUnderdogs" name="allUnderdogs" value="allUnderdogs" checked={isCheckedDogs} onChange={handleDogsChange} />
-            <label for="allUnderdogs">Select All Underdogs</label><br />
-            <input type="checkbox" id="allFavorites" name="allFavorites" value="allFavorites" checked={isCheckedFaves} onChange={handleFavesChange} />
-            <label for="allFavorites">Select All Favorites</label><br />
+            <div className='inputs'>
+                <input type="checkbox" id="allUnderdogs" name="allUnderdogs" value="allUnderdogs" checked={isCheckedDogs} onChange={handleDogsChange} />
+                <label for="allUnderdogs">Select All Underdogs</label><br />
+                <input type="checkbox" id="allFavorites" name="allFavorites" value="allFavorites" checked={isCheckedFaves} onChange={handleFavesChange} />
+                <label for="allFavorites">Select All Favorites</label><br />
+            </div>
             <p>These options will overwrite any previous picks.</p>
             <div className="table">
                 <Table striped bordered hover>
