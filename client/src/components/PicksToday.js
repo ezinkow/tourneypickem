@@ -298,12 +298,12 @@ export default function PicksToday() {
                     </thead>
                     <tbody>
                         {tableGrid}
-                        {/* <tr>
-                        <td>Tiebreaker: Big Ten Score</td>
+                        <tr>
+                        <td>Tiebreaker: Championship Score</td>
                         <td>Enter scores to the right</td>
                         <td><input onChange={handleUScore} type="text" id="tiebreakeru" name="underdog score" size="10" /></td>
                         <td><input onChange={handleFScore} type="text" id="tiebreakerf" name="favorite score" size="10" /></td>
-                    </tr> */}
+                    </tr>
                     </tbody>
                 </Table>
 
