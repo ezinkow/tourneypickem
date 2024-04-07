@@ -229,7 +229,7 @@ export default function PicksToday() {
             const tiebreakerScore = uScore + '-' + fScore + ' (' + totalTiebreakerScore + ')'
             axios.post('api/picks', {
                 name,
-                game_id: 113,
+                game_id: 68,
                 pick:tiebreakerScore,
                 game_date: 'tb'
             })
