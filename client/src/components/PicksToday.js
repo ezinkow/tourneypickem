@@ -18,6 +18,8 @@ export default function PicksToday() {
     const [modalIsOpen, setIsOpen] = useState('')
     const [isCheckedDogs, setIsCheckedDogs] = useState(false)
     const [isCheckedFaves, setIsCheckedFaves] = useState(false)
+    const [uScore, setUScore] = useState('')
+    const [fScore, setFScore] = useState('')
 
     const customStyles = {
         content: {
