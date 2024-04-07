@@ -223,14 +223,14 @@ export default function PicksToday() {
                 })
             }
 
-            // const totalTiebreakerScore = Number(uScore) + Number(fScore)
-            // const tiebreakerScore = uScore + '-' + fScore + ' (' + totalTiebreakerScore + ')'
-            // axios.post('api/picks', {
-            //     name,
-            //     game_id: 113,
-            //     pick:tiebreakerScore,
-            //     game_date: 'tb'
-            // })
+            const totalTiebreakerScore = Number(uScore) + Number(fScore)
+            const tiebreakerScore = uScore + '-' + fScore + ' (' + totalTiebreakerScore + ')'
+            axios.post('api/picks', {
+                name,
+                game_id: 113,
+                pick:tiebreakerScore,
+                game_date: 'tb'
+            })
 
             toast.success(`Thanks, ${nameToast}, picks submitted.`,
                 {
