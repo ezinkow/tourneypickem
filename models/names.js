@@ -1,16 +1,28 @@
 module.exports = function (sequelize, DataTypes) {
     const Names = sequelize.define("Names", {
+        real_name: {
+            type: DataTypes.TEXT,
+            allowNull: false
+        },
         name: {
             type: DataTypes.TEXT,
             allowNull: false
-        }, 
-        paid: {
+        },
+        email_address: {
             type: DataTypes.TEXT,
             allowNull: true
         },
-        friendly_name: {
+        email_opt_in: {
             type: DataTypes.TEXT,
-            allowNull:true
+            allowNull: true
+        },
+        paid_commitment: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
+        paid: {
+            type: DataTypes.TEXT,
+            allowNull: true
         }
     });
 
