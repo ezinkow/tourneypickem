@@ -6,7 +6,7 @@ import toast, { Toaster } from 'react-hot-toast'
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Table from 'react-bootstrap/Table';
-import Steps from './Steps'
+import Instructions from './Instructions'
 
 export default function PicksTomorrow() {
     const [name, setName] = useState('SELECT YOUR NAME IN DROPDOWN!')
@@ -269,7 +269,7 @@ export default function PicksTomorrow() {
     return (
         <div className='container'>
             <Toaster />
-            <Steps />
+            <Instructions />
             <DropdownButton
                 id="dropdown-basic-button"
                 title='Name'
