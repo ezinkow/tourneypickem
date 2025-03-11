@@ -5,7 +5,7 @@ module.exports = function (sequelize, DataTypes) {
             allowNull: false
         },
         game_id: {
-            type: DataTypes.TEXT,
+            type: DataTypes.INTEGER,
             allowNull: true,
         },
         pick: {
