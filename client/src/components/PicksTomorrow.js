@@ -32,7 +32,7 @@ export default function PicksTomorrow() {
     useEffect(() => {
         async function fetchGames() {
             try {
-                const response = await axios(`api/games/t`)
+                const response = await axios(`api/games/m`)
                 setGames(response.data)
                 console.log(response.data)
             } catch (e) {
