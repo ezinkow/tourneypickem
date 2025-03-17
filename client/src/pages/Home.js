@@ -12,7 +12,7 @@ export default function Home() {
             <div className='container'>
                 The game:<br></br>
                 Runs from March 18 (FIRST FOUR) - April 7<br></br>
-                Pick tournament game <u>against the spread</u> from the First Four through the Championship.<br></br>
+                Pick every tournament game <u>against the spread</u> from the First Four through the Championship.<br></br>
                 Each round, points increase by 1:<br></br>
                 First Four and First Round: 1 point<br></br>
                 Second Round: 2 points<br></br>
