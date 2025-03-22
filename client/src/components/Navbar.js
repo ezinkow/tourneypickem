@@ -26,6 +26,9 @@ export default function Navbar() {
                     <div className="col-1 navtext">
                         <Link to='/picksdisplay'><h5>Group Picks</h5></Link>
                     </div>
+                    <div className="col-1 navtext">
+                        <Link to='/gameresults'><h5>Game Results</h5></Link>
+                    </div>
                 </div>
                 <br />
             </div>

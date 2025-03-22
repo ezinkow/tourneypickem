@@ -49,6 +49,14 @@ a:hover { text-decoration: none; }
   font: normal 13px Arial, sans-serif;
 }
 
+.resultstable{
+  border: none;
+  border-right: solid 1px rgb(75, 90, 102);
+  border-collapse: separate;
+  border-spacing: 0;
+  font: normal 30px Arial, sans-serif;
+}
+
 .table-main thead th {
   background-color: rgb(203, 220, 233);
   border: none;
