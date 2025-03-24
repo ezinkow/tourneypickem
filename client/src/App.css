@@ -50,11 +50,13 @@ a:hover { text-decoration: none; }
 }
 
 .resultstable{
-  border: none;
-  border-right: solid 1px rgb(75, 90, 102);
+  border: solid 1px rgb(75, 90, 102);
   border-collapse: separate;
   border-spacing: 0;
   font: normal 30px Arial, sans-serif;
+  margin-left: 50px;
+  margin-right: 50px;
+  width: 80%;
 }
 
 .table-main thead th {
