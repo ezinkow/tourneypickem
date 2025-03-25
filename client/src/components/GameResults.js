@@ -19,7 +19,7 @@ export default function GameResults() {
         fetchGames()
     }, []);
     return (
-        <div className="table resultstable">
+        <div className="table resultsTable">
             <Table striped bordered hover size="sm">
                 <thead>
                     <tr>
