@@ -103,12 +103,12 @@ export default function PicksToday() {
     };
 
     //tiebreaker scores
-    // const handleUScore = event => {
-    //     setUScore(event.target.value)
-    // };
-    // const handleFScore = event => {
-    //     setFScore(event.target.value)
-    // };
+    const handleUScore = event => {
+        setUScore(event.target.value)
+    };
+    const handleFScore = event => {
+        setFScore(event.target.value)
+    };
 
     let dogPicks = []
     let favePicks = []
@@ -224,15 +224,15 @@ export default function PicksToday() {
                     game_date
                 })
             }
-            // add for tiebreaker
-            // const totalTiebreakerScore = Number(uScore) + Number(fScore)
-            // const tiebreakerScore = uScore + '-' + fScore + ' (' + totalTiebreakerScore + ')'
-            // axios.post('api/picks', {
-            //     name,
-            //     game_id: 68,
-            //     pick:tiebreakerScore,
-            //     game_date: 'tb'
-            // })
+            //add for tiebreaker
+            const totalTiebreakerScore = Number(uScore) + Number(fScore)
+            const tiebreakerScore = uScore + '-' + fScore + ' (' + totalTiebreakerScore + ')'
+            axios.post('api/picks', {
+                name,
+                game_id: 68,
+                pick:tiebreakerScore,
+                game_date: 'tb'
+            })
 
             toast.success(`Thanks, ${nameToast}, picks submitted.`,
                 {
@@ -301,12 +301,12 @@ export default function PicksToday() {
                     <tbody>
                         {tableGrid}
                         {/* add for tiebreaker */}
-                        {/* <tr>
+                        <tr>
                         <td>Tiebreaker: Championship Score</td>
                         <td>Enter scores to the right</td>
                         <td><input onChange={handleUScore} type="text" id="tiebreakeru" name="underdog score" size="10" /></td>
                         <td><input onChange={handleFScore} type="text" id="tiebreakerf" name="favorite score" size="10" /></td>
-                    </tr> */}
+                    </tr>
                     </tbody>
                 </Table>
 
