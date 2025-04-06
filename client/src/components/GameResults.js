@@ -19,7 +19,7 @@ export default function GameResults() {
         fetchGames()
     }, []);
     return (
-        <div className="table resultstable">
+        <div className="table resultsTable">
             <Table striped bordered hover size="sm">
                 <thead>
                     <tr>
@@ -36,7 +36,7 @@ export default function GameResults() {
                             <td key={thisGame.id}>{thisGame.id}</td>
                             <td key={thisGame.underdog}>{thisGame.underdog}</td>
                             <td key={thisGame.favorite}>{thisGame.favorite}</td>
-                            <td key={thisGame.line}>{thisGame.line}</td>
+                            <td key={thisGame.line}>-{thisGame.line}</td>
                             <td key={thisGame.winner}>{thisGame.winner}</td>
                         </tr>
                     ) : ""

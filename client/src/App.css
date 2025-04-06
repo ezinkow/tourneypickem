@@ -49,12 +49,11 @@ a:hover { text-decoration: none; }
   font: normal 13px Arial, sans-serif;
 }
 
-.resultstable{
-  border: none;
-  border-right: solid 1px rgb(75, 90, 102);
+.resultsTable{
+  border: solid 2px rgb(75, 90, 102);
   border-collapse: separate;
   border-spacing: 0;
-  font: normal 30px Arial, sans-serif;
+  font: normal 20px Arial, sans-serif;
 }
 
 .table-main thead th {
