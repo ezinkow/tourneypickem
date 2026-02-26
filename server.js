@@ -1,34 +1,45 @@
 // Dependencies
+require("dotenv").config();
 const express = require("express");
+const cors = require("cors");
+const path = require("path");
+const bodyParser = require("body-parser");
+const { sequelize } = require("./models");
 
-// Sets up the Express App
+// Initialize app
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-const path = require('path')
-
-// Requiring our models for syncing
-const db = require("./models");
-
+// Middleware
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(bodyParser.json());
 
-// Static directory to be served
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('client/build'));
+// Static React build (production)
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static("client/build"));
 }
 
 // Routes
 require("./routes/picks-api-routes.js")(app);
 require("./routes/games-api-routes.js")(app);
-require("./routes/names-api-routes.js")(app);
+require("./routes/users-api-routes.js")(app);
 require("./routes/standings-api-routes.js")(app);
+require("./routes/scoreboard-api-routes.js")(app);
+require("./routes/adminRefreshGames.js")(app);
 require("./routes/picksdisplay-api-routes.js")(app);
-require("./routes/picksdisplayoverflow-api-routes.js")(app);
 
-// Starts the server to begin listening
-db.sequelize.sync({ force: false }).then(function() {
-  app.listen(PORT, function() {
-      console.log("App listening on PORT " + PORT);
+// React Router fallback
+if (process.env.NODE_ENV === "production") {
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+  });
+}
+
+// Start server after syncing
+sequelize.sync({ force: false }).then(() => {
+  app.listen(PORT, () => {
+    console.log(`App listening on PORT ${PORT}`);
   });
 });

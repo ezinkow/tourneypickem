@@ -1,6 +1,6 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
-import PlayerPicksDisplay from '../components/PlayerPicksDisplay'
+import UserPicksDisplay from '../components/UserPicksDisplay'
 
 export default function PicksDisplay() {
 
@@ -8,7 +8,7 @@ export default function PicksDisplay() {
     return (
         <div>
             <Navbar />
-            <PlayerPicksDisplay />
+            <UserPicksDisplay />
         </div>
     )
 }

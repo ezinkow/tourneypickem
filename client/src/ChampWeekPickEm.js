@@ -7,13 +7,14 @@ import {
 } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from './pages/Home';
-import ActiveGames from './pages/PicksAM';
-import PicksP from './pages/PicksPM';
+import Picks from './pages/Picks';
+import MyPicks from './pages/MyPicks';
 import OnDeckGames from './pages/OnDeckGames';
 import InTheHoleGames from './pages/InTheHoleGames';
-import PicksDisplay from './pages/PicksDisplay';
+import UserPicksDisplay from './pages/UserPicksDisplay';
 import Standings from './pages/Standings';
 import SignUp from './pages/SignUp';
+import Scoreboard from './pages/Scoreboard';
 
 export default function App() {
 
@@ -21,11 +22,10 @@ export default function App() {
     <Router>
       <Routes>
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/picksam" element={<ActiveGames />} />
-        <Route path="/pickspm" element={<PicksP />} />
-        <Route path="/tomorrowsgames" element={<OnDeckGames />} />
-        <Route path="/twodaysout" element={<InTheHoleGames />} />
-        <Route path="/picksdisplay" element={<PicksDisplay />} />
+        <Route path="/picks" element={<Picks />} />
+        <Route path="/mypicks" element={<MyPicks />} />
+        <Route path="/scoreboard" element={<Scoreboard />} />
+        <Route path="/picksdisplay" element={<UserPicksDisplay />} />
         <Route path="/standings" element={<Standings />} />
         <Route path="/" element={<Home />} />
       </Routes>

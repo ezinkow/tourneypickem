@@ -6,10 +6,12 @@ import toast, { Toaster } from 'react-hot-toast'
 import Form from 'react-bootstrap/Form';
 
 
-export default function NameSubmit() {
+export default function UserSubmit() {
     const [real_name, setReal_name] = useState('')
     const [name, setName] = useState('')
     const [email_address, setEmail_address] = useState('')
+    const [password, setPassword] = useState('')
+    const [phone, setPhone] = useState('')
     const [email_opt_in, setEmail_opt_in] = useState(false)
     const [paid, setPaid] = useState(false)
     const [modalIsOpen, setIsOpen] = useState('')
@@ -22,9 +24,17 @@ export default function NameSubmit() {
         setName(event.target.value)
         console.log(real_name)
     }
+    const handlePasswordChange = event => {
+        setPassword(event.target.value)
+        console.log(password)
+    }
     const handleEmail_addressChange = event => {
         setEmail_address(event.target.value)
         console.log(email_address)
+    }
+    const handlePhoneChange = event => {
+        setPhone(event.target.value)
+        console.log(phone)
     }
     const handleEmail_opt_inChange = event => {
         setEmail_opt_in(event.target.checked)
@@ -39,9 +49,10 @@ export default function NameSubmit() {
         event.preventDefault()
         console.log(real_name + name + email_address + email_opt_in)
         setIsOpen(true);
-        axios.post('api/names', {
+        axios.post('api/users', {
             real_name,
             name,
+            password,
             email_address,
             email_opt_in,
             paid
@@ -78,9 +89,17 @@ export default function NameSubmit() {
                         <Form.Label>Username:</Form.Label>
                         <Form.Control size="lg" type="name" placeholder="Enter Name You'll Select All Week" />
                     </Form.Group>
+                    <Form.Group onChange={handlePasswordChange} type="text" id="password" value={password} classPassword="mb-3" controlId="formBasicPassword">
+                        <Form.Label>Password (Use a SIMPLE password, there are no requirements):</Form.Label>
+                        <Form.Control size="lg" type="password" placeholder="Enter a SIMPLE password. Do NOT use your normal password, there is NO password encryption" />
+                    </Form.Group>
                     <Form.Group onChange={handleEmail_addressChange} type="text" id="email_address" value={email_address} className="mb-3" controlId="formPlaintextEmail">
                         <Form.Label>Email address</Form.Label>
                         <Form.Control size="lg" type="email" placeholder="Enter email" />
+                    </Form.Group>
+                    <Form.Group onChange={handlePhoneChange} type="text" id="phone" value={phone} className="mb-3" controlId="formBasicPhone">
+                        <Form.Label>Email address</Form.Label>
+                        <Form.Control size="lg" type="phone" placeholder="Phone Number" />
                     </Form.Group>
                     <Form.Group onChange={handleEmail_opt_inChange} className="mb-3" controlId="formBasicCheckbox">
                         <Form.Check type="checkbox" label="Sign me up for emails!" />

@@ -16,8 +16,12 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.TEXT,
             allowNull: true,
         },
-        make_visible: {
-            type: DataTypes.TEXT,
+        missed_pick_flag: {
+            type: DataTypes.BOOLEAN,
+            allowNull: true,
+        },
+        game_locked_time: {
+            type: DataTypes.DATE,
             allowNull: true,
         }
     });

@@ -1,7 +1,7 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
-import NameSubmit from '../components/NameSubmit'
-import Names from '../components/NamesDisplay'
+import UserSubmit from '../components/UserSubmit'
+import Users from '../components/UsersDisplay'
 
 
 export default function SignUp() {
@@ -11,9 +11,9 @@ export default function SignUp() {
         <div>
             <Navbar />
             <div className='container'>
-                <NameSubmit />
+                <UserSubmit />
               </div>
-              <Names />
+              <Users />
         </div>
     )
 }

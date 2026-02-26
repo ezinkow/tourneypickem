@@ -1,54 +1,55 @@
-// Requiring our models
-const { Picks } = require("../models");
-
+// routes/mypicks.js
+const { Picks, Games } = require("../models");
 
 module.exports = function (app) {
-
     // Get everything in Picks table
-    app.get("/api/picks", function (req, res) {
-        Picks.findAll({})
-            .then(function (dbpicks) {
-                res.json(dbpicks)
-            })
+    app.get("/api/picks", async function (req, res) {
+        try {
+            const dbpicks = await Picks.findAll({});
+            res.json(dbpicks);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: "Failed to fetch picks" });
+        }
     });
 
-    // Post new picks to picks table
-    app.post("/api/picks", function (req, res) {
-        Picks.create({
-            name: req.body.name,
-            game_id: req.body.game_id,
-            pick: req.body.pick,
-            game_date: req.body.game_date
-        })
-            .then(function (dbpicks) {
-                res.json(dbpicks)
-            })
+    app.get("/api/mypicks", async (req, res) => {
+        try {
+            const picks = await Picks.findAll({
+                where: { name: req.query.name },
+                include: [
+                    {
+                        model: Games,
+                        attributes: [
+                            "id",
+                            "home_team",
+                            "away_team",
+                            "home_logo",
+                            "away_logo",
+                            "favorite",
+                            "underdog",
+                            "line_locked",
+                            "game_clock",
+                            "winner",          // ⭐ IMPORTANT
+                            "status",
+                            "home_score",
+                            "away_score"
+                        ],
+                    },
+                ],
+                order: [["game_date", "ASC"]],
+            });
+
+            // flatten response
+            const result = picks.map(p => ({
+                ...p.dataValues,
+                ...p.Game?.dataValues,
+            }));
+
+            res.json(result);
+        } catch (err) {
+            console.error("mypicks error", err);
+            res.status(500).json({ error: "failed" });
+        }
     });
-
-    // Find picks where set to visible
-    app.get('/api/picks/:make_visible', function (req, res) {
-        console.log('req params', req.params)
-        Picks.findAll({
-            where: {
-                make_visible: req.params.make_visible
-            }
-        })
-            .then(function (dbpicks) {
-                res.json(dbpicks)
-            })
-        console.log(req.params)
-    })
-
-    // // Find picks where id = __
-    // app.get('/api/picks/:id', function (req, res) {
-    //     Picks.findAll({}
-    //     )
-    //         .then(function (dbpicks) {
-    //             res.json(dbpicks)
-    //         })
-    //     console.log(req.params)
-    // })
-
-
-
-}
+};

@@ -1,7 +1,7 @@
-/*DROP DATABASE IF EXISTS champweekpickem2023;
-CREATE DATABASE champweekpickem2023;
+/*DROP DATABASE IF EXISTS champweekpickem;
+CREATE DATABASE champweekpickem;
 
-USE champweekpickem2023;
+USE champweekpickem;
 
 CREATE TABLE picks (
     id INTEGER NOT NULL AUTO_INCREMENT,

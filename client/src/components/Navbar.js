@@ -20,16 +20,10 @@ export default function Navbar() {
                         <Link to='/'><h5>Home</h5></Link>
                     </div>
                     <div className="col-1 navtext">
-                        <Link to='/picksam'><h5>Todays Picks AM</h5></Link>
+                        <Link to='/picks'><h5>Make Your Picks</h5></Link>
                     </div>
                     <div className="col-1 navtext">
-                        <Link to='/pickspm'><h5>Todays Picks PM</h5></Link>
-                    </div>
-                    <div className="col-1 navtext">
-                        <Link to='/tomorrowsgames'><h5>On Deck</h5></Link>
-                    </div>
-                    <div className="col-1 navtext">
-                        <Link to='/twodaysout'><h5>In The Hole</h5></Link>
+                        <Link to='/scoreboard'><h5>Scoreboard</h5></Link>
                     </div>
                     <div className="col-1 navtext">
                         <Link to='/standings'><h5>Standings</h5></Link>

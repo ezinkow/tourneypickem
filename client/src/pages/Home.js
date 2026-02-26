@@ -1,7 +1,7 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
 import { Link } from 'react-router-dom'
-import NameSubmit from '../components/NameSubmit'
+import UserSubmit from '../components/UserSubmit'
 
 
 export default function Home() {

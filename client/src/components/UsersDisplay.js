@@ -3,8 +3,8 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Table from 'react-bootstrap/Table';
 
-export default function NamesDisplay() {
-    const [names, setNames] = useState([])
+export default function UsersDisplay() {
+    const [users, setUsers] = useState([])
 
     const customStyles = {
         content: {
@@ -17,20 +17,20 @@ export default function NamesDisplay() {
         },
     };
     useEffect(() => {
-        async function fetchNames() {
+        async function fetchUsers() {
             try {
-                const response = await axios("api/names/")
+                const response = await axios("api/users/")
                 const sortedList = response.data.sort((a, b) => (a.name > b.name) ? 1 : -1);
-                setNames(sortedList)
+                setUsers(sortedList)
             } catch (e) {
                 console.log(e)
             }
         }
-        fetchNames()
+        fetchUsers()
     }, [])
 
     const tableGrid =
-        names.map(name =>
+        users.map(name =>
             <tr>
                 <>
                     <td key={name.id}>{name.name}</td>

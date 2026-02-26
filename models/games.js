@@ -1,14 +1,26 @@
 module.exports = function (sequelize, DataTypes) {
     const Games = sequelize.define("Games", {
+        id: {
+            type: DataTypes.STRING(32),
+            primaryKey: true
+        },
         game_date: {
-            type: DataTypes.TEXT,
+            type: DataTypes.DATE,
             allowNull: false,
         },
-        time: {
+        home_team: {
             type: DataTypes.TEXT,
             allowNull: true,
         },
-        underdog: {
+        home_logo: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+        },
+        away_team: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+        },
+        away_logo: {
             type: DataTypes.TEXT,
             allowNull: true,
         },
@@ -16,15 +28,66 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.TEXT,
             allowNull: true,
         },
-        line: {
+        fav_logo: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
+        underdog: {
             type: DataTypes.TEXT,
             allowNull: true,
+        },
+        dog_logo: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
+        line_locked: {
+            type: DataTypes.FLOAT,
+            allowNull: true
+        },
+        locked_favorite: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
+        locked_underdog: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
+        locked_fav_logo: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
+        locked_dog_logo: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
+        line_locked_time: {
+            type: DataTypes.DATE
         },
         winner: {
             type: DataTypes.TEXT,
             allowNull: true,
         },
+        game_locked_time: {
+            type: DataTypes.DATE,
+            allowNull: true,
+        },
+        home_score: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
+        away_score: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
+        conference_id: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+        },
         status: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+        },
+        game_clock: {
             type: DataTypes.TEXT,
             allowNull: true,
         }

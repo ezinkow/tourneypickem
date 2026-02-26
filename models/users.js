@@ -1,10 +1,14 @@
 module.exports = function (sequelize, DataTypes) {
-    const Names = sequelize.define("Names", {
+    const Users = sequelize.define("Users", {
         real_name: {
             type: DataTypes.TEXT,
             allowNull: false
         },
         name: {
+            type: DataTypes.TEXT,
+            allowNull: false
+        },
+        password: {
             type: DataTypes.TEXT,
             allowNull: false
         },
@@ -26,5 +30,5 @@ module.exports = function (sequelize, DataTypes) {
         }
     });
 
-    return Names;
+    return Users;
 };
