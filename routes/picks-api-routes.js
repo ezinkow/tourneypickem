@@ -1,7 +1,8 @@
-// routes/mypicks.js
+// Requiring our models
 const { Picks, Games } = require("../models");
 
 module.exports = function (app) {
+    
     // Get everything in Picks table
     app.get("/api/picks", async function (req, res) {
         try {
@@ -13,6 +14,54 @@ module.exports = function (app) {
         }
     });
 
+    // Create OR Overwrite pick
+    app.post("/api/picks", async function (req, res) {
+        try {
+            const { name, game_id, pick, game_date, game_locked_time } = req.body;
+
+            // Check if pick already exists for this user + game
+            const existingPick = await Picks.findOne({
+                where: {
+                    name,
+                    game_id
+                }
+            });
+
+            if (existingPick) {
+                // Overwrite existing pick
+                await existingPick.update({
+                    pick,
+                    game_date,
+                    game_locked_time
+                });
+
+                return res.json({
+                    message: "Pick updated",
+                    pick: existingPick
+                });
+            }
+
+            // Otherwise create new pick
+            const newPick = await Picks.create({
+                name,
+                game_id,
+                pick,
+                game_date,
+                game_locked_time
+            });
+
+            res.json({
+                message: "Pick created",
+                pick: newPick
+            });
+
+        } catch (err) {
+            console.error("Pick submission error:", err);
+            res.status(500).json({ error: "Submission failed" });
+        }
+    });
+
+    //my picks
     app.get("/api/mypicks", async (req, res) => {
         try {
             const picks = await Picks.findAll({
@@ -30,7 +79,7 @@ module.exports = function (app) {
                             "underdog",
                             "line_locked",
                             "game_clock",
-                            "winner",          // ⭐ IMPORTANT
+                            "winner",
                             "status",
                             "home_score",
                             "away_score"
