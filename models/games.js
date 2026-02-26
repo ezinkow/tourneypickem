@@ -1,8 +1,9 @@
 module.exports = function (sequelize, DataTypes) {
     const Games = sequelize.define("Games", {
         id: {
-            type: DataTypes.STRING(32),
-            primaryKey: true
+            type: DataTypes.STRING(255),
+            primaryKey: true,
+            allowNull: false
         },
         game_date: {
             type: DataTypes.DATE,
