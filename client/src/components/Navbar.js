@@ -23,6 +23,9 @@ export default function Navbar() {
                         <Link to='/picks'><h5>Make Your Picks</h5></Link>
                     </div>
                     <div className="col-1 navtext">
+                        <Link to='/mypicks'><h5>My Picks</h5></Link>
+                    </div>
+                    <div className="col-1 navtext">
                         <Link to='/scoreboard'><h5>Scoreboard</h5></Link>
                     </div>
                     <div className="col-1 navtext">
@@ -30,6 +33,9 @@ export default function Navbar() {
                     </div>
                     <div className="col-1 navtext">
                         <Link to='/picksdisplay'><h5>Group Picks</h5></Link>
+                    </div>
+                    <div className="col-1 navtext">
+                        <Link to='/signup'><h5>Sign Up Here</h5></Link>
                     </div>
                 </div>
                 <br />

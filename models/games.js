@@ -41,7 +41,7 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.TEXT,
             allowNull: true
         },
-        line_locked: {
+        line: {
             type: DataTypes.FLOAT,
             allowNull: true
         },
@@ -66,10 +66,6 @@ module.exports = function (sequelize, DataTypes) {
         },
         winner: {
             type: DataTypes.TEXT,
-            allowNull: true,
-        },
-        game_locked_time: {
-            type: DataTypes.DATE,
             allowNull: true,
         },
         home_score: {

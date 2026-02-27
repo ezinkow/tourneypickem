@@ -13,15 +13,11 @@ module.exports = function (sequelize, DataTypes) {
             allowNull: true,
         },
         game_date: {
-            type: DataTypes.STRING,
+            type: DataTypes.DATE,
             allowNull: true,
         },
         missed_pick_flag: {
             type: DataTypes.BOOLEAN,
-            allowNull: true,
-        },
-        game_locked_time: {
-            type: DataTypes.DATE,
             allowNull: true,
         }
     });

@@ -61,7 +61,7 @@ module.exports = function (app) {
 
         // -------- Score ATS winner --------
         if (
-          game.line_locked &&
+          game.line &&
           !game.winner &&
           !isNaN(homeScore) &&
           !isNaN(awayScore) &&
@@ -69,7 +69,7 @@ module.exports = function (app) {
         ) {
           const favorite = game.locked_favorite || game.favorite;
           const underdog = game.locked_underdog || game.underdog;
-          const spread = Number(game.line_locked);
+          const spread = Number(game.line);
 
           let favScore =
             game.home_team === favorite ? homeScore : awayScore;

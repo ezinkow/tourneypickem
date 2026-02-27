@@ -70,6 +70,18 @@ export default function MyPicks() {
         return null;
     };
 
+    let fav_logo = ''
+    let dog_logo = ''
+
+    const getFavoriteLogo = (p) => {
+        const game = p.Game;
+
+        if (game.home_team === game.favorite) return p.home_logo
+        if (game.away_team === game.favorite) return p.away_logo
+        return null;
+    }
+    console.log(fav_logo)
+
     // Result Logic Helper
     const renderResultIcon = (p) => {
         // Access the associated Game data
@@ -142,7 +154,7 @@ export default function MyPicks() {
                                 <tr>
                                     <th>Matchup</th>
                                     <th>Line</th>
-                                    <th>Score</th>
+                                    <th>Status/Score</th>
                                     <th>Winner (ATS)</th>
                                     <th>Your Pick</th>
                                 </tr>
@@ -158,12 +170,24 @@ export default function MyPicks() {
                                         </td>
 
                                         <td>
-                                            {p.favorite} (-{p.line_locked})
+                                            <img
+                                                src={getFavoriteLogo(p)}
+                                                height={24}
+                                                style={{ borderRadius: 4 }}
+                                            /> (-{p.line})
                                         </td>
 
                                         <td>
-                                            {p.Game?.status === "STATUS_FINAL" ? "Final: " : `${p.game_clock}: `}
-                                            <img src={p.away_logo} height={22} /> {p.away_score}-{p.home_score} <img src={p.home_logo} height={22} />
+                                            {/* If live or finished, show the status and the scores */}
+                                            {(p.Game?.status === "STATUS_FINAL" || p.Game?.status === "STATUS_IN_PROGRESS") ? (
+                                                <>
+                                                    {p.Game?.status === "STATUS_FINAL" ? "Final: " : `${p.game_clock}: `}
+                                                    <img src={p.away_logo} height={22} alt="away" /> {p.away_score}-{p.home_score} <img src={p.home_logo} height={22} alt="home" />
+                                                </>
+                                            ) : (
+                                                /* If the game hasn't started yet, just show the time/clock detail */
+                                                <span>{p.game_clock || "Scheduled"}</span>
+                                            )}
                                         </td>
                                         {/* Winner */}
                                         <td style={{ textAlign: "center" }}>

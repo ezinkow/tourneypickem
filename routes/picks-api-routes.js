@@ -17,7 +17,7 @@ module.exports = function (app) {
     // Create OR Overwrite pick
     app.post("/api/picks", async function (req, res) {
         try {
-            const { name, game_id, pick, game_date, game_locked_time } = req.body;
+            const { name, game_id, pick, game_date } = req.body;
 
             // Check if pick already exists for this user + game
             const existingPick = await Picks.findOne({
@@ -32,7 +32,6 @@ module.exports = function (app) {
                 await existingPick.update({
                     pick,
                     game_date,
-                    game_locked_time
                 });
 
                 return res.json({
@@ -46,8 +45,7 @@ module.exports = function (app) {
                 name,
                 game_id,
                 pick,
-                game_date,
-                game_locked_time
+                game_date
             });
 
             res.json({
@@ -77,7 +75,7 @@ module.exports = function (app) {
                             "away_logo",
                             "favorite",
                             "underdog",
-                            "line_locked",
+                            "line",
                             "game_clock",
                             "winner",
                             "status",

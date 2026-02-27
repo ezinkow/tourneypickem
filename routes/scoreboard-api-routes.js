@@ -21,7 +21,7 @@ module.exports = function (app) {
           fav_logo: g.fav_logo,
           underdog: g.underdog,
           dog_logo: g.dog_logo,
-          locked_line: g.line_locked,
+          line: g.line,
           winner: g.winner,
           status: g.status,
           game_clock:g.game_clock

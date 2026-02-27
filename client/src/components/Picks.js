@@ -24,7 +24,7 @@ export default function Picks() {
       setUsers(res.data.sort((a, b) => a.name.localeCompare(b.name)))
     );
   }, []);
-
+  console.log(games)
   const visibleGames = useMemo(
     () =>
       games
@@ -38,6 +38,14 @@ export default function Picks() {
       timeZone: "America/New_York",
       month: "short",
       day: "numeric"
+    });
+  }
+
+  function formatTimeET(date) {
+    return new Date(date).toLocaleTimeString("en-US", {
+      timeZone: "America/New_York",
+      hour: "numeric",
+      minute: "2-digit",
     });
   }
 
@@ -138,8 +146,9 @@ export default function Picks() {
       <Table striped bordered hover>
         <thead>
           <tr>
-            <th>Date</th>
+            <th>Game Start</th>
             <th>Game</th>
+            <th>Line Locks at</th>
             <th>Line</th>
             <th>Pick</th>
           </tr>
@@ -148,16 +157,18 @@ export default function Picks() {
         <tbody>
           {visibleGames.map(game => (
             <tr key={game.id}>
-              <td>{formatDateET(game.game_date)}</td>
+              <td>{game.game_clock}</td>
 
               <td>
                 <img src={game.dog_logo} width={24} /> {game.underdog}
                 {" vs "}
                 <img src={game.fav_logo} width={24} /> {game.favorite}
               </td>
-
               <td>
-                {game.line_is_locked ? (
+                {formatTimeET(game.line_locked_time)} ET
+              </td>
+              <td>
+                {new Date() >= new Date(game.line_locked_time) ? (
                   <span style={{ fontWeight: 'bold', color: '#d9534f' }}>
                     🔒 -{game.line}
                   </span>

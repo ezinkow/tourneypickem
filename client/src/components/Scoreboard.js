@@ -36,21 +36,21 @@ const Scoreboard = () => {
     }, []);
 
     const didFavoriteCover = (g) => {
-        console.log(g)
-        if (!g.locked_line || g.status !== "STATUS_FINAL") return null;
+        // Note: match the variable name line_locked from your Model
+        if (g.line === null || g.status !== "STATUS_FINAL") return null;
 
         const favIsHome = g.favorite === g.home_team;
-
         const favScore = favIsHome ? g.home_score : g.away_score;
         const dogScore = favIsHome ? g.away_score : g.home_score;
 
-        return favScore - g.locked_line > dogScore;
+        // A favorite covers if (Fav Score - Spread) > Dog Score
+        return (favScore - g.line) > dogScore;
     };
 
     return (
         <div className="scoreboard-container">
             <div style={{ whiteSpace: 'nowrap' }}>
-                <h2>Scoreboard<RefreshGamesButton/></h2><strong>(Home team in bold)</strong>
+                <h2>Scoreboard<RefreshGamesButton /></h2><strong>(Home team in bold)</strong>
             </div>
 
             <table className="scoreboard-table">
@@ -107,7 +107,7 @@ const Scoreboard = () => {
                                         src={g.fav_logo}
                                         width="24"
                                         style={{ marginRight: 6 }}
-                                    />-{g.locked_line ?? "TBD"}
+                                    />-{g.line ?? "TBD"}
                                 </td>
 
                                 {/* SCORE */}
