@@ -3,7 +3,6 @@ import axios from "axios";
 import Button from "react-bootstrap/Button";
 import Table from "react-bootstrap/Table";
 import Dropdown from "react-bootstrap/Dropdown";
-import DropdownButton from "react-bootstrap/DropdownButton";
 import toast, { Toaster } from "react-hot-toast";
 import Instructions from "./Instructions";
 
@@ -11,20 +10,37 @@ import Instructions from "./Instructions";
 const isLocked = iso => iso && new Date() >= new Date(iso);
 
 export default function Picks() {
-  const [name, setUser] = useState("SELECT YOUR NAME IN DROPDOWN!");
   const [users, setUsers] = useState([]);
+  const [user, setUser] = useState("SELECT YOUR NAME");
+  const [password, setPassword] = useState("");
+  const [authenticated, setAuthenticated] = useState(false);
+
   const [games, setGames] = useState([]);
   const [picks, setPicks] = useState([]);
   const [allDogs, setAllDogs] = useState(false);
   const [allFaves, setAllFaves] = useState(false);
 
+  /* ---------- Initial Load ---------- */
   useEffect(() => {
     axios.get("/api/games").then(res => setGames(res.data));
     axios.get("/api/users").then(res =>
       setUsers(res.data.sort((a, b) => a.name.localeCompare(b.name)))
     );
   }, []);
-  console.log(games)
+
+  /* ---------- Authentication Logic ---------- */
+  const verify = async () => {
+    try {
+      const res = await axios.post("/api/users/verify", { name: user, password });
+      if (!res.data.success) return toast.error("Wrong password");
+
+      setAuthenticated(true);
+      toast.success("Identity verified!");
+    } catch {
+      toast.error("Verify failed");
+    }
+  };
+
   const visibleGames = useMemo(
     () =>
       games
@@ -33,15 +49,8 @@ export default function Picks() {
     [games]
   );
 
-  function formatDateET(date) {
-    return new Date(date).toLocaleDateString("en-US", {
-      timeZone: "America/New_York",
-      month: "short",
-      day: "numeric"
-    });
-  }
-
   function formatTimeET(date) {
+    if (!date) return "TBD";
     return new Date(date).toLocaleTimeString("en-US", {
       timeZone: "America/New_York",
       hour: "numeric",
@@ -70,38 +79,29 @@ export default function Picks() {
   };
 
   const selectAll = type => {
-    const validGames = visibleGames;
-
     setPicks(
-      validGames.map(g => ({
+      visibleGames.map(g => ({
         game: g.id,
         pick: type === "dogs" ? g.underdog : g.favorite,
         line: g.line,
         game_date: g.game_date
       }))
     );
-
     setAllDogs(type === "dogs");
     setAllFaves(type === "faves");
   };
 
   const handleSubmit = async () => {
-    if (name === "SELECT YOUR NAME IN DROPDOWN!") {
-      toast.error("Please select your name");
-      return;
-    }
-
     try {
       for (const p of picks) {
         await axios.post("/api/picks", {
-          name,
+          name: user, // Using 'user' from state
           game_id: p.game,
           pick: p.pick,
           game_date: p.game_date
         });
       }
-
-      toast.success(`Thanks ${name}, picks submitted!`);
+      toast.success(`Thanks ${user}, picks submitted!`);
       setPicks([]);
     } catch {
       toast.error("Submission failed");
@@ -113,107 +113,126 @@ export default function Picks() {
       <Toaster />
       <Instructions />
 
-      <DropdownButton title="User" onSelect={setUser}>
-        {users.map(n => (
-          <Dropdown.Item key={n.name} eventKey={n.name}>
-            {n.name}
-          </Dropdown.Item>
-        ))}
-      </DropdownButton>
+      <h2>🏈 Make Your Picks</h2>
 
-      <h4>User: {name}</h4>
-      <Button onClick={handleSubmit}>Submit Picks</Button>{' '}
+      {/* --- Auth Section --- */}
+      {!authenticated && (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            verify();
+          }}
+          style={{ display: "flex", gap: 10, marginBottom: 20 }}
+        >
+          <Dropdown onSelect={setUser}>
+            <Dropdown.Toggle variant="outline-primary">{user}</Dropdown.Toggle>
+            <Dropdown.Menu>
+              {users.map(n => (
+                <Dropdown.Item key={n.name} eventKey={n.name}>{n.name}</Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
 
-      <label>
-        <input
-          type="checkbox"
-          checked={allDogs}
-          onChange={() => selectAll("dogs")}
-        /> Select All Underdogs
-      </label>{' '}
+          <input
+            type="password"
+            className="form-control"
+            style={{ width: "200px" }}
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            placeholder="Password"
+            required
+          />
 
-      <label>
-        <input
-          type="checkbox"
-          checked={allFaves}
-          onChange={() => selectAll("faves")}
-        /> Select All Favorites
-      </label>
-      <h5>
-        Picks selected: {picks.length} / {visibleGames.length}
-      </h5>
+          {/* Note: type="submit" makes 'Enter' work */}
+          <Button type="submit">Verify Identity</Button>
+        </form>
+      )}
 
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Game Start</th>
-            <th>Game</th>
-            <th>Line Locks at</th>
-            <th>Line</th>
-            <th>Pick</th>
-          </tr>
-        </thead>
+      {/* --- Picks Section --- */}
+      {authenticated && (
+        <>
+          <h4>User: {user}</h4>
+          <div style={{ marginBottom: 15 }}>
+            <Button onClick={handleSubmit} variant="success">Submit Picks</Button>{' '}
+            <label style={{ marginLeft: 10 }}>
+              <input
+                type="checkbox"
+                checked={allDogs}
+                onChange={() => selectAll("dogs")}
+              /> Select All Underdogs
+            </label>{' '}
+            <label style={{ marginLeft: 10 }}>
+              <input
+                type="checkbox"
+                checked={allFaves}
+                onChange={() => selectAll("faves")}
+              /> Select All Favorites
+            </label>
+          </div>
 
-        <tbody>
-          {visibleGames.map(game => (
-            <tr key={game.id}>
-              <td>{game.game_clock}</td>
+          <h5>
+            Picks selected: {picks.length} / {visibleGames.length}
+          </h5>
 
-              <td>
-                <img src={game.dog_logo} width={24} /> {game.underdog}
-                {" vs "}
-                <img src={game.fav_logo} width={24} /> {game.favorite}
-              </td>
-              <td>
-                {formatTimeET(game.line_locked_time)} ET
-              </td>
-              <td>
-                {new Date() >= new Date(game.line_locked_time) ? (
-                  <span style={{ fontWeight: 'bold', color: '#d9534f' }}>
-                    🔒 -{game.line}
-                  </span>
-                ) : (
-                  game.line ? `-${game.line}` : "TBD"
-                )}
-              </td>
-
-              <td>
-
-                <select
-                  // Add a required attribute for standard HTML validation
-                  required
-                  value={picks.find(p => p.game === game.id)?.pick || ""}
-                  onChange={e => updatePick(game, e.target.value)}
-                >
-                  {/* This is the key: hidden hides it from the list, 
-      disabled prevents it from being selected again */}
-                  <option value="" disabled hidden>Select a team</option>
-
-                  <option value={game.underdog}>
-                    {game.underdog} (+{game.line})
-                  </option>
-                  <option value={game.favorite}>
-                    {game.favorite} (-{game.line})
-                  </option>
-                </select>
-                {/* <select
-                  value={picks.find(p => p.game === game.id)?.pick || ""}
-                  onChange={e => updatePick(game, e.target.value)}
-                >
-                  <option value="" />
-                  <option value={game.underdog}>
-                    {game.underdog} (+{game.line})
-                  </option>
-                  <option value={game.favorite}>
-                    {game.favorite} (-{game.line})
-                  </option>
-                </select> */}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-
+          <Table striped bordered hover responsive>
+            <thead>
+              <tr>
+                <th>Game Start</th>
+                <th>Game</th>
+                <th>Line Locks at</th>
+                <th>Line</th>
+                <th>Pick</th>
+              </tr>
+            </thead>
+            <tbody>
+              {visibleGames.map(game => (
+                <tr key={game.id}>
+                  <td>{game.game_clock}</td>
+                  <td>
+                    <img src={game.away_logo} width={24} alt="" /> {game.away_team}
+                    {" @ "}
+                    <img src={game.home_logo} width={24} alt="" /> {game.home_team}
+                  </td>
+                  <td>
+                    {formatTimeET(game.line_locked_time)} ET
+                  </td>
+                  <td>
+                    {new Date() >= new Date(game.line_locked_time) ? (
+                      <span style={{ fontWeight: 'bold', color: '#d9534f' }}>
+                        🔒 <img src={game.fav_logo} width={24} alt="fav" /> -{game.line}
+                      </span>
+                    ) : (
+                      game.line ? (
+                        <>
+                          <img src={game.fav_logo} width={24} alt="fav" /> -{game.line}
+                        </>
+                      ) : (
+                        "TBD"
+                      )
+                    )}
+                  </td>
+                  <td>
+                    <select
+                      className="form-select"
+                      required
+                      value={picks.find(p => p.game === game.id)?.pick || ""}
+                      onChange={e => updatePick(game, e.target.value)}
+                    >
+                      <option value="" disabled hidden>Select a team</option>
+                      <option value={game.underdog}>
+                        {game.underdog} (+{game.line})
+                      </option>
+                      <option value={game.favorite}>
+                        {game.favorite} (-{game.line})
+                      </option>
+                    </select>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </>
+      )}
     </div>
   );
 }

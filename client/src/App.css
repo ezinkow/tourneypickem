@@ -1,24 +1,189 @@
-.header {
-  background-color: gray;
-  text-align: center;
-  color: darkblue;
-  overflow: hidden;
-  position: fixed;
-  /* Set the navbar to fixed position */
-  top: 0;
-  /* Position the navbar at the top of the page */
-  width: 100%;
-  /* Full width */
-  display: flex;
-  position: relative;
-  max-height: 100%;
-  height: auto;
+/* ===============================
+   BASE
+================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.banner {
-  position: absolute;
-  margin-left: -5px;
+body {
+  background: #f5f7fb;
+  font-family: "Inter", system-ui, Arial, sans-serif;
+  color: #111827;
+}
 
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 16px;
+}
+
+/* ===============================
+   NAVBAR
+================================ */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: linear-gradient(90deg, #111827, #1f2937);
+  border-bottom: 1px solid #222;
+}
+
+.navbar-inner {
+  max-width: 1100px;
+  margin: auto;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #facc15;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 14px;
+}
+
+.nav-links a {
+  color: #e5e7eb;
+  text-decoration: none;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.nav-links a:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 22px;
+}
+
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+
+  .nav-links {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    background: #111827;
+    flex-direction: column;
+    padding: 16px;
+    display: none;
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+}
+
+/* ===============================
+   TABLES
+================================ */
+.table-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  background: #111827;
+  color: white;
+  text-align: left;
+  padding: 12px;
+  font-size: 13px;
+}
+
+td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+tr:hover {
+  background: #f9fafb;
+}
+
+.game-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.team {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.team img {
+  width: 22px;
+  height: 22px;
+}
+
+.pick-win {
+  background: #dcfce7;
+}
+
+.pick-loss {
+  background: #fee2e2;
+}
+
+.pick-missed {
+  background: #fef9c3;
+}
+
+@media (max-width: 700px) {
+
+  table thead {
+    display: none;
+  }
+
+  table tr {
+    display: block;
+    margin-bottom: 14px;
+    background: white;
+    border-radius: 12px;
+    padding: 10px;
+  }
+
+  table td {
+    display: flex;
+    justify-content: space-between;
+    border: none;
+    padding: 6px 0;
+  }
+
+  table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #666;
+  }
 }
 
 a:active {
@@ -29,42 +194,9 @@ a:hover {
   text-decoration: none;
 }
 
-.navtext {
-  text-decoration: none;
-  margin-top: 100px;
-  color: green;
-  background-color: rgba(239, 239, 240, 0.8);
-  ;
-}
-
-.body {
-  background-color: #ebe8e2;
-}
-
 .dropdown-menu {
   height: 200px;
   overflow-y: scroll;
-}
-
-.picksTable {
-  width: 50%;
-}
-
-.fix-col {
-  border-left: solid 1px rgb(75, 90, 102);
-  border-right: solid 1px rgb(75, 90, 102);
-  left: 0;
-  position: absolute;
-  top: auto;
-  /* color: blue; */
-}
-
-.table-main {
-  border: none;
-  border-right: solid 1px rgb(75, 90, 102);
-  border-collapse: separate;
-  border-spacing: 0;
-  font: normal 13px Arial, sans-serif;
 }
 
 .table-main thead th {
@@ -87,23 +219,6 @@ a:hover {
 
 .table {
   position: relative;
-}
-
-.table-scroll {
-  margin-left: 131px;
-  overflow-x: scroll;
-  overflow-y: visible;
-  padding-bottom: 5px;
-  width: 2000px;
-}
-
-.table-main .fix-col {
-  border-left: solid 1px rgb(75, 90, 102);
-  border-right: solid 1px rgb(75, 90, 102);
-  left: 0;
-  position: absolute;
-  top: auto;
-  width: 110px;
 }
 
 table {

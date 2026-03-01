@@ -6,27 +6,28 @@ import Button from "react-bootstrap/Button";
 import toast, { Toaster } from "react-hot-toast";
 
 export default function MyPicks() {
-    const [names, setNames] = useState([]);
-    const [name, setName] = useState("SELECT YOUR NAME");
+    const [users, setUsers] = useState([]);
+    const [user, setUser] = useState("SELECT YOUR NAME");
     const [password, setPassword] = useState("");
     const [authenticated, setAuthenticated] = useState(false);
     const [picks, setPicks] = useState([]);
     const [standings, setStandings] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    /* ---------- Load Names ---------- */
+    /* ---------- Initial Load ---------- */
     useEffect(() => {
-        axios.get("/api/users").then(r => setNames(r.data));
+        axios.get("/api/users").then(r => setUsers(r.data));
         axios.get("/api/standings").then(r => setStandings(r.data));
     }, []);
 
-    /* ---------- Verify ---------- */
+    /* ---------- Authentication Logic ---------- */
     const verify = async () => {
         try {
-            const res = await axios.post("/api/users/verify", { name, password });
+            const res = await axios.post("/api/users/verify", { name: user, password });
             if (!res.data.success) return toast.error("Wrong password");
 
             setAuthenticated(true);
+            toast.success("Identity verified!");
             fetchPicks();
         } catch {
             toast.error("Verify failed");
@@ -37,12 +38,10 @@ export default function MyPicks() {
     const fetchPicks = async () => {
         setLoading(true);
         try {
-            const res = await axios.get("/api/mypicks", { params: { name } });
-            // Sort by game_date in ascending order
+            const res = await axios.get("/api/mypicks", { params: { name: user } });
             const sortedData = (res.data || []).sort((a, b) => {
                 return new Date(a.game_date) - new Date(b.game_date);
             });
-            console.log("MYPICKS:", sortedData);
             setPicks(sortedData || []);
         } catch {
             toast.error("Failed loading picks");
@@ -51,10 +50,10 @@ export default function MyPicks() {
         }
     };
 
-    /* ---------- Points ---------- */
-    const myStanding = standings.find(s => s.name === name);
+    /* ---------- Points Logic ---------- */
+    const myStanding = standings.find(s => s.name === user);
 
-    /* ---------- Helpers ---------- */
+    /* ---------- Helper Functions ---------- */
     const getPickLogo = (p) => {
         if (p.pick === p.home_team) return p.home_logo;
         if (p.pick === p.away_team) return p.away_logo;
@@ -64,40 +63,28 @@ export default function MyPicks() {
     const getWinnerLogo = (p) => {
         const game = p.Game;
         if (!game || !game.winner || game.winner === "PUSH") return null;
-
         if (game.winner === p.home_team) return p.home_logo;
         if (game.winner === p.away_team) return p.away_logo;
         return null;
     };
 
-    let fav_logo = ''
-    let dog_logo = ''
-
     const getFavoriteLogo = (p) => {
         const game = p.Game;
-
-        if (game.home_team === game.favorite) return p.home_logo
-        if (game.away_team === game.favorite) return p.away_logo
+        if (!game) return null;
+        if (game.home_team === game.favorite) return p.home_logo;
+        if (game.away_team === game.favorite) return p.away_logo;
         return null;
     }
-    console.log(fav_logo)
 
-    // Result Logic Helper
     const renderResultIcon = (p) => {
-        // Access the associated Game data
         const game = p.Game;
-
-        // Don't show icons if game isn't over or data is missing
-        if (!game || game.status !== "STATUS_FINAL" || !game.winner) {
-            return null;
-        }
+        if (!game || game.status !== "STATUS_FINAL" || !game.winner) return null;
 
         if (game.winner === "PUSH") {
             return <span style={{ marginLeft: "8px", color: "orange" }}>➖</span>;
         }
 
         const isCorrect = p.pick === game.winner;
-
         return isCorrect ? (
             <span style={{ marginLeft: "8px", color: "green", fontWeight: "bold" }}>✅</span>
         ) : (
@@ -105,19 +92,19 @@ export default function MyPicks() {
         );
     };
 
-    /* ---------- Render ---------- */
     return (
-        <div className="container" style={{ maxWidth: 900 }}>
+        <div className="container" style={{ maxWidth: 1000 }}>
             <Toaster />
 
             <h2>🏀 My Picks</h2>
 
+            {/* --- Auth Section (Matches Picks Style) --- */}
             {!authenticated && (
-                <div style={{ display: "flex", gap: 10 }}>
-                    <Dropdown onSelect={setName}>
-                        <Dropdown.Toggle>{name}</Dropdown.Toggle>
+                <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
+                    <Dropdown onSelect={setUser}>
+                        <Dropdown.Toggle variant="outline-primary">{user}</Dropdown.Toggle>
                         <Dropdown.Menu>
-                            {names.map(n => (
+                            {users.map(n => (
                                 <Dropdown.Item key={n.name} eventKey={n.name}>
                                     {n.name}
                                 </Dropdown.Item>
@@ -127,34 +114,38 @@ export default function MyPicks() {
 
                     <input
                         type="password"
+                        className="form-control"
+                        style={{ width: "200px" }}
                         value={password}
                         onChange={e => setPassword(e.target.value)}
                         placeholder="Password"
                     />
 
-                    <Button onClick={verify}>Verify</Button>
+                    <Button onClick={verify}>Verify Identity</Button>
                 </div>
             )}
 
+            {/* --- My Picks Display Section --- */}
             {authenticated && (
                 <>
-                    <h4>
-                        {name} — {myStanding?.points || 0} pts
-                    </h4>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                        <h4>{user}</h4>
+                        <h5 style={{ color: "#666" }}>Total Points: {myStanding?.points || 0}</h5>
+                    </div>
 
-                    {loading && <p>Loading...</p>}
+                    {loading && <p>Loading your picks...</p>}
 
                     {!loading && picks.length === 0 && (
-                        <p>No picks found.</p>
+                        <p className="mt-4">No picks found for this user.</p>
                     )}
 
                     {!loading && picks.length > 0 && (
-                        <Table striped bordered hover>
+                        <Table striped bordered hover responsive className="mt-2">
                             <thead>
                                 <tr>
                                     <th>Matchup</th>
                                     <th>Line</th>
-                                    <th>Status/Score</th>
+                                    <th>Status / Score</th>
                                     <th>Winner (ATS)</th>
                                     <th>Your Pick</th>
                                 </tr>
@@ -164,32 +155,44 @@ export default function MyPicks() {
                                 {picks.map((p, i) => (
                                     <tr key={i}>
                                         <td>
-                                            <img src={p.away_logo} height={22} />
-                                            {" @ "}
-                                            <img src={p.home_logo} height={22} />
+                                            <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                                                <img src={p.away_logo} height={22} alt="" />
+                                                {" @ "}
+                                                <img src={p.home_logo} height={22} alt="" />
+                                            </div>
                                         </td>
 
                                         <td>
-                                            <img
-                                                src={getFavoriteLogo(p)}
-                                                height={24}
-                                                style={{ borderRadius: 4 }}
-                                            /> (-{p.line})
-                                        </td>
-
-                                        <td>
-                                            {/* If live or finished, show the status and the scores */}
-                                            {(p.Game?.status === "STATUS_FINAL" || p.Game?.status === "STATUS_IN_PROGRESS") ? (
+                                            {getFavoriteLogo(p) ? (
                                                 <>
-                                                    {p.Game?.status === "STATUS_FINAL" ? "Final: " : `${p.game_clock}: `}
-                                                    <img src={p.away_logo} height={22} alt="away" /> {p.away_score}-{p.home_score} <img src={p.home_logo} height={22} alt="home" />
+                                                    <img
+                                                        src={getFavoriteLogo(p)}
+                                                        height={24}
+                                                        style={{ borderRadius: 4, marginRight: 5 }}
+                                                        alt="fav"
+                                                    />
+                                                    (-{p.line})
                                                 </>
                                             ) : (
-                                                /* If the game hasn't started yet, just show the time/clock detail */
-                                                <span>{p.game_clock || "Scheduled"}</span>
+                                                `-${p.line}`
                                             )}
                                         </td>
-                                        {/* Winner */}
+
+                                        <td>
+                                            {(p.Game?.status === "STATUS_FINAL" || p.Game?.status === "STATUS_IN_PROGRESS") ? (
+                                                <div style={{ whiteSpace: "nowrap" }}>
+                                                    <span style={{ fontWeight: p.Game?.status === "STATUS_IN_PROGRESS" ? "bold" : "normal" }}>
+                                                        {p.Game?.status === "STATUS_FINAL" ? "Final: " : `${p.game_clock}: `}
+                                                    </span>
+                                                    <img src={p.away_logo} height={22} style={{ margin: "0 4px" }} alt="" />
+                                                    {p.away_score} - {p.home_score}
+                                                    <img src={p.home_logo} height={22} style={{ margin: "0 4px" }} alt="" />
+                                                </div>
+                                            ) : (
+                                                <span style={{ color: "#666" }}>{p.game_clock || "Scheduled"}</span>
+                                            )}
+                                        </td>
+
                                         <td style={{ textAlign: "center" }}>
                                             {p.Game?.winner === "PUSH" ? (
                                                 <span style={{ fontSize: "12px", fontWeight: "bold" }}>PUSH</span>
@@ -211,11 +214,11 @@ export default function MyPicks() {
                                                     src={getPickLogo(p)}
                                                     height={24}
                                                     style={{ borderRadius: 4 }}
+                                                    alt="pick"
                                                 />
                                                 {renderResultIcon(p)}
                                             </div>
                                         </td>
-
                                     </tr>
                                 ))}
                             </tbody>

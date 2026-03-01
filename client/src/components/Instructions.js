@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function instructions() {
     return (
-        <div>
+        <div className="instructions-card">
             <h3>Instructions:</h3>
             <ul>
                 <li>Select CORRECT name from drop down</li>

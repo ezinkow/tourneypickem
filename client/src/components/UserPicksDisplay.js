@@ -95,10 +95,10 @@ export default function PlayerPicksMatrix() {
       <div style={{ textAlign: "center", minWidth: 140 }}>
         <div style={{ display: "flex", justifyContent: "center", gap: 4 }}>
           <img src={game.away_logo} alt="" height={20} />
-          {isAwayFav && <span>-{game.line_locked}</span>}
+          {isAwayFav && <span>-{game.line}</span>}
           <span>@</span>
           <img src={game.home_logo} alt="" height={20} />
-          {isHomeFav && <span>-{game.line_locked}</span>}
+          {isHomeFav && <span>-{game.line}</span>}
         </div>
 
         <div style={{ fontSize: 10, color: "#666" }}>

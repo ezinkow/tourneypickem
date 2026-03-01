@@ -19,7 +19,7 @@ const Standings = () => {
                         <th>User</th>
                         <th>Points</th>
                         <th>Correct Picks</th>
-                        <th>Missed (.5 pt) Picks</th>
+                        <th>Correct Missed (.5 pt) Picks</th>
                     </tr>
                 </thead>
                 <tbody>

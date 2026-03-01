@@ -47,6 +47,29 @@ const Scoreboard = () => {
         return (favScore - g.line) > dogScore;
     };
 
+       // Result Logic Helper
+    // const renderResultIcon = (g) => {
+    //     // Access the associated Game data
+    //     const game = g.Game;
+
+    //     // Don't show icons if game isn't over or data is missing
+    //     if (!game || game.status !== "STATUS_FINAL" || !game.winner) {
+    //         return null;
+    //     }
+
+    //     if (game.winner === "PUSH") {
+    //         return <span style={{ marginLeft: "8px", color: "orange" }}>➖</span>;
+    //     }
+
+    //     const isCorrect = g.pick === game.winner;
+
+    //     return isCorrect ? (
+    //         <span style={{ marginLeft: "8px", color: "green", fontWeight: "bold" }}>✅</span>
+    //     ) : (
+    //         <span style={{ marginLeft: "8px", color: "red", fontWeight: "bold" }}>❌</span>
+    //     );
+    // };
+
     return (
         <div className="scoreboard-container">
             <div style={{ whiteSpace: 'nowrap' }}>

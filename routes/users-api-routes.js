@@ -42,9 +42,7 @@ module.exports = function (app) {
             real_name: req.body.real_name,
             name: req.body.name,
             password: req.body.password,
-            email_address: req.body.email_address,
-            email_opt_in: req.body.email_opt_in,
-            paid_commitment: req.body.paid
+            email_address: req.body.email_address
         })
             .then(function (dbusers) {
                 res.json(dbusers)

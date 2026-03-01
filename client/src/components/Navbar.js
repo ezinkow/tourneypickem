@@ -1,45 +1,31 @@
-import React from 'react'
-import banner from '../images/banner.jpg'
-
-import {
-    Link
-} from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 export default function Navbar() {
+  const [open, setOpen] = useState(false);
+  const location = useLocation();
 
-    return (
-        <div className="header" style={{
-            backgroundImage: `url(${banner})`,
-            backgroundRepeat: 'repeat',
-            backgroundSize: 'contain',
-            backgroundPosition: 'center'
-        }}>
-            <div className="navbar">
-                <div className='container'>
-                    <div className="col-1 navtext">
-                        <Link to='/'><h5>Home</h5></Link>
-                    </div>
-                    <div className="col-1 navtext">
-                        <Link to='/picks'><h5>Make Your Picks</h5></Link>
-                    </div>
-                    <div className="col-1 navtext">
-                        <Link to='/mypicks'><h5>My Picks</h5></Link>
-                    </div>
-                    <div className="col-1 navtext">
-                        <Link to='/scoreboard'><h5>Scoreboard</h5></Link>
-                    </div>
-                    <div className="col-1 navtext">
-                        <Link to='/standings'><h5>Standings</h5></Link>
-                    </div>
-                    <div className="col-1 navtext">
-                        <Link to='/picksdisplay'><h5>Group Picks</h5></Link>
-                    </div>
-                    <div className="col-1 navtext">
-                        <Link to='/signup'><h5>Sign Up Here</h5></Link>
-                    </div>
-                </div>
-                <br />
-            </div>
-        </div>
-    )
+  return (
+    <header className="navbar">
+      <div className="navbar-inner">
+
+        <button className="menu-toggle" onClick={() => setOpen(!open)}>
+          ☰
+        </button>
+
+        <Link to="/" className="navbar-brand">
+          🏀 Champ Week Pick'em
+        </Link>
+
+        <nav className={`nav-links ${open ? "open" : ""}`}>
+          <Link to="/">Home</Link>
+          <Link to="/picks">Make Picks</Link>
+          <Link to="/mypicks">My Picks</Link>
+          <Link to="/scoreboard">Scoreboard</Link>
+          <Link to="/standings">Standings</Link>
+          <Link to="/signup">Sign Up</Link>
+        </nav>
+      </div>
+    </header>
+  );
 }

@@ -53,9 +53,7 @@ export default function UserSubmit() {
             real_name,
             name,
             password,
-            email_address,
-            email_opt_in,
-            paid
+            email_address
         })
         toast.success(`THANKS, ${real_name}, YOU'RE SIGNED UP!`,
             {
@@ -90,8 +88,8 @@ export default function UserSubmit() {
                         <Form.Control size="lg" type="name" placeholder="Enter Name You'll Select All Week" />
                     </Form.Group>
                     <Form.Group onChange={handlePasswordChange} type="text" id="password" value={password} classPassword="mb-3" controlId="formBasicPassword">
-                        <Form.Label>Password (Use a SIMPLE password, there are no requirements):</Form.Label>
-                        <Form.Control size="lg" type="password" placeholder="Enter a SIMPLE password. Do NOT use your normal password, there is NO password encryption" />
+                        <Form.Label>Password (Use a SIMPLE password, do NOT use your normal password, there are no requirements and NO password encryption):</Form.Label>
+                        <Form.Control size="lg" type="password" placeholder="Enter SIMPLE password" />
                     </Form.Group>
                     <Form.Group onChange={handleEmail_addressChange} type="text" id="email_address" value={email_address} className="mb-3" controlId="formPlaintextEmail">
                         <Form.Label>Email address</Form.Label>
@@ -100,12 +98,6 @@ export default function UserSubmit() {
                     <Form.Group onChange={handlePhoneChange} type="text" id="phone" value={phone} className="mb-3" controlId="formBasicPhone">
                         <Form.Label>Email address</Form.Label>
                         <Form.Control size="lg" type="phone" placeholder="Phone Number" />
-                    </Form.Group>
-                    <Form.Group onChange={handleEmail_opt_inChange} className="mb-3" controlId="formBasicCheckbox">
-                        <Form.Check type="checkbox" label="Sign me up for emails!" />
-                    </Form.Group>
-                    <Form.Group onChange={handlePaidChange} className="mb-3" controlId="formBasicCheckbox">
-                        <Form.Check type="checkbox" label="I'm going to pay (venmo or zelle) right now!" />
                     </Form.Group>
                     <Button onClick={handleNameSubmit} type="submit" value="Submit" variant="primary">
                         Submit

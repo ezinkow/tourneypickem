@@ -17,14 +17,6 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.STRING,
             allowNull: true
         },
-        email_opt_in: {
-            type: DataTypes.STRING,
-            allowNull: true
-        },
-        paid_commitment: {
-            type: DataTypes.STRING,
-            allowNull: true
-        },
         paid: {
             type: DataTypes.STRING,
             allowNull: true
