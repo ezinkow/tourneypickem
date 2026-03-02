@@ -20,7 +20,7 @@ const CONFERENCES = new Set(["4", "7", "23", "62", "2", "8", "44", "3", "11"]);
   }
 
 async function syncGames() {
-    const url = "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard?groups=50&limit=200&dates=20260301-20260315";
+    const url = "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard?groups=50&limit=200&dates=20260302-20260315";
 
     const response = await fetch(url);
     const data = await response.json();
