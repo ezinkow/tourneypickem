@@ -6,7 +6,7 @@ export default function StandingsPage() {
 
 
     return (
-        <div>
+        <div className='page-content'>
             <Navbar />
             <Standings />
         </div>

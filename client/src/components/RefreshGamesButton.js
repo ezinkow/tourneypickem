@@ -23,7 +23,7 @@ const RefreshGamesButton = ({ onRefresh }) => {
 
   return (
     <button onClick={refreshGames} disabled={loading}>
-      {loading ? "Refreshing..." : "Refresh Games"}
+      {loading ? "Refreshing..." : "Manually Refresh Games"}
     </button>
   );
 };

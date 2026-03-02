@@ -74,7 +74,7 @@ export default function UserSubmit() {
     }
 
     return (
-        < div >
+        < div className='page-content'>
             < form >
                 <Toaster />
                 <label for="fname"><h3>Sign up below:</h3></label><br />

@@ -154,7 +154,7 @@ export default function MyPicks() {
                     )}
 
                     {!loading && picks.length > 0 && (
-                        <Table striped bordered hover responsive className="mt-2 table-wrapper">
+                        <Table striped bordered hover responsive className="mt-2 table-wrapper table-scroll-wrapper">
                             <thead className="hide-mobile">
                                 <tr>
                                     <th>Matchup</th>

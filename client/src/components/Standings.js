@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import Table from "react-bootstrap/esm/Table";
 
 const Standings = () => {
     const [standings, setStandings] = useState([]);
@@ -11,9 +12,9 @@ const Standings = () => {
     console.log(standings)
 
     return (
-        <div className="standings">
+        <div className="standings table-scroll-wrapper">
             <h2>Standings</h2>
-            <table>
+            <Table>
                 <thead>
                     <tr>
                         <th>User</th>
@@ -32,7 +33,7 @@ const Standings = () => {
                         </tr>
                     ))}
                 </tbody>
-            </table>
+            </Table>
         </div>
     );
 };

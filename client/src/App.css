@@ -1,5 +1,15 @@
 /* ===============================
-   GLOBAL RESET & BASE
+   1. TOURNAMENT THEME VARIABLES
+================================ */
+:root {
+  --primary-navy: #13447a;
+  --accent-gold: #c89d3c;
+  --bg-body: #f4f7f9;
+  --white: #ffffff;
+}
+
+/* ===============================
+   2. GLOBAL RESET
 ================================ */
 * {
   margin: 0;
@@ -7,92 +17,64 @@
   box-sizing: border-box;
 }
 
-html,
 body {
-  max-width: 100%;
-  overflow-x: auto;
-  /* <-- change from hidden to auto */
-  overflow-y: auto;
-}
-
-
-body {
-  line-height: 1.6;
   background-color: var(--bg-body);
-  color: var(--text);
   margin: 0;
+  padding: 0;
   font-family: 'Inter', sans-serif;
 }
 
 /* ===============================
-   BASE
+   3. NAVBAR
 ================================ */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  background: #f5f7fb;
-  font-family: "Inter", system-ui, Arial, sans-serif;
-  color: #111827;
-}
-
-.container {
-  margin: auto;
-  padding: 16px;
-  background: transparent !important;
-  box-shadow: none !important;
-  max-width: 1200px !important;
-  padding-top: 30px;
-}
-
-/* ===============================
-   NAVBAR
-================================ */
-.navbar {
-  position: sticky;
+.navbar-header {
+  width: 100%;
+  position: fixed;
   top: 0;
-  z-index: 1000;
-  background: linear-gradient(90deg, #111827, #1f2937);
-  border-bottom: 1px solid #222;
+  left: 0;
+  z-index: 2000;
+  background-color: #13447a !important;
+  border-bottom: 3px solid #c89d3c;
+  height: 65px;
+  display: flex;
+  align-items: center;
 }
 
 .navbar-inner {
-  max-width: 1100px;
-  margin: auto;
-  padding: 12px 16px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
 }
 
 .navbar-brand {
-  font-size: 1.1rem;
-  color: #facc15 !important;
-  /* color: #ffd966 !important; */
-  text-decoration: none;
+  color: #c89d3c !important;
   font-weight: 900;
   text-transform: uppercase;
+  text-decoration: none;
+  font-size: 1.1rem;
   letter-spacing: 1px;
 }
 
 .nav-links {
   display: flex;
-  gap: 14px;
+  gap: 15px;
 }
 
 .nav-links a {
-  color: #e5e7eb;
+  color: #ffffff;
   text-decoration: none;
-  padding: 8px 10px;
-  border-radius: 6px;
-  font-size: 14px;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  transition: color 0.2s;
 }
 
 .nav-links a:hover {
-  background: rgba(255, 255, 255, 0.1);
+  color: #c89d3c;
 }
 
 .menu-toggle {
@@ -100,23 +82,29 @@ body {
   background: none;
   border: none;
   color: white;
-  font-size: 22px;
+  font-size: 24px;
+  cursor: pointer;
 }
 
-@media (max-width: 768px) {
+/* ===============================
+   MOBILE RESPONSIVENESS
+================================ */
+@media (max-width: 992px) {
   .menu-toggle {
     display: block;
   }
 
   .nav-links {
-    position: fixed;
-    top: 60px;
-    left: 0;
-    right: 0;
-    background: #111827;
-    flex-direction: column;
-    padding: 16px;
     display: none;
+    position: absolute;
+    top: 65px;
+    left: 0;
+    width: 100%;
+    background-color: #13447a;
+    flex-direction: column;
+    padding: 20px;
+    border-bottom: 3px solid #c89d3c;
+    gap: 20px;
   }
 
   .nav-links.open {
@@ -125,199 +113,152 @@ body {
 }
 
 /* ===============================
-   TABLES
+   4. LAYOUT — NAVBAR OFFSET FIX
 ================================ */
-.table-card {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
-  overflow: hidden;
+
+/* 
+  FIX: Use a page wrapper instead of relying on the + selector.
+  Wrap all your page content in a <div className="page-content"> 
+  and it will always clear the navbar.
+*/
+.page-content {
+  padding-top: 60px;
+  /* 65px navbar + 20px breathing room */
 }
 
-
-.table-wrapper {
-  overflow-x: auto;
+/* Keep the old selector as a fallback too */
+.navbar-header+* {
+  margin-top: 85px;
 }
 
-.table-wrapper thead th {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  color: black;
-}
-
-table {
+.container {
   width: 100%;
-  border-collapse: collapse;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 15px;
 }
 
-th {
-  background: gray;
-  color: black;
-  text-align: left;
-  padding: 12px;
-  font-size: 13px;
-}
-
-td {
-  padding: 12px;
-  border-bottom: 1px solid #eee;
-}
-
-tr:hover {
-  background: #f9fafb;
-}
-
-.team-cell {
+.navbar-container-fluid {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 6px;
 }
 
-.team-cell img {
-  width: 20px;
-  height: 20px;
-}
-
-.team {
+.navbar-links {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
-.team img {
-  width: 22px;
-  height: 22px;
-}
-
-.pick-win {
-  background: #dcfce7;
-}
-
-.pick-loss {
-  background: #fee2e2;
-}
-
-.pick-missed {
-  background: #fef9c3;
-}
-
-/* ===============================
-   MOBILE TABLES
-================================ */
-@media (max-width: 700px) {
-
-  .table-wrapper {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  table {
-    min-width: 620px;
-    /* prevents squishing */
-    font-size: 13px;
-  }
-
-  th,
-  td {
-    padding: 8px 6px;
-    white-space: nowrap;
-  }
-
-  .team img {
-    width: 18px;
-    height: 18px;
-  }
-
-  .score {
-    font-weight: 600;
-    font-size: 12px;
-  }
-
-  .game-clock {
-    font-size: 11px;
-    color: #666;
-  }
-}
-
-a:active {
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: none;
-}
-
-.dropdown-menu {
-  min-width: 250px !important;
-  /* Makes it wider to fit long names */
-  max-height: 400px !important;
-  /* Increased height so it's not tiny */
-  overflow-y: auto !important;
-  z-index: 2000 !important;
-  /* Ensure it sits above the table headers */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
-  /* Professional shadow */
-  border: 1px solid var(--border) !important;
-}
-
-.table-main thead th {
-  background-color: rgb(203, 220, 233);
+.navbar-links button {
+  background: none;
   border: none;
-  color: #336B6B;
-  padding: 10px;
-  text-align: left;
-  text-shadow: 1px 1px 1px #fff;
-  white-space: nowrap;
+  color: var(--white) !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 13px;
+  padding: 8px 12px;
+  cursor: pointer;
 }
 
-.table-main tbody td {
-  border-bottom: solid 1px rgb(75, 90, 102);
-  color: #333;
-  padding: 10px;
-  text-shadow: 1px 1px 1px #fff;
-  white-space: nowrap;
+.navbar-links button:hover {
+  color: var(--accent-gold) !important;
 }
 
-table {
-  background: white;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, .05);
-}
+@media (max-width: 768px) {
+  .navbar-header {
+    height: auto;
+    padding: 10px 0;
+  }
 
-th,
-td {
-  padding: 10px 14px;
-  text-align: left;
-  border-bottom: 1px solid #eee;
-}
+  .navbar-container-fluid {
+    flex-direction: column;
+    gap: 10px;
+  }
 
-th {
-  background: #f3f2ef;
-  font-weight: 600;
-}
+  .page-content {
+    padding-top: 140px;
+  }
 
-tr:hover {
-  background: #fafafa;
-}
-
-.pick-win td:first-child {
-  border-left: 4px solid #22c55e;
-}
-
-.pick-loss td:first-child {
-  border-left: 4px solid #ef4444;
-}
-
-.pick-missed td:first-child {
-  border-left: 4px solid #eab308;
+  .navbar-header+* {
+    margin-top: 140px;
+  }
 }
 
 /* ===============================
-   COUNTDOWN
+   5. TABLE — DESKTOP & MOBILE FIX
 ================================ */
 
+/* 
+  FIX: Wrap the table in a scrollable container so it 
+  never gets squished — it scrolls horizontally instead.
+*/
+.scoreboard-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 15px;
+}
+
+.scoreboard-container h2 {
+  font-size: 1.4rem;
+  color: var(--primary-navy);
+  margin-bottom: 6px;
+}
+
+/* This wrapper enables horizontal scroll on small screens */
+.table-scroll-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  /* smooth scroll on iOS */
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.scoreboard-table {
+  width: 100%;
+  min-width: 750px;
+  /* FIX: Forces table to stay wide on desktop too */
+  border-collapse: collapse;
+  background: var(--white);
+  font-size: 14px;
+}
+
+.scoreboard-table th,
+.scoreboard-table td {
+  padding: 12px 16px;
+  /* FIX: More generous padding so columns breathe */
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+  /* FIX: Prevents text from wrapping and squishing */
+  vertical-align: middle;
+}
+
+.table-wrapper thead th,
+.scoreboard-table thead th {
+  background-color: var(--primary-navy) !important;
+  color: var(--white) !important;
+  border-bottom: 2px solid var(--accent-gold) !important;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+
+.scoreboard-table tbody tr:hover {
+  background-color: #f0f4f8;
+}
+
+.scoreboard-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ===============================
+   6. COUNTDOWN
+================================ */
 .countdown-card {
   background: linear-gradient(135deg, #111827, #1f2937);
   color: white;
@@ -362,84 +303,4 @@ tr:hover {
   margin-top: 12px;
   font-size: 0.85rem;
   color: #9ca3af;
-}
-
-/* Mobile */
-@media (max-width: 600px) {
-  .countdown-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* --- Flat Theme Variables --- */
-.light {
-  --nav-bg: #1a1a1b;
-  --bg-body: #f4f7f6;
-  --accent: #007bff;
-  --text: #333333;
-  --border: #d1d1d1;
-  --component-bg: #ffffff;
-}
-
-.dark {
-  --nav-bg: #000000;
-  --bg-body: #121212;
-  --accent: #3793ff;
-  --text: #e1e1e1;
-  --border: #333333;
-  --component-bg: #1e1e1e;
-}
-
-/* --- Solid Opaque Navbar --- */
-.navbar-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1100;
-  height: 70px;
-  background-color: var(--nav-bg) !important;
-  border-bottom: 2px solid var(--accent);
-  display: flex;
-  align-items: center;
-}
-
-.navbar-links button {
-  background: none;
-  border: none;
-  color: #ffffff !important;
-  font-weight: 700;
-  text-transform: uppercase;
-  padding: 10px 15px;
-}
-
-/* --- Flat Component Styles --- */
-.instructions-card,
-.table {
-  background: var(--component-bg);
-  border: 1px solid var(--border);
-  box-shadow: none !important;
-  border-radius: 4px;
-  position: relative;
-}
-
-.auth-container,
-form[style*="display: flex"] {
-  overflow: visible !important;
-  /* CRITICAL: Allows dropdown to spill out of the form */
-  z-index: 1001;
-  /* Sits above table */
-  background: var(--component-bg);
-  border: 1px solid var(--border);
-  box-shadow: none !important;
-  border-radius: 4px;
-  position: relative;
-}
-
-/* Style the dropdown toggle button to match your inputs */
-.dropdown-toggle {
-  height: 42px; /* Standardize with the password input */
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }

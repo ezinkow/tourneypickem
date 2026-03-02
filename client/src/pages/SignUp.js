@@ -10,7 +10,7 @@ export default function UserSignUp() {
     return (
         <div>
             <Navbar />
-            <div className='container'>
+            <div className='container page-content'>
                 <SignUp />
               </div>
               <Users />

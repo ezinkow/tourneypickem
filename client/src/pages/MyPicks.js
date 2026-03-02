@@ -8,7 +8,7 @@ export default function Games() {
     return (
         <div>
             <Navbar />
-            <div className='=container'>
+            <div className='=container page-content'>
                 <MyPicks />
             </div>
         </div>

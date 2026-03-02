@@ -6,7 +6,7 @@ export default function PicksDisplay() {
 
 
     return (
-        <div>
+        <div className='page-content'>
             <Navbar />
             <UserPicksDisplay />
         </div>

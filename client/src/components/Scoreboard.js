@@ -47,7 +47,7 @@ const Scoreboard = () => {
         return (favScore - g.line) > dogScore;
     };
 
-       // Result Logic Helper
+    // Result Logic Helper
     // const renderResultIcon = (g) => {
     //     // Access the associated Game data
     //     const game = g.Game;
@@ -71,9 +71,9 @@ const Scoreboard = () => {
     // };
 
     return (
-        <div className="scoreboard-container">
+        <div className="scoreboard-container table-scroll-wrapper">
             <div style={{ whiteSpace: 'nowrap' }}>
-                <h2>Scoreboard<RefreshGamesButton /></h2><strong>(Home team in bold)</strong>
+                <h2>Scoreboard{' '}<RefreshGamesButton /></h2><strong>(Home team in bold)</strong>
             </div>
 
             <table className="scoreboard-table table-wrapper">

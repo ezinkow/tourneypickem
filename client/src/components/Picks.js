@@ -185,7 +185,7 @@ const handleSubmit = async () => {
             Picks selected: {picks.length} / {visibleGames.length}
           </h5>
 
-          <Table striped bordered hover responsive className="table-wrapper">
+          <Table striped bordered hover responsive className="table-wrapper table-scroll-wrapper">
             <thead>
               <tr>
                 <th>Game Start</th>
