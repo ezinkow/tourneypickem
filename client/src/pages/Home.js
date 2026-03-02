@@ -41,7 +41,7 @@ export default function Home() {
                 <Link to="/picks"><h3>🏀 Make Your Picks</h3></Link>
                 <br />
                 <h5>Conference Tournament Schedules:</h5>
-                <a href='https://www.ncaa.com/news/basketball-men/article/2025-02-12/2025-ncaa-conference-tournaments-schedules-brackets-scores-auto-bids' target="_blank" rel="noreferrer">
+                <a href='https://www.ncaa.com/news/basketball-men/article/2026-02-11/tracking-31-ncaa-mens-basketball-conference-tournaments-auto-bids-2026-march' target="_blank" rel="noreferrer">
                     FULL LIST OF CONFERENCE TOURNAMENTS
                 </a>
             </div>
