@@ -12,48 +12,32 @@ export default function UserSubmit() {
     const [email_address, setEmail_address] = useState('')
     const [password, setPassword] = useState('')
     const [phone, setPhone] = useState('')
-    const [email_opt_in, setEmail_opt_in] = useState(false)
-    const [paid, setPaid] = useState(false)
     const [modalIsOpen, setIsOpen] = useState('')
 
     const handleRealNameChange = event => {
         setReal_name(event.target.value)
-        console.log(name)
     }
     const handleNameChange = event => {
         setName(event.target.value)
-        console.log(real_name)
     }
     const handlePasswordChange = event => {
         setPassword(event.target.value)
-        console.log(password)
     }
     const handleEmail_addressChange = event => {
         setEmail_address(event.target.value)
-        console.log(email_address)
     }
     const handlePhoneChange = event => {
         setPhone(event.target.value)
-        console.log(phone)
     }
-    const handleEmail_opt_inChange = event => {
-        setEmail_opt_in(event.target.checked)
-        console.log(email_opt_in)
-    }
-    const handlePaidChange = event => {
-        setPaid(event.target.checked)
-        console.log(paid)
-    }
-
     const handleNameSubmit = event => {
         event.preventDefault()
-        console.log(real_name + name + email_address + email_opt_in)
         setIsOpen(true);
         axios.post('api/users', {
             real_name,
             name,
             password,
-            email_address
+            email_address,
+            phone
         })
         toast.success(`THANKS, ${real_name}, YOU'RE SIGNED UP!`,
             {

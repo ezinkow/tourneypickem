@@ -6,10 +6,8 @@ const Standings = () => {
     const [standings, setStandings] = useState([]);
 
     useEffect(() => {
-        axios.get("/api/standings").then(res => setStandings(res.data)
-        );
+        axios.get("/api/standings").then(res => setStandings(res.data));
     }, []);
-    console.log(standings)
 
     return (
         <div className="standings table-scroll-wrapper">
@@ -17,6 +15,7 @@ const Standings = () => {
             <Table>
                 <thead>
                     <tr>
+                        <th>Rank</th>
                         <th>User</th>
                         <th>Points</th>
                         <th>Correct Picks</th>
@@ -24,8 +23,14 @@ const Standings = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {standings.map(s => (
+                    {standings.map((s, idx) => (
                         <tr key={s.user_id}>
+                            <td>
+                                {idx === 0 && "🥇 "}
+                                {idx === 1 && "🥈 "}
+                                {idx === 2 && "🥉 "}
+                                {idx + 1}
+                            </td>
                             <td>{s.name}</td>
                             <td>{s.points}</td>
                             <td>{s.correct}</td>

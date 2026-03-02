@@ -17,6 +17,10 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.STRING,
             allowNull: true
         },
+        phone: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
         paid: {
             type: DataTypes.STRING,
             allowNull: true
