@@ -22,6 +22,7 @@ export default function Navbar() {
           <Link to="/picks">Make Picks</Link>
           <Link to="/mypicks">My Picks</Link>
           <Link to="/scoreboard">Scoreboard</Link>
+          <Link to="/picksdisplay">Group Picks</Link>
           <Link to="/standings">Standings</Link>
           <Link to="/signup">Sign Up</Link>
         </nav>

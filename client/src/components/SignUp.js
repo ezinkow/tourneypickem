@@ -96,7 +96,7 @@ export default function UserSubmit() {
                         <Form.Control size="lg" type="email" placeholder="Enter email" />
                     </Form.Group>
                     <Form.Group onChange={handlePhoneChange} type="text" id="phone" value={phone} className="mb-3" controlId="formBasicPhone">
-                        <Form.Label>Email address</Form.Label>
+                        <Form.Label>Phone</Form.Label>
                         <Form.Control size="lg" type="phone" placeholder="Phone Number" />
                     </Form.Group>
                     <Button onClick={handleNameSubmit} type="submit" value="Submit" variant="primary">
