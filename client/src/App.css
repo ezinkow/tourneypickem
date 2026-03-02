@@ -1,4 +1,30 @@
 /* ===============================
+   GLOBAL RESET & BASE
+================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: auto;
+  /* <-- change from hidden to auto */
+  overflow-y: auto;
+}
+
+
+body {
+  line-height: 1.6;
+  background-color: var(--bg-body);
+  color: var(--text);
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ===============================
    BASE
 ================================ */
 * {
@@ -14,9 +40,12 @@ body {
 }
 
 .container {
-  max-width: 1100px;
   margin: auto;
   padding: 16px;
+  background: transparent !important;
+  box-shadow: none !important;
+  max-width: 1200px !important;
+  padding-top: 30px;
 }
 
 /* ===============================
@@ -40,10 +69,13 @@ body {
 }
 
 .navbar-brand {
-  font-weight: 700;
   font-size: 1.1rem;
-  color: #facc15;
+  color: #facc15 !important;
+  /* color: #ffd966 !important; */
   text-decoration: none;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .nav-links {
@@ -60,7 +92,7 @@ body {
 }
 
 .nav-links a:hover {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .menu-toggle {
@@ -98,12 +130,19 @@ body {
 .table-card {
   background: white;
   border-radius: 16px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
   overflow: hidden;
 }
 
+
 .table-wrapper {
   overflow-x: auto;
+}
+
+.table-wrapper thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
 table {
@@ -128,11 +167,15 @@ tr:hover {
   background: #f9fafb;
 }
 
-.game-row {
+.team-cell {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 10px;
+  gap: 6px;
+}
+
+.team-cell img {
+  width: 20px;
+  height: 20px;
 }
 
 .team {
@@ -158,30 +201,40 @@ tr:hover {
   background: #fef9c3;
 }
 
+/* ===============================
+   MOBILE TABLES
+================================ */
 @media (max-width: 700px) {
 
-  table thead {
-    display: none;
+  .table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
-  table tr {
-    display: block;
-    margin-bottom: 14px;
-    background: white;
-    border-radius: 12px;
-    padding: 10px;
+  table {
+    min-width: 620px;
+    /* prevents squishing */
+    font-size: 13px;
   }
 
-  table td {
-    display: flex;
-    justify-content: space-between;
-    border: none;
-    padding: 6px 0;
+  th,
+  td {
+    padding: 8px 6px;
+    white-space: nowrap;
   }
 
-  table td::before {
-    content: attr(data-label);
+  .team img {
+    width: 18px;
+    height: 18px;
+  }
+
+  .score {
     font-weight: 600;
+    font-size: 12px;
+  }
+
+  .game-clock {
+    font-size: 11px;
     color: #666;
   }
 }
@@ -195,8 +248,16 @@ a:hover {
 }
 
 .dropdown-menu {
-  height: 200px;
-  overflow-y: scroll;
+  min-width: 250px !important;
+  /* Makes it wider to fit long names */
+  max-height: 400px !important;
+  /* Increased height so it's not tiny */
+  overflow-y: auto !important;
+  z-index: 2000 !important;
+  /* Ensure it sits above the table headers */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
+  /* Professional shadow */
+  border: 1px solid var(--border) !important;
 }
 
 .table-main thead th {
@@ -215,10 +276,6 @@ a:hover {
   padding: 10px;
   text-shadow: 1px 1px 1px #fff;
   white-space: nowrap;
-}
-
-.table {
-  position: relative;
 }
 
 table {
@@ -242,4 +299,146 @@ th {
 
 tr:hover {
   background: #fafafa;
+}
+
+.pick-win td:first-child {
+  border-left: 4px solid #22c55e;
+}
+
+.pick-loss td:first-child {
+  border-left: 4px solid #ef4444;
+}
+
+.pick-missed td:first-child {
+  border-left: 4px solid #eab308;
+}
+
+/* ===============================
+   COUNTDOWN
+================================ */
+
+.countdown-card {
+  background: linear-gradient(135deg, #111827, #1f2937);
+  color: white;
+  border-radius: 18px;
+  padding: 22px;
+  text-align: center;
+  max-width: 420px;
+  margin: 20px auto;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.15);
+}
+
+.countdown-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+  color: #facc15;
+}
+
+.countdown-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.countdown-box {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.countdown-number {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.countdown-label {
+  font-size: 0.75rem;
+  color: #e5e7eb;
+}
+
+.countdown-sub {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .countdown-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* --- Flat Theme Variables --- */
+.light {
+  --nav-bg: #1a1a1b;
+  --bg-body: #f4f7f6;
+  --accent: #007bff;
+  --text: #333333;
+  --border: #d1d1d1;
+  --component-bg: #ffffff;
+}
+
+.dark {
+  --nav-bg: #000000;
+  --bg-body: #121212;
+  --accent: #3793ff;
+  --text: #e1e1e1;
+  --border: #333333;
+  --component-bg: #1e1e1e;
+}
+
+/* --- Solid Opaque Navbar --- */
+.navbar-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1100;
+  height: 70px;
+  background-color: var(--nav-bg) !important;
+  border-bottom: 2px solid var(--accent);
+  display: flex;
+  align-items: center;
+}
+
+.navbar-links button {
+  background: none;
+  border: none;
+  color: #ffffff !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 10px 15px;
+}
+
+/* --- Flat Component Styles --- */
+.instructions-card,
+.table {
+  background: var(--component-bg);
+  border: 1px solid var(--border);
+  box-shadow: none !important;
+  border-radius: 4px;
+  position: relative;
+}
+
+.auth-container,
+form[style*="display: flex"] {
+  overflow: visible !important;
+  /* CRITICAL: Allows dropdown to spill out of the form */
+  z-index: 1001;
+  /* Sits above table */
+  background: var(--component-bg);
+  border: 1px solid var(--border);
+  box-shadow: none !important;
+  border-radius: 4px;
+  position: relative;
+}
+
+/* Style the dropdown toggle button to match your inputs */
+.dropdown-toggle {
+  height: 42px; /* Standardize with the password input */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }

@@ -113,7 +113,7 @@ export default function Picks() {
       <Toaster />
       <Instructions />
 
-      <h2>🏈 Make Your Picks</h2>
+      <h2>🏀 Make Your Picks 🗑️</h2>
 
       {/* --- Auth Section --- */}
       {!authenticated && (
@@ -122,29 +122,32 @@ export default function Picks() {
             e.preventDefault();
             verify();
           }}
-          style={{ display: "flex", gap: 10, marginBottom: 20 }}
+          className="auth-container" /* Use this class instead of inline flex */
         >
-          <Dropdown onSelect={setUser}>
-            <Dropdown.Toggle variant="outline-primary">{user}</Dropdown.Toggle>
+          <Dropdown onSelect={setUser} className="user-dropdown">
+            <Dropdown.Toggle variant="outline-primary" id="dropdown-basic">
+              {user}
+            </Dropdown.Toggle>
+
             <Dropdown.Menu>
               {users.map(n => (
-                <Dropdown.Item key={n.name} eventKey={n.name}>{n.name}</Dropdown.Item>
+                <Dropdown.Item key={n.name} eventKey={n.name}>
+                  {n.name}
+                </Dropdown.Item>
               ))}
             </Dropdown.Menu>
           </Dropdown>
 
           <input
             type="password"
-            className="form-control"
-            style={{ width: "200px" }}
+            className="form-control auth-input"
             value={password}
             onChange={e => setPassword(e.target.value)}
             placeholder="Password"
             required
           />
 
-          {/* Note: type="submit" makes 'Enter' work */}
-          <Button type="submit">Verify Identity</Button>
+          <Button type="submit" variant="primary">Verify Identity</Button>
         </form>
       )}
 
@@ -174,7 +177,7 @@ export default function Picks() {
             Picks selected: {picks.length} / {visibleGames.length}
           </h5>
 
-          <Table striped bordered hover responsive>
+          <Table striped bordered hover responsive className="table-wrapper">
             <thead>
               <tr>
                 <th>Game Start</th>

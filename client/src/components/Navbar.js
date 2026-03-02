@@ -14,7 +14,7 @@ export default function Navbar() {
         </button>
 
         <Link to="/" className="navbar-brand">
-          🏀 Champ Week Pick'em
+          🏀 Champ Week Pick'em ⛹🏾‍♂️
         </Link>
 
         <nav className={`nav-links ${open ? "open" : ""}`}>

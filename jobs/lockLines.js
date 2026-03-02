@@ -40,7 +40,7 @@ const lockLines = async () => {
 
     const games = await Games.findAll({
         where: {
-            line_locked: null
+            line: null
         }
     });
 
@@ -51,7 +51,7 @@ const lockLines = async () => {
         if (now >= lockThreshold && game.favorite) {
 
             await game.update({
-                line_locked: game.favorite ? game.line_locked ?? game.line_locked : null,
+                line: game.favorite ? game.line ?? game.line : null,
                 locked_favorite: game.favorite,
                 locked_underdog: game.underdog,
                 locked_fav_logo: game.fav_logo,

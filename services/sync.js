@@ -20,7 +20,7 @@ const CONFERENCES = new Set(["4", "7", "23", "62", "2", "8", "44", "3", "11"]);
   }
 
 async function syncGames() {
-    const url = "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard?groups=50&limit=200&dates=20260227-20260315";
+    const url = "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard?groups=50&limit=200&dates=20260301-20260315";
 
     const response = await fetch(url);
     const data = await response.json();
@@ -29,7 +29,7 @@ async function syncGames() {
     for (const event of data.events) {
         const comp = event?.competitions?.[0];
         if (!comp) continue;
-
+        // console.log('coooommmppppp', comp)
         const home = comp.competitors.find(c => c.homeAway === "home");
         const away = comp.competitors.find(c => c.homeAway === "away");
         if (!home || !away) continue;
@@ -37,12 +37,10 @@ async function syncGames() {
         const homeConf = home.team.conferenceId?.toString();
         const awayConf = away.team.conferenceId?.toString();
         if (!CONFERENCES.has(homeConf) && !CONFERENCES.has(awayConf)) continue;
-        console.log(event.date)
         const gameStart = formatDateET(event.date)
         const event_date = new Date(event.date);
         // Set lock time to 1 hour before game time
         const lineLockedTime = new Date(event_date.getTime() - 60 * 60 * 1000);
-        console.log('looockkkk',lineLockedTime)
         const status = event.status.type.name;
 
         // --- ODDS & LINE LOGIC ---

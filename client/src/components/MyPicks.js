@@ -39,7 +39,8 @@ export default function MyPicks() {
         setLoading(true);
         try {
             const res = await axios.get("/api/mypicks", { params: { name: user } });
-            const sortedData = (res.data || []).sort((a, b) => {
+            // Sorted by game_date descending
+            const sortedData = (res.data || []).sort((b, a) => {
                 return new Date(a.game_date) - new Date(b.game_date);
             });
             setPicks(sortedData || []);
@@ -92,15 +93,28 @@ export default function MyPicks() {
         );
     };
 
+    const getRowClass = (p) => {
+        if (!p.Game?.winner) return "";
+        if (p.pick === p.Game.winner) return "pick-win";
+        if (p.missed_pick_flag) return "pick-missed";
+        return "pick-loss";
+    };
+
     return (
         <div className="container" style={{ maxWidth: 1000 }}>
             <Toaster />
 
             <h2>🏀 My Picks</h2>
 
-            {/* --- Auth Section (Matches Picks Style) --- */}
+            {/* --- Auth Section (Now uses the form wrapper for 'Enter' key and overflow visibility) --- */}
             {!authenticated && (
-                <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
+                <form
+                    className="auth-container"
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        verify();
+                    }}
+                >
                     <Dropdown onSelect={setUser}>
                         <Dropdown.Toggle variant="outline-primary">{user}</Dropdown.Toggle>
                         <Dropdown.Menu>
@@ -114,15 +128,15 @@ export default function MyPicks() {
 
                     <input
                         type="password"
-                        className="form-control"
-                        style={{ width: "200px" }}
+                        className="form-control auth-input"
                         value={password}
                         onChange={e => setPassword(e.target.value)}
                         placeholder="Password"
+                        required
                     />
 
-                    <Button onClick={verify}>Verify Identity</Button>
-                </div>
+                    <Button type="submit">Verify Identity</Button>
+                </form>
             )}
 
             {/* --- My Picks Display Section --- */}
@@ -140,8 +154,8 @@ export default function MyPicks() {
                     )}
 
                     {!loading && picks.length > 0 && (
-                        <Table striped bordered hover responsive className="mt-2">
-                            <thead>
+                        <Table striped bordered hover responsive className="mt-2 table-wrapper">
+                            <thead className="hide-mobile">
                                 <tr>
                                     <th>Matchup</th>
                                     <th>Line</th>
@@ -153,7 +167,7 @@ export default function MyPicks() {
 
                             <tbody>
                                 {picks.map((p, i) => (
-                                    <tr key={i}>
+                                    <tr className={getRowClass(p)} key={i}>
                                         <td>
                                             <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
                                                 <img src={p.away_logo} height={22} alt="" />
@@ -165,7 +179,7 @@ export default function MyPicks() {
                                         <td>
                                             {getFavoriteLogo(p) ? (
                                                 <>
-                                                    <img
+                                                    <img className="team-cell"
                                                         src={getFavoriteLogo(p)}
                                                         height={24}
                                                         style={{ borderRadius: 4, marginRight: 5 }}
@@ -182,14 +196,14 @@ export default function MyPicks() {
                                             {(p.Game?.status === "STATUS_FINAL" || p.Game?.status === "STATUS_IN_PROGRESS") ? (
                                                 <div style={{ whiteSpace: "nowrap" }}>
                                                     <span style={{ fontWeight: p.Game?.status === "STATUS_IN_PROGRESS" ? "bold" : "normal" }}>
-                                                        {p.Game?.status === "STATUS_FINAL" ? "Final: " : `${p.game_clock}: `}
+                                                        {p.Game?.status === "STATUS_FINAL" ? "Final: " : `${p.Game.game_clock}: `}
                                                     </span>
                                                     <img src={p.away_logo} height={22} style={{ margin: "0 4px" }} alt="" />
                                                     {p.away_score} - {p.home_score}
                                                     <img src={p.home_logo} height={22} style={{ margin: "0 4px" }} alt="" />
                                                 </div>
                                             ) : (
-                                                <span style={{ color: "#666" }}>{p.game_clock || "Scheduled"}</span>
+                                                <span style={{ color: "#666" }}>{p.Game?.game_clock || "Scheduled"}</span>
                                             )}
                                         </td>
 

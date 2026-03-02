@@ -76,7 +76,7 @@ const Scoreboard = () => {
                 <h2>Scoreboard<RefreshGamesButton /></h2><strong>(Home team in bold)</strong>
             </div>
 
-            <table className="scoreboard-table">
+            <table className="scoreboard-table table-wrapper">
                 <thead>
                     <tr>
                         <th>Date</th>
