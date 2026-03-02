@@ -2,7 +2,7 @@
 const { Picks, Games } = require("../models");
 
 module.exports = function (app) {
-    
+
     // Get everything in Picks table
     app.get("/api/picks", async function (req, res) {
         try {
@@ -56,6 +56,41 @@ module.exports = function (app) {
         } catch (err) {
             console.error("Pick submission error:", err);
             res.status(500).json({ error: "Submission failed" });
+        }
+    });
+
+    app.post("/api/picks/bulk", async (req, res) => {
+        const { name, picks } = req.body;
+
+        if (!name || !picks || !Array.isArray(picks)) {
+            return res.status(400).json({ error: "Invalid data format" });
+        }
+
+        try {
+            const picksData = picks.map(p => ({
+                name: name,
+                game_id: p.game_id,
+                pick: p.pick,
+                game_date: p.game_date
+            }));
+
+            /**
+             * bulkCreate with updateOnDuplicate:
+             * 1. It attempts to insert all rows.
+             * 2. If a (name + game_id) conflict occurs, it updates the specified columns instead.
+             * 3. This is ONE single query to the DB (extremely quota-friendly).
+             */
+            await Picks.bulkCreate(picksData, {
+                updateOnDuplicate: ["pick", "game_date"]
+            });
+
+            res.json({
+                success: true,
+                message: `Successfully processed ${picks.length} picks.`
+            });
+        } catch (err) {
+            console.error("Bulk Pick Error:", err);
+            res.status(500).json({ error: "Bulk submission failed" });
         }
     });
 

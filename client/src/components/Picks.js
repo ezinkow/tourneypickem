@@ -91,22 +91,30 @@ export default function Picks() {
     setAllFaves(type === "faves");
   };
 
-  const handleSubmit = async () => {
-    try {
-      for (const p of picks) {
-        await axios.post("/api/picks", {
-          name: user, // Using 'user' from state
-          game_id: p.game,
-          pick: p.pick,
-          game_date: p.game_date
-        });
-      }
-      toast.success(`Thanks ${user}, picks submitted!`);
-      setPicks([]);
-    } catch {
-      toast.error("Submission failed");
-    }
-  };
+const handleSubmit = async () => {
+  if (picks.length === 0) return toast.error("No picks selected");
+
+  try {
+    // Format picks to match the backend expectation
+    const payload = {
+      name: user,
+      picks: picks.map(p => ({
+        game_id: p.game,
+        pick: p.pick,
+        game_date: p.game_date
+      }))
+    };
+
+    // Single request instead of a loop
+    await axios.post("/api/picks/bulk", payload);
+
+    toast.success(`Thanks ${user}, ${picks.length} picks submitted!`);
+    setPicks([]); // Clear local state after success
+  } catch (err) {
+    console.error(err);
+    toast.error("Submission failed");
+  }
+};
 
   return (
     <div className="container">

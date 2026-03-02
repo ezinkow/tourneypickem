@@ -33,7 +33,7 @@ require("./routes/picksdisplay-api-routes.js")(app);
 const syncGames = require("./services/sync");
 const lockLines = require("./jobs/lockLines");
 
-// Run sync + lock every 5 minutes
+// Run sync + lock every 15 minutes
 setInterval(async () => {
   try {
     await syncGames();
@@ -41,7 +41,7 @@ setInterval(async () => {
   } catch (err) {
     console.error("Background job failed:", err);
   }
-}, 5 * 60 * 1000);
+}, 15 * 60 * 1000);
 
 // Run once at startup
 (async () => {

@@ -3,21 +3,21 @@ const { Games } = require("../models");
 
 const CONFERENCES = new Set(["4", "7", "23", "62", "2", "8", "44", "3", "11"]);
 
-  function formatDateET(date) {
+function formatDateET(date) {
     return new Date(date).toLocaleDateString("en-US", {
-      timeZone: "America/New_York",
-      month: "short",
-      day: "numeric"
+        timeZone: "America/New_York",
+        month: "short",
+        day: "numeric"
     });
-  }
+}
 
-   function formatTimeET(date) {
+function formatTimeET(date) {
     return new Date(date).toLocaleTimeString("en-US", {
-      timeZone: "America/New_York",
-      hour: "numeric",
-      minute: "2-digit",
+        timeZone: "America/New_York",
+        hour: "numeric",
+        minute: "2-digit",
     });
-  }
+}
 
 async function syncGames() {
     const url = "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard?groups=50&limit=200&dates=20260302-20260315";
@@ -76,9 +76,22 @@ async function syncGames() {
 
         // --- DB UPSERT WITH LOCK LOGIC ---
         const existingGame = await Games.findByPk(event.id);
-        
-        // Check if we are past the lock time
         const isLocked = now >= lineLockedTime;
+
+        // ⚡ OPTIMIZATION: Check if data actually changed before hitting the DB
+        const newScore = parseInt(home.score || 0);
+        const newAwayScore = parseInt(away.score || 0);
+        const newStatus = event.status.type.shortDetail;
+
+        // If the game exists AND scores/status haven't changed AND it's locked (so line won't change)
+        // then SKIP the upsert to save a database "question"
+        if (existingGame &&
+            existingGame.home_score === newScore &&
+            existingGame.away_score === newAwayScore &&
+            existingGame.game_clock === newStatus &&
+            isLocked) {
+            continue;
+        }
 
         await Games.upsert({
             id: event.id,
@@ -93,7 +106,7 @@ async function syncGames() {
             status: status,
             game_clock: event.status.type.shortDetail,
             winner: status === "STATUS_FINAL" ? (parseInt(home.score) > parseInt(away.score) ? home.team.shortDisplayName : away.team.shortDisplayName) : null,
-            
+
             // 🔥 The Logic: If locked, use existing data. If not, update with current ESPN data.
             line: isLocked ? existingGame?.line : currentLine,
             favorite: isLocked ? existingGame?.favorite : favorite,
