@@ -6,6 +6,7 @@
   --accent-gold: #c89d3c;
   --bg-body: #f4f7f9;
   --white: #ffffff;
+  --navbar-height: 65px;
 }
 
 /* ===============================
@@ -19,8 +20,6 @@
 
 body {
   background-color: var(--bg-body);
-  margin: 0;
-  padding: 0;
   font-family: 'Inter', sans-serif;
 }
 
@@ -33,11 +32,12 @@ body {
   top: 0;
   left: 0;
   z-index: 2000;
-  background-color: #13447a !important;
-  border-bottom: 3px solid #c89d3c;
-  height: 65px;
+  background-color: var(--primary-navy);
+  border-bottom: 3px solid var(--accent-gold);
+  height: var(--navbar-height);
   display: flex;
   align-items: center;
+  color: #c89d3c;
 }
 
 .navbar-inner {
@@ -51,7 +51,7 @@ body {
 }
 
 .navbar-brand {
-  color: #c89d3c !important;
+  color: var(--accent-gold);
   font-weight: 900;
   text-transform: uppercase;
   text-decoration: none;
@@ -65,7 +65,7 @@ body {
 }
 
 .nav-links a {
-  color: #ffffff;
+  color: var(--white);
   text-decoration: none;
   font-weight: 600;
   font-size: 13px;
@@ -74,21 +74,19 @@ body {
 }
 
 .nav-links a:hover {
-  color: #c89d3c;
+  color: var(--accent-gold);
 }
 
 .menu-toggle {
   display: none;
   background: none;
   border: none;
-  color: white;
+  color: var(--white);
   font-size: 24px;
   cursor: pointer;
 }
 
-/* ===============================
-   MOBILE RESPONSIVENESS
-================================ */
+/* Mobile nav dropdown — overlays content, doesn't push it */
 @media (max-width: 992px) {
   .menu-toggle {
     display: block;
@@ -96,15 +94,17 @@ body {
 
   .nav-links {
     display: none;
-    position: absolute;
-    top: 65px;
+    position: fixed;
+    /* fixed so it overlays, never affects layout */
+    top: var(--navbar-height);
     left: 0;
     width: 100%;
-    background-color: #13447a;
+    background-color: var(--primary-navy);
     flex-direction: column;
     padding: 20px;
-    border-bottom: 3px solid #c89d3c;
+    border-bottom: 3px solid var(--accent-gold);
     gap: 20px;
+    z-index: 1999;
   }
 
   .nav-links.open {
@@ -113,22 +113,15 @@ body {
 }
 
 /* ===============================
-   4. LAYOUT — NAVBAR OFFSET FIX
+   4. LAYOUT
 ================================ */
 
-/* 
-  FIX: Use a page wrapper instead of relying on the + selector.
-  Wrap all your page content in a <div className="page-content"> 
-  and it will always clear the navbar.
-*/
+/* Single source of truth for page offset — works on all screen sizes
+   because the navbar is always exactly --navbar-height tall */
 .page-content {
-  padding-top: 60px;
-  /* 65px navbar + 20px breathing room */
-}
-
-/* Keep the old selector as a fallback too */
-.navbar-header+* {
-  margin-top: 85px;
+  padding-top: calc(var(--navbar-height) + 20px);
+  /* 65px + breathing room */
+  min-height: 100vh;
 }
 
 .container {
@@ -138,63 +131,12 @@ body {
   padding: 15px;
 }
 
-.navbar-container-fluid {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.navbar-links {
-  display: flex;
-  gap: 10px;
-}
-
-.navbar-links button {
-  background: none;
-  border: none;
-  color: var(--white) !important;
-  font-weight: 700;
-  text-transform: uppercase;
-  font-size: 13px;
-  padding: 8px 12px;
-  cursor: pointer;
-}
-
-.navbar-links button:hover {
-  color: var(--accent-gold) !important;
-}
-
-@media (max-width: 768px) {
-  .navbar-header {
-    height: auto;
-    padding: 10px 0;
-  }
-
-  .navbar-container-fluid {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .page-content {
-    padding-top: 140px;
-  }
-
-  .navbar-header+* {
-    margin-top: 140px;
-  }
-}
+/* Removed: .navbar-header+*, .navbar-container-fluid, 
+   .navbar-links — these were unused duplicates causing confusion */
 
 /* ===============================
-   5. TABLE — DESKTOP & MOBILE FIX
+   5. TABLE
 ================================ */
-
-/* 
-  FIX: Wrap the table in a scrollable container so it 
-  never gets squished — it scrolls horizontally instead.
-*/
 .scoreboard-container {
   width: 100%;
   max-width: 1200px;
@@ -208,12 +150,10 @@ body {
   margin-bottom: 6px;
 }
 
-/* This wrapper enables horizontal scroll on small screens */
 .table-scroll-wrapper {
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  /* smooth scroll on iOS */
   border-radius: 10px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
@@ -221,7 +161,6 @@ body {
 .scoreboard-table {
   width: 100%;
   min-width: 750px;
-  /* FIX: Forces table to stay wide on desktop too */
   border-collapse: collapse;
   background: var(--white);
   font-size: 14px;
@@ -230,16 +169,14 @@ body {
 .scoreboard-table th,
 .scoreboard-table td {
   padding: 12px 16px;
-  /* FIX: More generous padding so columns breathe */
   text-align: left;
   border-bottom: 1px solid #e5e7eb;
   white-space: nowrap;
-  /* FIX: Prevents text from wrapping and squishing */
   vertical-align: middle;
 }
 
-.table-wrapper thead th,
-.scoreboard-table thead th {
+.scoreboard-table thead th,
+.table-wrapper thead th {
   background-color: var(--primary-navy) !important;
   color: var(--white) !important;
   border-bottom: 2px solid var(--accent-gold) !important;
@@ -261,7 +198,7 @@ body {
 ================================ */
 .countdown-card {
   background: linear-gradient(135deg, #111827, #1f2937);
-  color: white;
+  color: var(--white);
   border-radius: 18px;
   padding: 22px;
   text-align: center;
@@ -303,4 +240,324 @@ body {
   margin-top: 12px;
   font-size: 0.85rem;
   color: #9ca3af;
+}
+
+.show-mobile {
+  display: none;
+}
+
+/* hidden on desktop */
+
+/* ===============================
+   MOBILE BOTTOM NAV
+================================ */
+.mobile-bottom-nav {
+  display: none;
+  /* hidden on desktop */
+}
+
+@media (max-width: 992px) {
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2000;
+    background-color: var(--primary-navy);
+    border-top: 3px solid var(--accent-gold);
+    justify-content: space-around;
+    align-items: center;
+    height: 60px;
+    padding: 0 4px;
+  }
+
+  .mobile-nav-link {
+    background: none;
+    border: none;
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 8px;
+    transition: background 0.15s;
+    flex: 1;
+  }
+
+  .mobile-nav-link span {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: #cbd5e1;
+  }
+
+  .mobile-nav-link:hover,
+  .mobile-nav-link:active {
+    background: rgba(200, 157, 60, 0.2);
+  }
+
+  /* Add bottom padding to page content so it doesn't hide behind the bar */
+  .page-content {
+    padding-bottom: 70px;
+  }
+}
+
+/* Desktop: bold text does the job, no extra styling needed */
+.home-team-logo {
+  outline: 2px solid var(--accent-gold);
+  border-radius: 3px;
+}
+
+/* ===============================
+   MENU OVERLAY
+================================ */
+.menu-overlay {
+  display: none;
+}
+
+@media (max-width: 992px) {
+  .menu-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1998;
+  }
+}
+
+/* Hide text labels on mobile, keep logos */
+@media (max-width: 768px) {
+  .hide-mobile {
+    display: none;
+  }
+
+  .show-mobile {
+    display: inline;
+  }
+
+  /* shown on mobile */
+
+  /* Tighten up cell padding on mobile */
+  .scoreboard-table th,
+  .scoreboard-table td {
+    padding: 6px 4px;
+    font-size: 11px;
+  }
+
+  /* Table no longer needs a min-width since text is gone */
+  .scoreboard-table {
+    min-width: unset;
+  }
+
+  /* Shrink all logos inside the table on mobile */
+  .scoreboard-table img {
+    width: 16px !important;
+    height: 16px;
+    object-fit: contain;
+    margin-right: 2px !important;
+    margin-left: 2px !important;
+  }
+
+  .scoreboard-header strong {
+    display: none;
+  }
+}
+
+/* ===============================
+   PLAYER PICKS MATRIX
+================================ */
+.picks-matrix-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px 0;
+}
+
+.picks-matrix-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.picks-matrix-table {
+  border-collapse: collapse;
+  background: var(--white);
+  font-size: 13px;
+  width: auto;
+}
+
+/* Sticky player column */
+.picks-sticky-col {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: var(--white);
+  border-right: 2px solid var(--accent-gold);
+  white-space: nowrap;
+  width: 120px;
+  min-width: 120px;
+  max-width: 120px;
+}
+
+.picks-sticky-header {
+  background-color: var(--primary-navy) !important;
+  color: var(--white) !important;
+  z-index: 3;
+  text-align: center;
+  /* ADD */
+  vertical-align: middle;
+  /* ADD */
+}
+
+/* All headers */
+.picks-matrix-table thead th {
+  background-color: var(--primary-navy);
+  color: var(--white);
+  border-bottom: 2px solid var(--accent-gold);
+  padding: 8px 6px;
+  text-align: center;
+  vertical-align: bottom;
+}
+
+.picks-game-header {
+  min-width: 60px;
+  max-width: 70px;
+}
+
+/* Player cell */
+.picks-player-cell {
+  padding: 6px 8px;
+  width: 120px;
+  min-width: 120px;
+  max-width: 120px;
+}
+
+.picks-rank {
+  font-size: 13px;
+}
+
+.picks-player-name {
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--primary-navy);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 75px;
+  /* enough for most first names */
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.picks-points {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+/* Pick cells */
+.picks-pick-cell {
+  padding: 6px 4px;
+  text-align: center;
+  vertical-align: middle;
+  border-bottom: 1px solid #f3f4f6;
+  border-right: 1px solid #f3f4f6;
+}
+
+.picks-matrix-table tbody tr:hover .picks-pick-cell,
+.picks-matrix-table tbody tr:hover .picks-sticky-col {
+  filter: brightness(0.96);
+}
+
+/* Mobile tweaks */
+@media (max-width: 768px) {
+  .picks-player-cell {
+    min-width: 100px;
+    padding: 6px 8px;
+  }
+
+  .picks-player-name {
+    font-size: 12px;
+  }
+
+  .picks-points {
+    display: none;
+  }
+
+  .picks-matrix-table {
+    font-size: 11px;
+  }
+}
+
+.user-picks-header {
+  background-color: #c89d3c;
+  color: green;
+}
+
+.picks-game-header {
+  min-width: 66px;
+  max-width: 66px;
+  width: 66px;
+  overflow: hidden;
+  padding: 4px 2px !important;
+}
+
+.picks-player-cell {
+  padding: 6px 8px;
+  min-width: 80px;
+  /* shrunk from 130px */
+  max-width: 80px;
+}
+
+.picks-player-name {
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--primary-navy);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 55px;
+  display: inline-block;
+}
+
+/* ===============================
+   MY PICKS
+================================ */
+.mypicks-desktop {
+  display: block;
+}
+
+.mypicks-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mypicks-desktop {
+    display: none;
+  }
+
+  .mypicks-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 8px 0;
+  }
+}
+
+/* Row color classes — used by both table and cards */
+.pick-win {
+  background-color: #f0fdf4 !important;
+}
+
+.pick-loss {
+  background-color: #fef2f2 !important;
+}
+
+.pick-missed {
+  background-color: #fffbeb !important;
 }

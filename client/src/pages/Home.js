@@ -11,12 +11,17 @@ export default function Home() {
             <div className="page-content">   {/* ← ADD THIS */}
                 <CountdownDisplay />
                 <div className='container'>
-                    <Link to="/signup" style={{ textDecoration: 'none' }}>
-                        <Button variant="success" size="lg">
-                            Sign Up Here
-                        </Button>
-                    </Link>
-                    <br /><br />
+                    <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+                        <Link to="/signup" style={{ textDecoration: 'none' }}>
+                            <Button variant="success" size="lg">
+                               📋 Sign Up Here 🚀
+                            </Button>
+                        </Link>
+                        <Link to="/picks"><h3 style={{ margin: 0 }}><Button variant="success" size="lg">
+                            🏀 Make Your Picks 🗑️
+                        </Button></h3></Link>
+                    </div>
+                    <br />
                     <strong>The game:</strong><br />
                     Runs from March 7 - March 15<br />
                     Pick every conference tournament game <strong><u>against the spread</u></strong> from the following conferences: <br />
@@ -37,7 +42,6 @@ export default function Home() {
                     Lines lock one hour before scheduled tip-off time.<br />
                     No matter what the line is when pick is submitted, the final, closed locked line will be the line everyone is using.
                     <br /><br />
-                    <Link to="/picks"><h3>🏀 Make Your Picks</h3></Link>
                     <br />
                     <h5>Conference Tournament Schedules:</h5>
                     <a href='https://www.ncaa.com/news/basketball-men/article/2026-02-11/tracking-31-ncaa-mens-basketball-conference-tournaments-auto-bids-2026-march' target="_blank" rel="noreferrer">
