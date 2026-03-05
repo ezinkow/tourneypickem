@@ -35,15 +35,15 @@ async function syncGames() {
             let homeTeam = home?.team?.shortDisplayName || "TBD";
             let awayTeam = away?.team?.shortDisplayName || "TBD";
 
+            const teamsKnown = homeTeam !== "TBD" && awayTeam !== "TBD";
+            console.log('teams known', teamsKnown)
+
             /**
              * If the team name is "TBD", use the tournament headline as the name.
              * This ensures the matchup shows the tournament info instead of just "TBD"
              */
             if (homeTeam === "TBD" && headline) homeTeam = headline;
             if (awayTeam === "TBD" && headline) awayTeam = headline;
-
-            // Skip games where either team is still TBD
-            if (homeTeam === "TBD" || awayTeam === "TBD") continue;
 
             const homeLogo = home?.team?.logo || null;
             const awayLogo = away?.team?.logo || null;
@@ -83,18 +83,14 @@ async function syncGames() {
                 home_score: parseInt(home?.score || 0),
                 away_score: parseInt(away?.score || 0),
                 status,
-                /**
-                 * GAME START COLUMN:
-                 * We prioritize the shortDetail (e.g., "7:00 PM") so the 
-                 * "Game Start" column looks correct.
-                 */
                 game_clock: event.status?.type?.shortDetail || "",
                 winner: status === "STATUS_FINAL"
                     ? (parseInt(home.score) > parseInt(away.score) ? homeTeam : awayTeam)
                     : null,
                 line: isLocked ? (existingGame?.line || currentLine) : currentLine,
                 favorite: isLocked ? (existingGame?.favorite || favorite) : favorite,
-                underdog: isLocked ? (existingGame?.underdog || underdog) : underdog
+                underdog: isLocked ? (existingGame?.underdog || underdog) : underdog,
+                selectable: teamsKnown
             });
         }
         return true;

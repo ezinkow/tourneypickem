@@ -11,7 +11,6 @@ export default function Picks() {
   const [user, setUser] = useState("SELECT YOUR NAME");
   const [password, setPassword] = useState("");
   const [authenticated, setAuthenticated] = useState(false);
-
   const [games, setGames] = useState([]);
   const [picks, setPicks] = useState([]);
   const [allDogs, setAllDogs] = useState(false);
@@ -24,7 +23,7 @@ export default function Picks() {
       setUsers(res.data.sort((a, b) => a.name.localeCompare(b.name)))
     );
   }, []);
-
+console.log(games)
   useEffect(() => {
     document.body.classList.add("force-mobile");
     return () => document.body.classList.remove("force-mobile");
@@ -256,14 +255,16 @@ export default function Picks() {
                 <td style={{ padding: "10px 12px", borderBottom: "1px solid #e5e7eb" }}>
                   <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                     {[
-                      { value: game.underdog, logo: game.dog_logo, label: `${game.underdog}`, spread: `+${game.line}` },
-                      { value: game.favorite, logo: game.fav_logo, label: `${game.favorite}`, spread: `-${game.line}` },
-                    ].map(({ value, logo, label, spread }) => {
+                      { value: game.underdog, logo: game.dog_logo, spread: `+${game.line}` },
+                      { value: game.favorite, logo: game.fav_logo, spread: `-${game.line}` },
+                    ].map(({ value, logo, spread }) => {
                       const selected = picks.find(p => p.game === game.id)?.pick === value;
+                      const disabled = !game.selectable || value === "TBD";
                       return (
                         <button
                           key={value}
-                          onClick={() => updatePick(game, value)}
+                          type="button"
+                          onClick={() => !disabled && updatePick(game, value)}
                           style={{
                             display: "flex",
                             alignItems: "center",
@@ -271,18 +272,19 @@ export default function Picks() {
                             padding: "5px 10px",
                             borderRadius: 6,
                             border: selected ? "2px solid #13447a" : "1px solid #d1d5db",
-                            backgroundColor: selected ? "#eff6ff" : "white",
-                            cursor: "pointer",
+                            backgroundColor: disabled ? "#f3f4f6" : selected ? "#eff6ff" : "white",
+                            cursor: disabled ? "not-allowed" : "pointer",
                             fontSize: 13,
                             fontWeight: selected ? 700 : 400,
-                            color: selected ? "#13447a" : "#374151",
+                            color: disabled ? "#9ca3af" : selected ? "#13447a" : "#374151",
                             width: "100%",
                             textAlign: "left",
+                            opacity: disabled ? 0.6 : 1,
                           }}
                         >
                           {logo && <img src={logo} width={20} height={20} alt="" style={{ objectFit: "contain", flexShrink: 0 }} />}
-                          <span>{label}</span>
-                          <span style={{ marginLeft: "auto", color: "#6b7280", fontSize: 12 }}>{spread}</span>
+                          <span>{value === "TBD" ? "TBD" : value}</span>
+                          {!disabled && <span style={{ marginLeft: "auto", color: "#6b7280", fontSize: 12 }}>{spread}</span>}
                         </button>
                       );
                     })}

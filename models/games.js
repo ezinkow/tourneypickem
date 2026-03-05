@@ -87,6 +87,10 @@ module.exports = function (sequelize, DataTypes) {
         game_clock: {
             type: DataTypes.TEXT,
             allowNull: true,
+        },
+        selectable: {
+            type: DataTypes.BOOLEAN,
+            allowNull: true,
         }
     });
 

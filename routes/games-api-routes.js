@@ -1,5 +1,5 @@
 const { Games } = require("../models");
-const syncGames = require("../services/sync-devtesting");
+const syncGames = require("../services/sync");
 
 module.exports = function (app) {
     app.get("/api/games", async (req, res) => {
