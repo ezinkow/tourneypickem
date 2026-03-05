@@ -30,7 +30,7 @@ require("./routes/scoreboard-api-routes.js")(app);
 require("./routes/adminRefreshGames.js")(app);
 require("./routes/picksdisplay-api-routes.js")(app);
 
-const syncGames = require("./services/sync");
+const syncGames = require("./services/sync-devtesting.js");
 const lockLines = require("./jobs/lockLines");
 
 // Run sync + lock every 15 minutes
