@@ -13,13 +13,44 @@ export default function Home() {
                 <div className='container'>
                     <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
                         <Link to="/signup" style={{ textDecoration: 'none' }}>
-                            <Button variant="success" size="lg">
-                               📋 Sign Up Here 🚀
-                            </Button>
+                            <button
+                                type="submit"
+                                style={{
+                                    width: "100%",
+                                    padding: "12px",
+                                    backgroundColor: "var(--primary-navy)",
+                                    color: "white",
+                                    border: "none",
+                                    borderRadius: 8,
+                                    fontSize: 15,
+                                    fontWeight: 700,
+                                    cursor: "pointer",
+                                    textTransform: "uppercase",
+                                    letterSpacing: "0.5px",
+                                }}
+                            >
+                                📋 Sign Up Here 🚀
+                            </button>
                         </Link>
-                        <Link to="/picks"><h3 style={{ margin: 0 }}><Button variant="success" size="lg">
-                            🏀 Make Your Picks 🗑️
-                        </Button></h3></Link>
+                        <Link to="/picks">
+                            <button
+                                type="submit"
+                                style={{
+                                    width: "100%",
+                                    padding: "12px",
+                                    backgroundColor: "var(--primary-navy)",
+                                    color: "white",
+                                    border: "none",
+                                    borderRadius: 8,
+                                    fontSize: 15,
+                                    fontWeight: 700,
+                                    cursor: "pointer",
+                                    textTransform: "uppercase",
+                                    letterSpacing: "0.5px",
+                                }}>
+                                🏀 Make Your Picks 🗑️
+                            </button>
+                        </Link>
                     </div>
                     <br />
                     <strong>The game:</strong><br />
@@ -42,13 +73,28 @@ export default function Home() {
                     Lines lock one hour before scheduled tip-off time.<br />
                     No matter what the line is when pick is submitted, the final, closed locked line will be the line everyone is using.
                     <br /><br />
-                    <br />
-                    <h5>Conference Tournament Schedules:</h5>
-                    <a href='https://www.ncaa.com/news/basketball-men/article/2026-02-11/tracking-31-ncaa-mens-basketball-conference-tournaments-auto-bids-2026-march' target="_blank" rel="noreferrer">
-                        FULL LIST OF CONFERENCE TOURNAMENTS
+                    <h4>Conference Tournament Schedules:</h4>
+                    <a href="https://www.ncaa.com/news/basketball-men/article/2026-02-11/tracking-31-ncaa-mens-basketball-conference-tournaments-auto-bids-2026-march"
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{
+                            display: "inline-block",
+                            padding: "12px 24px",
+                            backgroundColor: "var(--primary-navy)",
+                            color: "white",
+                            border: "none",
+                            borderRadius: 8,
+                            fontSize: 15,
+                            fontWeight: 700,
+                            cursor: "pointer",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.5px",
+                            textDecoration: "none",
+                        }}>
+                        📋 Full List of Conference Tournaments ↗
                     </a>
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
