@@ -20,8 +20,7 @@ export default function UsersDisplay() {
         async function fetchUsers() {
             try {
                 const response = await axios("api/users/")
-                const sortedList = response.data.sort((a, b) => (a.name > b.name) ? 1 : -1);
-                setUsers(sortedList)
+                setUsers(response.data.sort((a, b) => (a.name > b.name) ? 1 : -1));
             } catch (e) {
                 console.log(e)
             }
@@ -42,8 +41,7 @@ export default function UsersDisplay() {
 
     return (
         <div className='container'>
-            <br></br>
-            <div className="table">
+            <div className="table" style={{paddingBottom: 80}}>
                 <h2>Signed Up:</h2>
                 <Table striped bordered hover>
                     <thead>

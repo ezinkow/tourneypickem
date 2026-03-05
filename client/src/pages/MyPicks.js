@@ -6,11 +6,13 @@ export default function Games() {
 
 
     return (
-        <div>
+        <>
             <Navbar />
-            <div className='=container page-content'>
-                <MyPicks />
+            <div>
+                <div className='page-content'>
+                    <MyPicks />
+                </div>
             </div>
-        </div>
+        </>
     )
 }

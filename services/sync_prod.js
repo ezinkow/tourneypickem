@@ -36,12 +36,14 @@ async function syncGames() {
             let awayTeam = away?.team?.shortDisplayName || "TBD";
 
             /**
-             * THE FIX: 
              * If the team name is "TBD", use the tournament headline as the name.
              * This ensures the matchup shows the tournament info instead of just "TBD"
              */
             if (homeTeam === "TBD" && headline) homeTeam = headline;
             if (awayTeam === "TBD" && headline) awayTeam = headline;
+
+            // Skip games where either team is still TBD
+            if (homeTeam === "TBD" || awayTeam === "TBD") continue;
 
             const homeLogo = home?.team?.logo || null;
             const awayLogo = away?.team?.logo || null;

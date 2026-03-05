@@ -1,10 +1,6 @@
-import React from 'react'
-import { useState } from 'react'
-import Button from 'react-bootstrap/Button'
+import React, { useState } from 'react'
 import axios from 'axios'
 import toast, { Toaster } from 'react-hot-toast'
-import Form from 'react-bootstrap/Form';
-
 
 export default function UserSubmit() {
     const [real_name, setReal_name] = useState('')
@@ -12,85 +8,153 @@ export default function UserSubmit() {
     const [email_address, setEmail_address] = useState('')
     const [password, setPassword] = useState('')
     const [phone, setPhone] = useState('')
-    const [modalIsOpen, setIsOpen] = useState('')
 
-    const handleRealNameChange = event => {
-        setReal_name(event.target.value)
-    }
-    const handleNameChange = event => {
-        setName(event.target.value)
-    }
-    const handlePasswordChange = event => {
-        setPassword(event.target.value)
-    }
-    const handleEmail_addressChange = event => {
-        setEmail_address(event.target.value)
-    }
-    const handlePhoneChange = event => {
-        setPhone(event.target.value)
-    }
     const handleNameSubmit = event => {
         event.preventDefault()
-        setIsOpen(true);
-        axios.post('api/users', {
-            real_name,
-            name,
-            password,
-            email_address,
-            phone
-        })
-        toast.success(`THANKS, ${real_name}, YOU'RE SIGNED UP!`,
-            {
-                duration: 10001,
-                position: 'top-center',
-                style: {
-                    border: '2px solid #713200',
-                    padding: '20px',
-                    marginTop: '100px',
-                    color: 'white',
-                    backgroundColor: 'rgb(60, 179, 113, 0.7)'
-                },
-                icon: '🏀',
-                role: 'status',
-                ariaLive: 'polite',
-            });
+        axios.post('api/users', { real_name, name, password, email_address, phone })
+        toast.success(`THANKS, ${real_name}, YOU'RE SIGNED UP!`, {
+            duration: 10001,
+            position: 'top-center',
+            style: {
+                border: '2px solid #713200',
+                padding: '20px',
+                marginTop: '100px',
+                color: 'white',
+                backgroundColor: 'rgb(60, 179, 113, 0.7)'
+            },
+            icon: '🏀',
+        });
         setName("")
     }
 
+    const inputStyle = {
+        width: "100%",
+        padding: "10px 12px",
+        borderRadius: 8,
+        border: "1px solid #d1d5db",
+        fontSize: 15,
+        outline: "none",
+        boxSizing: "border-box",
+        transition: "border-color 0.2s",
+    };
+
+    const labelStyle = {
+        display: "block",
+        fontWeight: 600,
+        fontSize: 13,
+        color: "#374151",
+        marginBottom: 6,
+        textTransform: "uppercase",
+        letterSpacing: "0.4px",
+    };
+
+    const fieldStyle = {
+        marginBottom: 20,
+    };
+
     return (
-        < div className='page-content'>
-            < form >
+        <div style={{ paddingTop: 68 }}>
+            <div style={{
+                maxWidth: 520,
+                margin: "0 auto",
+                padding: "32px 24px",
+                background: "white",
+                borderRadius: 16,
+                boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
+                marginTop: 24,
+            }}>
                 <Toaster />
-                <label for="fname"><h3>Sign up below:</h3></label><br />
-                <Form>
-                    <Form.Group onChange={handleRealNameChange} type="text" id="real_name" value={real_name} className="mb-3" controlId="formBasicName">
-                        <Form.Label>REAL Name:</Form.Label>
-                        <Form.Control size="lg" type="name" placeholder="Enter Your REAL Name" />
-                    </Form.Group>
-                    <Form.Group onChange={handleNameChange} type="text" id="name" value={name} className="mb-3" controlId="formBasicName">
-                        <Form.Label>Username:</Form.Label>
-                        <Form.Control size="lg" type="name" placeholder="Enter Name You'll Select All Week" />
-                    </Form.Group>
-                    <Form.Group onChange={handlePasswordChange} type="text" id="password" value={password} classPassword="mb-3" controlId="formBasicPassword">
-                        <Form.Label>Password (Use a SIMPLE password, do NOT use your normal password, there are no requirements and NO password encryption):</Form.Label>
-                        <Form.Control size="lg" type="password" placeholder="Enter SIMPLE password" />
-                    </Form.Group>
-                    <Form.Group onChange={handleEmail_addressChange} type="text" id="email_address" value={email_address} className="mb-3" controlId="formPlaintextEmail">
-                        <Form.Label>Email address</Form.Label>
-                        <Form.Control size="lg" type="email" placeholder="Enter email" />
-                    </Form.Group>
-                    <Form.Group onChange={handlePhoneChange} type="text" id="phone" value={phone} className="mb-3" controlId="formBasicPhone">
-                        <Form.Label>Phone</Form.Label>
-                        <Form.Control size="lg" type="phone" placeholder="Phone Number" />
-                    </Form.Group>
-                    <Button onClick={handleNameSubmit} type="submit" value="Submit" variant="primary">
-                        Submit
-                    </Button>
-                </Form>
-                {/* <input onChange={handleNameChange} type="text" id="name" value={name} placeholder='Name' /><br /><br /> */}
-                {/* <Button onClick={handleNameSubmit} type="submit" value="Submit">Submit</Button> */}
-                <h3>Please check the list below for any name duplicates, include last initial if needed</h3>
-            </form >
-        </div >
+                <h2 style={{ color: "var(--primary-navy)", marginBottom: 4,textAlign: "center"  }}>🏀 Sign Up 🏀</h2>
+                <p style={{ color: "#6b7280", fontSize: 14, marginBottom: 24, textAlign: "center"  }}>
+                    Create your entry to start making picks.
+                </p>
+
+                <form onSubmit={handleNameSubmit}>
+                    <div style={fieldStyle}>
+                        <label style={labelStyle}>Real Name</label>
+                        <input
+                            style={inputStyle}
+                            type="text"
+                            value={real_name}
+                            onChange={e => setReal_name(e.target.value)}
+                            placeholder="Your real name"
+                            required
+                        />
+                    </div>
+
+                    <div style={fieldStyle}>
+                        <label style={labelStyle}>Username</label>
+                        <input
+                            style={inputStyle}
+                            type="text"
+                            value={name}
+                            onChange={e => setName(e.target.value)}
+                            placeholder="Name you'll select all week"
+                            required
+                        />
+                    </div>
+
+                    <div style={fieldStyle}>
+                        <label style={labelStyle}>Password</label>
+                        <input
+                            style={inputStyle}
+                            type="password"
+                            value={password}
+                            onChange={e => setPassword(e.target.value)}
+                            placeholder="Simple password (no encryption)"
+                            required
+                        />
+                        <p style={{ fontSize: 12, color: "#9ca3af", marginTop: 6 }}>
+                            ⚠️ Use a simple password — do NOT use your normal password. No encryption is applied.
+                        </p>
+                    </div>
+
+                    <div style={fieldStyle}>
+                        <label style={labelStyle}>Email Address</label>
+                        <input
+                            style={inputStyle}
+                            type="email"
+                            value={email_address}
+                            onChange={e => setEmail_address(e.target.value)}
+                            placeholder="your@email.com"
+                        />
+                    </div>
+
+                    <div style={fieldStyle}>
+                        <label style={labelStyle}>Phone</label>
+                        <input
+                            style={inputStyle}
+                            type="tel"
+                            value={phone}
+                            onChange={e => setPhone(e.target.value)}
+                            placeholder="Phone number"
+                        />
+                    </div>
+
+                    <button
+                        type="submit"
+                        style={{
+                            width: "100%",
+                            padding: "12px",
+                            backgroundColor: "var(--primary-navy)",
+                            color: "white",
+                            border: "none",
+                            borderRadius: 8,
+                            fontSize: 15,
+                            fontWeight: 700,
+                            cursor: "pointer",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.5px",
+                        }}
+                    >
+                        Sign Up
+                    </button>
+                </form>
+
+                <p style={{ marginTop: 20, fontSize: 13, color: "#6b7280", textAlign: "center" }}>
+                    ⚠️ Check the list below for duplicate names — include your last initial if needed.
+                </p>
+            </div>
+        </div>
     )
 }

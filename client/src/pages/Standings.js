@@ -6,9 +6,9 @@ export default function StandingsPage() {
 
 
     return (
-        <div className='page-content'>
+        <>
             <Navbar />
             <Standings />
-        </div>
+        </>
     )
 }

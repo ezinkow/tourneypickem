@@ -1,4 +1,35 @@
 /* ===============================
+   GLOBAL RESET & BASE
+================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 100%;
+}
+
+body {
+  overflow-x: visible;
+  overflow-y: visible;
+  max-width: 100%;
+  background-color: #f8f7f4;
+  font-family: "Inter", Arial, sans-serif;
+  color: #333;
+  line-height: 1.6;
+  height: 100%;
+}
+
+/* Only group picks page gets horizontal scroll */
+body.force-mobile {
+  overflow-x: auto;
+}
+
+/* ===============================
    1. TOURNAMENT THEME VARIABLES
 ================================ */
 :root {
@@ -37,7 +68,6 @@ body {
   height: var(--navbar-height);
   display: flex;
   align-items: center;
-  color: #c89d3c;
 }
 
 .navbar-inner {
@@ -51,7 +81,7 @@ body {
 }
 
 .navbar-brand {
-  color: var(--accent-gold);
+  color: var(--accent-gold) !important;
   font-weight: 900;
   text-transform: uppercase;
   text-decoration: none;
@@ -86,7 +116,6 @@ body {
   cursor: pointer;
 }
 
-/* Mobile nav dropdown — overlays content, doesn't push it */
 @media (max-width: 992px) {
   .menu-toggle {
     display: block;
@@ -95,7 +124,6 @@ body {
   .nav-links {
     display: none;
     position: fixed;
-    /* fixed so it overlays, never affects layout */
     top: var(--navbar-height);
     left: 0;
     width: 100%;
@@ -115,12 +143,8 @@ body {
 /* ===============================
    4. LAYOUT
 ================================ */
-
-/* Single source of truth for page offset — works on all screen sizes
-   because the navbar is always exactly --navbar-height tall */
 .page-content {
   padding-top: calc(var(--navbar-height) + 20px);
-  /* 65px + breathing room */
   min-height: 100vh;
 }
 
@@ -131,12 +155,24 @@ body {
   padding: 15px;
 }
 
-/* Removed: .navbar-header+*, .navbar-container-fluid, 
-   .navbar-links — these were unused duplicates causing confusion */
-
 /* ===============================
-   5. TABLE
+   5. SCOREBOARD TABLE
 ================================ */
+/* ===============================
+   STICKY TABLE HEADERS
+================================ */
+
+.scoreboard-table thead th,
+.scoreboard-sticky {
+  position: sticky;
+  top: var(--navbar-height);
+  /* stick directly under navbar */
+  z-index: 3000;
+  background-color: var(--primary-navy);
+  color: var(--white);
+  border-bottom: 2px solid var(--accent-gold);
+}
+
 .scoreboard-container {
   width: 100%;
   max-width: 1200px;
@@ -193,6 +229,49 @@ body {
   border-bottom: none;
 }
 
+@media (max-width: 768px) {
+  .hide-mobile {
+    display: none !important;
+  }
+
+  .show-mobile {
+    display: inline !important;
+  }
+
+  .scoreboard-table th,
+  .scoreboard-table td {
+    padding: 6px 4px;
+    font-size: 11px;
+  }
+
+  .scoreboard-table {
+    min-width: unset;
+  }
+
+  .scoreboard-table img {
+    width: 16px !important;
+    height: 16px;
+    object-fit: contain;
+    margin-right: 2px !important;
+    margin-left: 2px !important;
+  }
+
+  .scoreboard-header strong {
+    display: none;
+  }
+}
+
+/* Desktop: show-mobile hidden by default */
+.show-mobile {
+  display: none;
+}
+
+/* Home team logo indicator */
+.home-team-logo {
+  outline: 2px solid var(--accent-gold);
+  border-radius: 3px;
+}
+
 /* ===============================
    6. COUNTDOWN
 ================================ */
@@ -242,18 +321,11 @@ body {
   color: #9ca3af;
 }
 
-.show-mobile {
-  display: none;
-}
-
-/* hidden on desktop */
-
 /* ===============================
-   MOBILE BOTTOM NAV
+   7. MOBILE BOTTOM NAV
 ================================ */
 .mobile-bottom-nav {
   display: none;
-  /* hidden on desktop */
 }
 
 @media (max-width: 992px) {
@@ -300,20 +372,13 @@ body {
     background: rgba(200, 157, 60, 0.2);
   }
 
-  /* Add bottom padding to page content so it doesn't hide behind the bar */
   .page-content {
     padding-bottom: 70px;
   }
 }
 
-/* Desktop: bold text does the job, no extra styling needed */
-.home-team-logo {
-  outline: 2px solid var(--accent-gold);
-  border-radius: 3px;
-}
-
 /* ===============================
-   MENU OVERLAY
+   8. MENU OVERLAY
 ================================ */
 .menu-overlay {
   display: none;
@@ -329,47 +394,50 @@ body {
   }
 }
 
-/* Hide text labels on mobile, keep logos */
-@media (max-width: 768px) {
-  .hide-mobile {
-    display: none;
-  }
-
-  .show-mobile {
-    display: inline;
-  }
-
-  /* shown on mobile */
-
-  /* Tighten up cell padding on mobile */
-  .scoreboard-table th,
-  .scoreboard-table td {
-    padding: 6px 4px;
-    font-size: 11px;
-  }
-
-  /* Table no longer needs a min-width since text is gone */
-  .scoreboard-table {
-    min-width: unset;
-  }
-
-  /* Shrink all logos inside the table on mobile */
-  .scoreboard-table img {
-    width: 16px !important;
-    height: 16px;
-    object-fit: contain;
-    margin-right: 2px !important;
-    margin-left: 2px !important;
-  }
-
-  .scoreboard-header strong {
-    display: none;
-  }
-}
+/* ===============================
+   9. PLAYER PICKS MATRIX
+================================ */
 
 /* ===============================
    PLAYER PICKS MATRIX
 ================================ */
+
+.picks-matrix-scroll {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+  /* VERY IMPORTANT */
+  -webkit-overflow-scrolling: touch;
+}
+
+.picks-matrix-table {
+  border-collapse: collapse;
+  background: var(--white);
+  font-size: 13px;
+  width: max-content;
+  /* critical for desktop scroll */
+}
+
+/* Sticky header row */
+.picks-matrix-table thead th {
+  position: sticky;
+  top: var(--navbar-height);
+  z-index: 4;
+  background-color: var(--primary-navy);
+  color: var(--white);
+  border-bottom: 2px solid var(--accent-gold);
+}
+
+/* Sticky left column */
+.picks-matrix-table td:first-child,
+.picks-matrix-table th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 5;
+  background: var(--white);
+  border-right: 2px solid var(--accent-gold);
+}
+
 .picks-matrix-container {
   width: 100%;
   max-width: 1200px;
@@ -377,22 +445,7 @@ body {
   padding: 12px 0;
 }
 
-.picks-matrix-scroll {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  border-radius: 10px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-}
-
-.picks-matrix-table {
-  border-collapse: collapse;
-  background: var(--white);
-  font-size: 13px;
-  width: auto;
-}
-
-/* Sticky player column */
+/* Sticky left + sticky top corner cell */
 .picks-sticky-col {
   position: sticky;
   left: 0;
@@ -406,53 +459,48 @@ body {
 }
 
 .picks-sticky-header {
+  position: sticky;
+  top: calc(var(--navbar-height) + 20px);
+  left: 0;
+  z-index: 5;
   background-color: var(--primary-navy) !important;
   color: var(--white) !important;
-  z-index: 3;
   text-align: center;
-  /* ADD */
   vertical-align: middle;
-  /* ADD */
-}
-
-/* All headers */
-.picks-matrix-table thead th {
-  background-color: var(--primary-navy);
-  color: var(--white);
-  border-bottom: 2px solid var(--accent-gold);
-  padding: 8px 6px;
-  text-align: center;
-  vertical-align: bottom;
 }
 
 .picks-game-header {
-  min-width: 60px;
-  max-width: 70px;
+  min-width: 66px;
+  max-width: 66px;
+  width: 66px;
+  padding: 4px 2px !important;
 }
 
-/* Player cell */
 .picks-player-cell {
   padding: 6px 8px;
-  width: 120px;
-  min-width: 120px;
-  max-width: 120px;
-}
-
-.picks-rank {
-  font-size: 13px;
+  min-width: 80px;
+  max-width: 80px;
 }
 
 .picks-player-name {
   font-weight: 700;
   font-size: 12px;
   color: var(--primary-navy);
-  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 75px;
-  /* enough for most first names */
+  max-width: 55px;
   display: inline-block;
   vertical-align: middle;
+}
+
+.picks-page-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.picks-rank {
+  font-size: 13px;
 }
 
 .picks-points {
@@ -460,7 +508,6 @@ body {
   color: #6b7280;
 }
 
-/* Pick cells */
 .picks-pick-cell {
   padding: 6px 4px;
   text-align: center;
@@ -474,7 +521,6 @@ body {
   filter: brightness(0.96);
 }
 
-/* Mobile tweaks */
 @media (max-width: 768px) {
   .picks-player-cell {
     min-width: 100px;
@@ -494,39 +540,8 @@ body {
   }
 }
 
-.user-picks-header {
-  background-color: #c89d3c;
-  color: green;
-}
-
-.picks-game-header {
-  min-width: 66px;
-  max-width: 66px;
-  width: 66px;
-  overflow: hidden;
-  padding: 4px 2px !important;
-}
-
-.picks-player-cell {
-  padding: 6px 8px;
-  min-width: 80px;
-  /* shrunk from 130px */
-  max-width: 80px;
-}
-
-.picks-player-name {
-  font-weight: 700;
-  font-size: 12px;
-  color: var(--primary-navy);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 55px;
-  display: inline-block;
-}
-
 /* ===============================
-   MY PICKS
+   10. MY PICKS
 ================================ */
 .mypicks-desktop {
   display: block;
@@ -549,7 +564,6 @@ body {
   }
 }
 
-/* Row color classes — used by both table and cards */
 .pick-win {
   background-color: #f0fdf4 !important;
 }

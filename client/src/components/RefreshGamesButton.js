@@ -10,10 +10,11 @@ const RefreshGamesButton = ({ onRefresh }) => {
 
       await axios.post("/api/admin/refresh-games");
 
-      // 🔥 Re-fetch games instead of alert/modal
+      // Re-fetch games instead of alert/modal
       if (onRefresh) {
         await onRefresh();
       }
+      window.location.reload();
     } catch (err) {
       console.error("Error refreshing games", err);
     } finally {
