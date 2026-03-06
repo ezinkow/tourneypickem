@@ -14,7 +14,27 @@ export default function MyPicks() {
     useEffect(() => {
         axios.get("/api/users").then(r => setUsers(r.data.sort((a, b) => (a.name > b.name) ? 1 : -1)));
         axios.get("/api/standings").then(r => setStandings(r.data));
+
+        // Auto-login if coming from picks page
+        const authedUser = sessionStorage.getItem("authedUser");
+        if (authedUser) {
+            setUser(authedUser);
+            setAuthenticated(true);
+            sessionStorage.removeItem("authedUser"); // clear after use
+        }
     }, []);
+
+    const authedUser = sessionStorage.getItem("authedUser");
+    if (authedUser) {
+        setUser(authedUser);
+        setAuthenticated(true);
+        sessionStorage.removeItem("authedUser");
+        // fetch picks directly with the name since state isn't set yet
+        axios.get("/api/mypicks", { params: { name: authedUser } }).then(res => {
+            const sortedData = (res.data || []).sort((b, a) => new Date(a.game_date) - new Date(b.game_date));
+            setPicks(sortedData);
+        });
+    }
 
     const verify = async () => {
         try {

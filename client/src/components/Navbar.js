@@ -70,7 +70,7 @@ export default function Navbar() {
                     🏠<span>Home</span>
                 </button>
                 <button onClick={() => handleNavClick("/picks")} className="mobile-nav-link">
-                    📝<span>Picks</span>
+                    📝<span>Make Picks</span>
                 </button>
                 <button onClick={() => handleNavClick("/mypicks")} className="mobile-nav-link">
                     🗒️<span>My Picks</span>
@@ -82,7 +82,7 @@ export default function Navbar() {
                     🔢<span>Scores</span>
                 </button>
                 <button onClick={() => handleNavClick("/picksdisplay")} className="mobile-nav-link">
-                    👥<span>Group</span>
+                    👥<span>Group Picks</span>
                 </button>
             </nav>
         </>
