@@ -8,19 +8,20 @@ const Standings = () => {
         axios.get("/api/standings").then(res => setStandings(res.data));
     }, []);
 
-      useEffect(() => {
-        document.body.classList.add("force-mobile");
-        return () => document.body.classList.remove("force-mobile");
-      }, []);
-
     return (
-        <div style={{ paddingTop: 68, paddingBottom: 80, padding: "68px 12px 80px" }}>
+        <div style={{ paddingTop: 68, paddingBottom: 80, paddingLeft: 12, paddingRight: 12 }} className="standings-table">
             <h2 style={{ color: "var(--primary-navy)", paddingBottom: 6 }}>Standings</h2>
-            <table style={{ borderCollapse: "collapse", background: "white", width: "100%", fontSize: 14 }}>
+            <table style={{ borderCollapse: "collapse", background: "white", width: "100%", fontSize: 14 }} className="standings-table">
                 <thead>
                     <tr>
-                        {["Rank", "Player", "Points", "Correct", "Correct Missed"].map(h => (
-                            <th key={h} style={{
+                        {[
+                            { full: "Rank", short: "Rank" },
+                            { full: "Name", short: "Name" },
+                            { full: "Points", short: "Pts" },
+                            { full: "Correct", short: "✅" },
+                            { full: "Correct Missed", short: "🟡" },
+                        ].map(({ full, short }) => (
+                            <th key={full} style={{
                                 position: "sticky",
                                 top: 65,
                                 zIndex: 4,
@@ -34,7 +35,8 @@ const Standings = () => {
                                 fontSize: 12,
                                 letterSpacing: "0.5px",
                             }}>
-                                {h}
+                                <span className="hide-mobile">{full}</span>
+                                <span className="show-mobile">{short}</span>
                             </th>
                         ))}
                     </tr>
