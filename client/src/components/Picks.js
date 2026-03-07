@@ -88,6 +88,10 @@ export default function Picks() {
     setPicks(prev => {
       const existing = prev.find(p => p.game === game.id);
       if (existing) {
+        // clicking the same pick deselects it
+        if (existing.pick === pick) {
+          return prev.filter(p => p.game !== game.id);
+        }
         return prev.map(p => p.game === game.id ? { ...p, pick } : p);
       }
       return [...prev, { game: game.id, pick, line: game.line, game_date: game.game_date }];
