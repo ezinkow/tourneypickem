@@ -46,8 +46,6 @@ async function syncGames() {
             if (awayTeam === "TBD" && headline) awayTeam = headline;
 
             const homeLogo = home?.team?.logo || null;
-            const awayLogo = away?.team?.logo || null;
-
             // 4. DATE & LOCK LOGIC
             const eventDate = new Date(event.date);
             const lineLockedTime = new Date(eventDate.getTime() - 60 * 60 * 1000);
@@ -72,6 +70,10 @@ async function syncGames() {
             // 6. DB UPSERT
             const existingGame = await Games.findByPk(event.id);
 
+            // After odds logic, derive fav/dog logos
+            const favLogo = favorite === homeTeam ? homeLogo : awayLogo;
+            const dogLogo = underdog === homeTeam ? homeLogo : awayLogo;
+
             await Games.upsert({
                 id: event.id,
                 game_date: event.date,
@@ -80,6 +82,8 @@ async function syncGames() {
                 away_team: awayTeam,
                 home_logo: homeLogo,
                 away_logo: awayLogo,
+                fav_logo: isLocked ? (existingGame?.fav_logo || favLogo) : favLogo,
+                dog_logo: isLocked ? (existingGame?.dog_logo || dogLogo) : dogLogo,
                 home_score: parseInt(home?.score || 0),
                 away_score: parseInt(away?.score || 0),
                 status,

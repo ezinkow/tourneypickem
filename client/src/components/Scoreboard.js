@@ -74,7 +74,7 @@ const Scoreboard = () => {
                 <table style={{ borderCollapse: "collapse", background: "white", fontSize: 14, width: "100%" }}>
                     <thead>
                         <tr>
-                            <th style={thStyle}><span className="hide-mobile">Date</span><span className="show-mobile">Date</span></th>
+                            <th style={thStyle}><span className="hide-mobile">Gamestart</span><span className="show-mobile">Start</span></th>
                             <th style={thStyle}><span className="hide-mobile">Underdog</span><span className="show-mobile">Dog</span></th>
                             <th style={thStyle}><span className="hide-mobile">Favorite</span><span className="show-mobile">Fav</span></th>
                             <th style={thStyle}><span className="hide-mobile">Line</span><span className="show-mobile">Line</span></th>

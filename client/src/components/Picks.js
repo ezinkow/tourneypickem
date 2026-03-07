@@ -9,8 +9,8 @@ const isLocked = iso => iso && new Date() >= new Date(iso);
 const PickButtons = ({ game, picks, updatePick }) => (
   <div style={{ display: "flex", gap: 6 }}>
     {[
-      { value: game.underdog, logo: game.dog_logo, spread: `+${game.line}` },
-      { value: game.favorite, logo: game.fav_logo, spread: `-${game.line}` },
+      { value: game.underdog, logo: game.dog_logo, spread: game.line ? `+${game.line}` : "" },
+      { value: game.favorite, logo: game.fav_logo, spread: game.line ? `-${game.line}` : "" },
     ].map(({ value, logo, spread }) => {
       const selected = picks.find(p => p.game === game.id)?.pick === value;
       const disabled = !game.selectable || value === "TBD";
@@ -20,19 +20,26 @@ const PickButtons = ({ game, picks, updatePick }) => (
           type="button"
           onClick={() => !disabled && updatePick(game, value)}
           style={{
-            display: "flex", alignItems: "center", gap: 6,
-            padding: "5px 10px", borderRadius: 6, flex: 1,
+            display: "flex", alignItems: "center", gap: 4,
+            padding: "5px 6px", borderRadius: 6, flex: 1, minWidth: 0,
             border: selected ? "2px solid #13447a" : "1px solid #d1d5db",
             backgroundColor: disabled ? "#f3f4f6" : selected ? "#eff6ff" : "white",
             cursor: disabled ? "not-allowed" : "pointer",
-            fontSize: 13, fontWeight: selected ? 700 : 400,
+            fontWeight: selected ? 700 : 400,
             color: disabled ? "#9ca3af" : selected ? "#13447a" : "#374151",
             opacity: disabled ? 0.6 : 1,
+            overflow: "hidden",
           }}
         >
-          {logo && <img src={logo} width={20} height={20} alt="" style={{ objectFit: "contain", flexShrink: 0 }} />}
-          <span style={{ fontSize: 12 }}>{value === "TBD" ? "TBD" : value}</span>
-          {!disabled && <span style={{ marginLeft: "auto", color: "#6b7280", fontSize: 11 }}>{spread}</span>}
+          {logo && <img src={logo} width={16} height={16} alt="" style={{ objectFit: "contain", flexShrink: 0 }} />}
+          <span style={{ fontSize: 11, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", minWidth: 0 }}>
+            {value === "TBD" ? "TBD" : value}
+          </span>
+          {!disabled && spread && (
+            <span style={{ fontSize: 10, color: "#6b7280", flexShrink: 0, marginLeft: "auto", paddingLeft: 2 }}>
+              {spread}
+            </span>
+          )}
         </button>
       );
     })}
@@ -46,8 +53,6 @@ export default function Picks() {
   const [authenticated, setAuthenticated] = useState(false);
   const [games, setGames] = useState([]);
   const [picks, setPicks] = useState([]);
-  // const [allDogs, setAllDogs] = useState(false);
-  // const [allFaves, setAllFaves] = useState(false);
 
   useEffect(() => {
     axios.get("/api/games").then(res => setGames(res.data));
@@ -88,35 +93,12 @@ export default function Picks() {
     setPicks(prev => {
       const existing = prev.find(p => p.game === game.id);
       if (existing) {
-        // clicking the same pick deselects it
-        if (existing.pick === pick) {
-          return prev.filter(p => p.game !== game.id);
-        }
+        if (existing.pick === pick) return prev.filter(p => p.game !== game.id);
         return prev.map(p => p.game === game.id ? { ...p, pick } : p);
       }
       return [...prev, { game: game.id, pick, line: game.line, game_date: game.game_date }];
     });
   };
-
-  // const selectAll = type => {
-  //   const isCurrentlySelected = type === "dogs" ? allDogs : allFaves;
-  //   if (isCurrentlySelected) {
-  //     setPicks([]);
-  //     setAllDogs(false);
-  //     setAllFaves(false);
-  //   } else {
-  //     setPicks(
-  //       visibleGames.map(g => ({
-  //         game: g.id,
-  //         pick: type === "dogs" ? g.underdog : g.favorite,
-  //         line: g.line,
-  //         game_date: g.game_date
-  //       }))
-  //     );
-  //     setAllDogs(type === "dogs");
-  //     setAllFaves(type === "faves");
-  //   }
-  // };
 
   const handleSubmit = async () => {
     if (picks.length === 0) return toast.error("No picks selected");
@@ -132,8 +114,8 @@ export default function Picks() {
       await axios.post("/api/picks/bulk", payload);
       toast.success(`Thanks ${user}, ${picks.length} picks submitted!`);
       setPicks([]);
-      sessionStorage.setItem("authedUser", user);  // store user
-      setTimeout(() => { window.location.hash = "#/mypicks"; }, 1500); // navigate after toast
+      sessionStorage.setItem("authedUser", user);
+      setTimeout(() => { window.location.hash = "#/mypicks"; }, 1500);
     } catch (err) {
       console.error(err);
       toast.error("Submission failed");
@@ -148,37 +130,16 @@ export default function Picks() {
       >
         Submit Picks
       </button>
-      {/* <button
-        type="button"
-        onClick={() => selectAll("dogs")}
-        style={{
-          padding: "6px 14px", borderRadius: 6, fontSize: 13, cursor: "pointer", fontWeight: 600,
-          backgroundColor: allDogs ? "#eff6ff" : "#f3f4f6",
-          border: allDogs ? "2px solid #13447a" : "1px solid #d1d5db",
-          color: allDogs ? "#13447a" : "#374151",
-        }}
-      >
-        All Underdogs
-      </button>
       <button
         type="button"
-        onClick={() => selectAll("faves")}
-        style={{
-          padding: "6px 14px", borderRadius: 6, fontSize: 13, cursor: "pointer", fontWeight: 600,
-          backgroundColor: allFaves ? "#eff6ff" : "#f3f4f6",
-          border: allFaves ? "2px solid #13447a" : "1px solid #d1d5db",
-          color: allFaves ? "#13447a" : "#374151",
-        }}
-      >
-        All Favorites
-      </button> */}
-      <button
-        type="button"
-        onClick={() => { setPicks([]); setAllDogs(false); setAllFaves(false); }}
+        onClick={() => setPicks([])}
         style={{ padding: "6px 14px", borderRadius: 6, backgroundColor: "#f3f4f6", color: "#374151", border: "1px solid #d1d5db", fontWeight: 600, cursor: "pointer", fontSize: 13 }}
       >
         Clear All
       </button>
+      <span style={{ fontSize: 13, color: "#6b7280" }}>
+        {picks.length} / {visibleGames.filter(g => g.selectable).length} available games picked
+      </span>
     </div>
   );
 
@@ -194,7 +155,7 @@ export default function Picks() {
             <select
               value={user}
               onChange={e => setUser(e.target.value)}
-              style={{ padding: "8px 12px", borderRadius: 6, border: "1px solid #ccc", fontSize: 14, minWidth: 160 }}
+              style={{ padding: "8px 12px", borderRadius: 6, border: "1px solid #ccc", fontSize: 14 }}
             >
               <option value="SELECT YOUR NAME" disabled>SELECT YOUR NAME</option>
               {users.map(n => (
@@ -230,13 +191,20 @@ export default function Picks() {
         <>
           {/* DESKTOP TABLE */}
           <div className="mypicks-desktop">
-            <table style={{ borderCollapse: "collapse", width: "100%", background: "white", fontSize: 14, marginTop: 8 }}>
+            <table style={{ borderCollapse: "collapse", width: "100%", background: "white", fontSize: 13, marginTop: 8, tableLayout: "fixed" }}>
+              <colgroup>
+                <col style={{ width: "12%" }} />
+                <col style={{ width: "40%" }} />
+                <col style={{ width: "10%" }} />
+                <col style={{ width: "8%" }} />
+                <col style={{ width: "30%" }} />
+              </colgroup>
               <thead>
                 <tr>
-                  {["Game Start", "Game", "Line Locks", "Line", "Pick"].map(h => (
+                  {["Start", "Game", "Locks", "Line", "Pick"].map(h => (
                     <th key={h} style={{
                       position: "sticky", top: 65, zIndex: 4,
-                      padding: "10px 12px", backgroundColor: "#13447a", color: "white",
+                      padding: "8px 8px", backgroundColor: "#13447a", color: "white",
                       borderBottom: "2px solid #c89d3c", textAlign: "left",
                       whiteSpace: "nowrap", textTransform: "uppercase", fontSize: 11, letterSpacing: "0.3px",
                     }}>{h}</th>
@@ -246,24 +214,28 @@ export default function Picks() {
               <tbody>
                 {visibleGames.map((game, idx) => (
                   <tr key={game.id} style={{ backgroundColor: idx % 2 === 0 ? "white" : "#f9fafb" }}>
-                    <td style={{ padding: "10px 12px", borderBottom: "1px solid #e5e7eb", whiteSpace: "nowrap" }}>{game.game_clock}</td>
-                    <td style={{ padding: "10px 12px", borderBottom: "1px solid #e5e7eb", whiteSpace: "nowrap" }}>
-                      <img src={game.away_logo} width={24} alt="" /> {game.away_team}{" @ "}
-                      <img src={game.home_logo} width={24} alt="" /> {game.home_team}
+                    <td style={{ padding: "8px 8px", borderBottom: "1px solid #e5e7eb", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                      {game.game_clock}
                     </td>
-                    <td style={{ padding: "10px 12px", borderBottom: "1px solid #e5e7eb", whiteSpace: "nowrap" }}>
+                    <td style={{ padding: "8px 8px", borderBottom: "1px solid #e5e7eb", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      <img src={game.away_logo} width={18} alt="" style={{ verticalAlign: "middle" }} />
+                      {" "}{game.away_team}{" @ "}
+                      <img src={game.home_logo} width={18} alt="" style={{ verticalAlign: "middle" }} />
+                      {" "}{game.home_team}
+                    </td>
+                    <td style={{ padding: "8px 8px", borderBottom: "1px solid #e5e7eb", whiteSpace: "nowrap", fontSize: 12 }}>
                       {formatTimeET(game.line_locked_time)} ET
                     </td>
-                    <td style={{ padding: "10px 12px", borderBottom: "1px solid #e5e7eb", whiteSpace: "nowrap" }}>
+                    <td style={{ padding: "8px 8px", borderBottom: "1px solid #e5e7eb", whiteSpace: "nowrap" }}>
                       {new Date() >= new Date(game.line_locked_time) ? (
                         <span style={{ fontWeight: "bold", color: "#d9534f" }}>
-                          🔒 <img src={game.fav_logo} width={24} alt="fav" /> -{game.line}
+                          🔒 <img src={game.fav_logo} width={18} alt="fav" style={{ verticalAlign: "middle" }} /> -{game.line}
                         </span>
                       ) : game.line ? (
-                        <><img src={game.fav_logo} width={24} alt="fav" /> -{game.line}</>
+                        <><img src={game.fav_logo} width={18} alt="fav" style={{ verticalAlign: "middle" }} /> -{game.line}</>
                       ) : "TBD"}
                     </td>
-                    <td style={{ padding: "10px 12px", borderBottom: "1px solid #e5e7eb" }}>
+                    <td style={{ padding: "8px 8px", borderBottom: "1px solid #e5e7eb" }}>
                       <PickButtons game={game} picks={picks} updatePick={updatePick} />
                     </td>
                   </tr>
@@ -288,7 +260,6 @@ export default function Picks() {
                   <img src={game.home_logo} width={20} alt="" />
                   <span>{game.home_team}</span>
                 </div>
-
                 {/* Info row */}
                 <div style={{ display: "flex", gap: 10, fontSize: 11, color: "#6b7280", marginBottom: 10, flexWrap: "wrap", alignItems: "center" }}>
                   <span>🕐 {game.game_clock}</span>
@@ -296,14 +267,13 @@ export default function Picks() {
                   <span>
                     {new Date() >= new Date(game.line_locked_time) ? (
                       <span style={{ color: "#d9534f", fontWeight: 700 }}>
-                        🔒 <img src={game.fav_logo} width={14} alt="" /> -{game.line}
+                        🔒 <img src={game.fav_logo} width={14} alt="" style={{ verticalAlign: "middle" }} /> -{game.line}
                       </span>
                     ) : game.line ? (
-                      <><img src={game.fav_logo} width={14} alt="" /> -{game.line}</>
+                      <><img src={game.fav_logo} width={14} alt="" style={{ verticalAlign: "middle" }} /> -{game.line}</>
                     ) : "Line TBD"}
                   </span>
                 </div>
-
                 {/* Pick buttons */}
                 <PickButtons game={game} picks={picks} updatePick={updatePick} />
               </div>
