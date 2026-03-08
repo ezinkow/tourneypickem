@@ -84,8 +84,12 @@ async function syncGames() {
                 away_team: awayTeam,
                 home_logo: homeLogo,
                 away_logo: awayLogo,
-                fav_logo: isLocked ? (existingGame?.fav_logo || favLogo) : (hasOdds ? favLogo : (existingGame?.fav_logo || favLogo)),
-                dog_logo: isLocked ? (existingGame?.dog_logo || dogLogo) : (hasOdds ? dogLogo : (existingGame?.dog_logo || dogLogo)),
+                fav_logo: isLocked
+                    ? (existingGame?.fav_logo || favLogo)
+                    : (hasOdds ? favLogo : (teamsKnown ? favLogo : (existingGame?.fav_logo || favLogo))),
+                dog_logo: isLocked
+                    ? (existingGame?.dog_logo || dogLogo)
+                    : (hasOdds ? dogLogo : (teamsKnown ? dogLogo : (existingGame?.dog_logo || dogLogo))),
                 home_score: parseInt(home?.score || 0),
                 away_score: parseInt(away?.score || 0),
                 status,
@@ -96,10 +100,10 @@ async function syncGames() {
                 line: isLocked ? (existingGame?.line || currentLine) : currentLine,
                 favorite: isLocked
                     ? (existingGame?.favorite || favorite)
-                    : (hasOdds ? favorite : (existingGame?.favorite || favorite)),
+                    : (hasOdds ? favorite : (teamsKnown ? favorite : (existingGame?.favorite || favorite))),
                 underdog: isLocked
                     ? (existingGame?.underdog || underdog)
-                    : (hasOdds ? underdog : (existingGame?.underdog || underdog)),
+                    : (hasOdds ? underdog : (teamsKnown ? underdog : (existingGame?.underdog || underdog))),
                 selectable: teamsKnown
             });
         }
