@@ -8,7 +8,7 @@ module.exports = function (app) {
     app.get('/api/games/finishedAndInProgress', function (req, res) {
         Games.findAll({
             where: {
-                status: ['STATUS_FINAL', 'STATUS_IN_PROGRESS']
+                status: ['STATUS_FINAL', 'STATUS_IN_PROGRESS', 'STATUS_HALFTIME']
             }
         })
             .then(function (dbgames) {

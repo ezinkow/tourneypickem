@@ -10,7 +10,7 @@ export default function PlayerPicksMatrix() {
     axios.get("/api/games/finishedAndInProgress").then(r =>
       setGames(
         r.data
-          .filter(g => g.status === "STATUS_FINAL" || g.status === "STATUS_IN_PROGRESS")
+          .filter(g => g.status === "STATUS_FINAL" || g.status === "STATUS_HALFTIME" || g.status === "STATUS_IN_PROGRESS")
           .sort((a, b) => new Date(a.game_date) - new Date(b.game_date))
       )
     );
@@ -22,7 +22,7 @@ export default function PlayerPicksMatrix() {
     document.body.classList.add("force-mobile");
     return () => document.body.classList.remove("force-mobile");
   }, []);
-  
+
   const users = useMemo(() =>
     [...standings].sort((a, b) => b.points - a.points),
     [standings]);
@@ -83,13 +83,13 @@ export default function PlayerPicksMatrix() {
 
         {/* Row 2: score */}
         <div style={{ fontSize: 10, fontWeight: 700, color: "#ffffff", whiteSpace: "nowrap" }}>
-          {game.status === "STATUS_FINAL" || game.status === "STATUS_IN_PROGRESS"
+          {game.status === "STATUS_FINAL" || game.status === "STATUS_HALFTIME" || game.status === "STATUS_IN_PROGRESS"
             ? `${game.away_score}-${game.home_score}` : ""}
         </div>
 
         {/* Row 3: covered team logo + spread */}
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 2 }}>
-          {game.status === "STATUS_IN_PROGRESS" ? (
+          {game.status === "STATUS_IN_PROGRESS" || game.status === "STATUS_HALFTIME" ? (
             <>
               <img src={game.fav_logo} alt="" height={13} style={{ flexShrink: 0 }} />
               <span style={{ fontSize: 8, color: "#ffffff", fontWeight: 700 }}>
