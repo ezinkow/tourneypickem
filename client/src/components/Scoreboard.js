@@ -31,9 +31,10 @@ const Scoreboard = () => {
 
     useEffect(() => {
         fetchGames();
-        const interval = setInterval(fetchGames, 30000);
+        const hasLive = games.some(g => g.status === "STATUS_IN_PROGRESS");
+        const interval = setInterval(fetchGames, hasLive ? 3 * 60 * 1000 : 10 * 60 * 1000);
         return () => clearInterval(interval);
-    }, []);
+    }, [games.some(g => g.status === "STATUS_IN_PROGRESS")]);
 
     useEffect(() => {
         document.body.classList.add("force-mobile");
