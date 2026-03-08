@@ -78,10 +78,16 @@ export default function PoolCountdown() {
     if (!nextLockTime && !nextTipTime) return null;
 
     return (
-        <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap", paddingLeft:"200px", paddingRight: "200px" }}>
+        <div style={{
+            display: "flex",
+            gap: 8,
+            marginBottom: 16,
+            flexWrap: "wrap",
+            padding: "0 12px"  // mobile-friendly, matches rest of app
+        }}>
             {/* LINE LOCK COUNTDOWN */}
             {nextLockTime && (
-                <div className="countdown-card" style={{ flex: 1, minWidth: 200, maxWidth: "none", padding: "14px 12px"}}>
+                <div className="countdown-card" style={{ flex: 1, minWidth: 140, maxWidth: "none", padding: "14px 12px" }}>
                     <div className="countdown-title" style={{ fontSize: "0.95rem" }}>
                         🔒 Next Lines Lock In
                     </div>
@@ -112,7 +118,7 @@ export default function PoolCountdown() {
 
             {/* TIP OFF COUNTDOWN */}
             {nextTipTime && (
-                <div className="countdown-card" style={{ flex: 1, minWidth: 200, maxWidth: "none", padding: "14px 12px" }}>
+                <div className="countdown-card" style={{ flex: 1, minWidth: 140, maxWidth: "none", padding: "14px 12px" }}>
                     <div className="countdown-title" style={{ fontSize: "0.95rem" }}>
                         🏀 Next Tip Off
                     </div>
