@@ -2,6 +2,7 @@ import React from 'react'
 import Navbar from '../components/Navbar'
 import { Link } from 'react-router-dom'
 import CountdownDisplay from '../components/CountdownDisplay'
+import CountdownNextGameLock from '../components/CountdownNextGameLock'
 import Button from 'react-bootstrap/esm/Button'
 
 export default function Home() {
@@ -9,7 +10,8 @@ export default function Home() {
         <div>
             <Navbar />
             <div className="page-content">   {/* ← ADD THIS */}
-                <CountdownDisplay />
+                {/* <CountdownDisplay /> */}
+                <CountdownNextGameLock />
                 <div className='container'>
                     <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
                         <Link to="/signup" style={{ textDecoration: 'none' }}>

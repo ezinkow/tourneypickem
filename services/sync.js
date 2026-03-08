@@ -6,7 +6,7 @@ const TOURNAMENT_IDS = new Set([
 ]);
 
 async function syncGames() {
-    const url = "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard?groups=50&limit=200&dates=20260307-20260315";
+    const url = "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard?groups=50&limit=304&dates=20260307-20260315";
 
     try {
         const response = await fetch(url);

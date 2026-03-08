@@ -1,29 +1,17 @@
 const fetch = require("node-fetch");
 const { Games } = require("../models");
 
-const CONFERENCES = new Set([
-  "4",   // Big East
-  "7",   // Big Ten
-  "23",  // SEC
-  "62",  // American
-  "2",   // ACC
-  "8",   // Big 12
-  "44",  // Mountain West
-  "3",   // A10
-  "11"   // Conference USA
+const TOURNAMENT_IDS = new Set([
+  "2", "3", "39", "5", "6", "9", "13", "20", "27"
 ]);
 
 module.exports = function (app) {
-
   app.post("/api/admin/refresh-games", async (req, res) => {
     try {
-
       const url =
-        "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard?groups=50&limit=500&dates=20260223-20260305";
-
+        "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard?groups=50&limit=500&dates=20260307-20260315";
       const response = await fetch(url);
       const data = await response.json();
-
       let updated = 0;
       let skipped = 0;
 
@@ -35,11 +23,14 @@ module.exports = function (app) {
         const away = comp.competitors.find(c => c.homeAway === "away");
         if (!home || !away) continue;
 
-        // ⭐ conference filter (same as /api/games)
-        const homeConf = home?.team?.conferenceId?.toString();
-        const awayConf = away?.team?.conferenceId?.toString();
+        // Tournament filter matching sync.js
+        const tournamentId = (event.tournamentId || comp.tournamentId)?.toString();
+        const isTourneyGame = comp.type?.id;
+        const headline = comp.notes?.[0]?.headline || "";
+        const isOurTournament = TOURNAMENT_IDS.has(tournamentId);
+        const isChampionshipFinal = isTourneyGame === "6" && headline.includes("- Final");
 
-        if (!CONFERENCES.has(homeConf) && !CONFERENCES.has(awayConf)) {
+        if (!isOurTournament && !isChampionshipFinal) {
           skipped++;
           continue;
         }
@@ -50,16 +41,11 @@ module.exports = function (app) {
         const homeScore = Number(home?.score);
         const awayScore = Number(away?.score);
         const status = event.status.type.name;
-        const game_clock = event?.status?.type?.shortDetail
+        const game_clock = event?.status?.type?.shortDetail;
 
-        await game.update({
-          home_score: homeScore,
-          away_score: awayScore,
-          status,
-          game_clock
-        });
+        await game.update({ home_score: homeScore, away_score: awayScore, status, game_clock });
 
-        // -------- Score ATS winner --------
+        // Score ATS winner
         if (
           game.line &&
           !game.winner &&
@@ -70,13 +56,8 @@ module.exports = function (app) {
           const favorite = game.locked_favorite || game.favorite;
           const underdog = game.locked_underdog || game.underdog;
           const spread = Number(game.line);
-
-          let favScore =
-            game.home_team === favorite ? homeScore : awayScore;
-
-          let dogScore =
-            game.home_team === favorite ? awayScore : homeScore;
-
+          const favScore = game.home_team === favorite ? homeScore : awayScore;
+          const dogScore = game.home_team === favorite ? awayScore : homeScore;
           const diff = favScore - dogScore;
 
           let atsWinner = null;
@@ -89,12 +70,7 @@ module.exports = function (app) {
         updated++;
       }
 
-      res.json({
-        message: "Refresh complete",
-        updated,
-        skipped
-      });
-
+      res.json({ message: "Refresh complete", updated, skipped });
     } catch (err) {
       console.error("Refresh games failed", err);
       res.status(500).json({ error: "Refresh failed" });

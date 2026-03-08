@@ -31,10 +31,9 @@ const Scoreboard = () => {
 
     useEffect(() => {
         fetchGames();
-        const hasLive = games.some(g => g.status === "STATUS_IN_PROGRESS");
-        const interval = setInterval(fetchGames, hasLive ? 3 * 60 * 1000 : 10 * 60 * 1000);
+        const interval = setInterval(fetchGames, 3 * 60 * 1000);
         return () => clearInterval(interval);
-    }, [games.some(g => g.status === "STATUS_IN_PROGRESS")]);
+    }, []); // empty deps - registers once, never re-creates
 
     useEffect(() => {
         document.body.classList.add("force-mobile");
