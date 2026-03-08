@@ -46,8 +46,8 @@ async function runSync() {
 // Run once at startup
 runSync();
 
-// Every 5 min normally, but you can bump to 10-15 min when quiet
-setInterval(runSync, 10 * 60 * 1000);
+// Every 2 min
+setInterval(runSync, 2 * 60 * 1000);
 
 // React Router fallback
 if (process.env.NODE_ENV === "production") {

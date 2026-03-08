@@ -3,7 +3,9 @@ import axios from "axios";
 import RefreshGamesButton from './RefreshGamesButton';
 
 const isLiveOrFinal = (status) =>
-    status === "STATUS_IN_PROGRESS" || status === "STATUS_FINAL";
+    status === "STATUS_IN_PROGRESS" ||
+    status === "STATUS_FINAL" ||
+    status === "STATUS_HALFTIME";
 
 function formatDateET(date) {
     return new Date(date).toLocaleDateString("en-US", {
