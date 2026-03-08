@@ -60,11 +60,10 @@ async function syncGames() {
             const odds = comp?.odds?.[0];
 
             if (odds && home && away) {
-                if (odds.homeTeamOdds?.favorite === "true") {
-                    favorite = homeTeam; underdog = awayTeam;
-                } else if (odds.awayTeamOdds?.favorite === "true") {
-                    favorite = awayTeam; underdog = homeTeam;
-                }
+                const homeFav = odds.homeTeamOdds?.favorite == true;  // loose equality handles both
+                const awayFav = odds.awayTeamOdds?.favorite == true;
+                if (homeFav) { favorite = homeTeam; underdog = awayTeam; }
+                else if (awayFav) { favorite = awayTeam; underdog = homeTeam; }
                 currentLine = odds.spread ? Math.abs(Number(odds.spread)) : null;
             }
 
