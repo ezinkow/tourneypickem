@@ -34,20 +34,20 @@ const syncGames = require("./services/sync.js");
 const lockLines = require("./jobs/lockLines");
 
 // Run sync + lock every 15 minutes
-setInterval(async () => {
+async function runSync() {
   try {
     await syncGames();
     await lockLines();
   } catch (err) {
     console.error("Background job failed:", err);
   }
-}, 15 * 60 * 1000);
+}
 
 // Run once at startup
-(async () => {
-  await syncGames();
-  await lockLines();
-})();
+runSync();
+
+// Every 5 min normally, but you can bump to 10-15 min when quiet
+setInterval(runSync, 10 * 60 * 1000);
 
 // React Router fallback
 if (process.env.NODE_ENV === "production") {

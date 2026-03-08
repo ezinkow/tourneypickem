@@ -13,6 +13,7 @@ import UserPicksDisplay from './pages/UserPicksDisplay';
 import Standings from './pages/Standings';
 import SignUp from './pages/SignUp';
 import Scoreboard from './pages/Scoreboard';
+import AdminRefresh from './pages/AdminRefresh';
 
 export default function App() {
 
@@ -25,6 +26,7 @@ export default function App() {
         <Route path="/scoreboard" element={<Scoreboard />} />
         <Route path="/picksdisplay" element={<UserPicksDisplay />} />
         <Route path="/standings" element={<Standings />} />
+        <Route path="/adminrefresh" element={<AdminRefresh />} />
         <Route path="/" element={<Home />} />
       </Routes>
     </Router>
