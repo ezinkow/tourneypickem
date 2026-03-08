@@ -201,7 +201,7 @@ export default function Picks() {
               </colgroup>
               <thead>
                 <tr>
-                  {["Start", "Game", "Locks", "Line", "Pick"].map(h => (
+                  {["Game Start", "Game", "Line Locks", "Line", "Pick"].map(h => (
                     <th key={h} style={{
                       position: "sticky", top: 65, zIndex: 4,
                       padding: "8px 8px", backgroundColor: "#13447a", color: "white",

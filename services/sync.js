@@ -46,6 +46,7 @@ async function syncGames() {
             if (awayTeam === "TBD" && headline) awayTeam = headline;
 
             const homeLogo = home?.team?.logo || null;
+            const awayLogo = away?.team?.logo || null;
             // 4. DATE & LOCK LOGIC
             const eventDate = new Date(event.date);
             const lineLockedTime = new Date(eventDate.getTime() - 60 * 60 * 1000);
