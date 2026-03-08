@@ -14,6 +14,7 @@ import Standings from './pages/Standings';
 import SignUp from './pages/SignUp';
 import Scoreboard from './pages/Scoreboard';
 import AdminRefresh from './pages/AdminRefresh';
+import ChangePassword from './pages/ChangePassword';
 
 export default function App() {
 
@@ -27,6 +28,7 @@ export default function App() {
         <Route path="/picksdisplay" element={<UserPicksDisplay />} />
         <Route path="/standings" element={<Standings />} />
         <Route path="/adminrefresh" element={<AdminRefresh />} />
+        <Route path="/change-password" element={<ChangePassword />} />
         <Route path="/" element={<Home />} />
       </Routes>
     </Router>

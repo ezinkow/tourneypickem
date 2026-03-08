@@ -61,12 +61,24 @@ export default function Picks() {
     );
   }, []);
 
-  const verify = async () => {
+const verify = async () => {
     try {
       const res = await axios.post("/api/users/verify", { name: user, password });
       if (!res.data.success) return toast.error("Wrong password");
       setAuthenticated(true);
       toast.success("Identity verified!");
+
+      // Fetch existing picks and pre-populate
+      const picksRes = await axios.get("/api/picks", { params: { name: user } });
+      const existingPicks = picksRes.data
+        .filter(p => !isLocked(p.game_date)) // only unlocked games
+        .map(p => ({
+          game: p.game_id,
+          pick: p.pick,
+          game_date: p.game_date,
+          line: games.find(g => g.id === p.game_id)?.line || null,
+        }));
+      setPicks(existingPicks);
     } catch {
       toast.error("Verify failed");
     }
@@ -176,6 +188,13 @@ export default function Picks() {
             >
               Verify Identity
             </button>
+            <button
+              type="button"
+              onClick={() => { window.location.hash = "#/change-password"; }}
+              style={{ padding: "8px 16px", borderRadius: 6, backgroundColor: "transparent", color: "#6b7280", border: "1px solid #d1d5db", fontWeight: 600, cursor: "pointer", fontSize: 13 }}
+            >
+              Forgot Password?
+            </button>
           </div>
         )}
 
@@ -219,7 +238,7 @@ export default function Picks() {
                     </td>
                     <td style={{ padding: "8px 8px", borderBottom: "1px solid #e5e7eb", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       <img src={game.away_logo} width={18} alt="" style={{ verticalAlign: "middle" }} />
-                      {" "}{game.away_team}{" @ "}
+                      {" "}{game.away_team}{" vs "}
                       <img src={game.home_logo} width={18} alt="" style={{ verticalAlign: "middle" }} />
                       {" "}{game.home_team}
                     </td>
@@ -256,7 +275,7 @@ export default function Picks() {
                 <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
                   <img src={game.away_logo} width={20} alt="" />
                   <span>{game.away_team}</span>
-                  <span style={{ color: "#9ca3af", fontSize: 11 }}>@</span>
+                  <span style={{ color: "#9ca3af", fontSize: 11 }}>VS</span>
                   <img src={game.home_logo} width={20} alt="" />
                   <span>{game.home_team}</span>
                 </div>

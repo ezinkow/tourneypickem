@@ -4,13 +4,13 @@ const { Picks, Games } = require("../models");
 module.exports = function (app) {
 
     // Get everything in Picks table
-    app.get("/api/picks", async function (req, res) {
+    app.get("/api/picks", async (req, res) => {
         try {
-            const dbpicks = await Picks.findAll({});
-            res.json(dbpicks);
+            const where = req.query.name ? { name: req.query.name } : {};
+            const picks = await Picks.findAll({ where });
+            res.json(picks);
         } catch (err) {
-            console.error(err);
-            res.status(500).json({ error: "Failed to fetch picks" });
+            res.status(500).json({ error: "Failed to load picks" });
         }
     });
 

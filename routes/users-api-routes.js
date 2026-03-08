@@ -65,4 +65,20 @@ module.exports = function (app) {
             res.status(500).json({ success: false });
         }
     });
+
+    app.post("/api/users/change-password", async (req, res) => {
+        try {
+            const { email, newPassword } = req.body;
+            if (!email || !newPassword) return res.status(400).json({ error: "Email and new password required" });
+
+            const user = await Users.findOne({ where: { email_address: email } });
+            if (!user) return res.status(404).json({ error: "No account found with that email" });
+
+            await user.update({ password: newPassword });
+            res.json({ success: true });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: "Failed to update password" });
+        }
+    });
 }
