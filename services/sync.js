@@ -75,6 +75,8 @@ async function syncGames() {
             const favLogo = favorite === homeTeam ? homeLogo : awayLogo;
             const dogLogo = underdog === homeTeam ? homeLogo : awayLogo;
 
+            const hasOdds = !!(odds && currentLine);
+
             await Games.upsert({
                 id: event.id,
                 game_date: event.date,
@@ -83,8 +85,8 @@ async function syncGames() {
                 away_team: awayTeam,
                 home_logo: homeLogo,
                 away_logo: awayLogo,
-                fav_logo: isLocked ? (existingGame?.fav_logo || favLogo) : favLogo,
-                dog_logo: isLocked ? (existingGame?.dog_logo || dogLogo) : dogLogo,
+                fav_logo: isLocked ? (existingGame?.fav_logo || favLogo) : (hasOdds ? favLogo : (existingGame?.fav_logo || favLogo)),
+                dog_logo: isLocked ? (existingGame?.dog_logo || dogLogo) : (hasOdds ? dogLogo : (existingGame?.dog_logo || dogLogo)),
                 home_score: parseInt(home?.score || 0),
                 away_score: parseInt(away?.score || 0),
                 status,
@@ -93,8 +95,12 @@ async function syncGames() {
                     ? (parseInt(home.score) > parseInt(away.score) ? homeTeam : awayTeam)
                     : null,
                 line: isLocked ? (existingGame?.line || currentLine) : currentLine,
-                favorite: isLocked ? (existingGame?.favorite || favorite) : favorite,
-                underdog: isLocked ? (existingGame?.underdog || underdog) : underdog,
+                favorite: isLocked
+                    ? (existingGame?.favorite || favorite)
+                    : (hasOdds ? favorite : (existingGame?.favorite || favorite)),
+                underdog: isLocked
+                    ? (existingGame?.underdog || underdog)
+                    : (hasOdds ? underdog : (existingGame?.underdog || underdog)),
                 selectable: teamsKnown
             });
         }
