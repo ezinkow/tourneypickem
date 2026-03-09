@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 export default function PoolCountdown() {
   // 👉 Set pool start time (Central Time)
-  const poolStart = new Date("2026-03-07T20:00:00-06:00"); // Sat 8pm CT
+  const poolStart = new Date("2026-03-17T22:40:00Z");
 
   const getTimeLeft = () => {
     const diff = poolStart - new Date();
@@ -49,7 +49,7 @@ export default function PoolCountdown() {
       </div>
 
       <div className="countdown-sub">
-        Saturday, 9/8:00 PM CT: Ohio Valley Championship
+        First Four Tip-off
       </div>
     </div>
   );

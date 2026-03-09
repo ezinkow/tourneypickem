@@ -10,8 +10,8 @@ export default function Home() {
         <div>
             <Navbar />
             <div className="page-content">   {/* ← ADD THIS */}
-                {/* <CountdownDisplay /> */}
-                <CountdownNextGameLock />
+                <CountdownDisplay />
+                {/* <CountdownNextGameLock /> */}
                 <div className='container'>
                     <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
                         <Link to="/signup" style={{ textDecoration: 'none' }}>
