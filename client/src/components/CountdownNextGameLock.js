@@ -89,7 +89,7 @@ export default function PoolCountdown() {
             {nextLockTime && (
                 <div className="countdown-card" style={{ flex: 1, minWidth: 140, maxWidth: "none", padding: "14px 12px" }}>
                     <div className="countdown-title" style={{ fontSize: "0.95rem" }}>
-                        🔒 Next Lines Lock In
+                        🔒 Next Lines Lock
                     </div>
                     {lockTimeLeft ? (
                         <div className="countdown-grid" style={{ gridTemplateColumns: "repeat(3, 1fr)" }}>

@@ -97,9 +97,7 @@ const Scoreboard = () => {
                                     {/* UNDERDOG */}
                                     <td style={{ padding: "8px 6px", verticalAlign: "middle", whiteSpace: "nowrap" }}>
                                         {g.dog_logo && <img src={g.dog_logo} width="20" alt={g.underdog} title={g.underdog} style={{ marginRight: 3 }} />}
-                                        {g.underdog === g.home_team && (
-                                            <span style={{ fontSize: 11, color: "#6b7280", marginRight: 1 }}>@</span>
-                                        )}
+                                        {g.underdog === g.home_team}
                                         <span className="hide-mobile">
                                             {g.underdog === g.home_team ? `${g.underdog}` : g.underdog}
                                         </span>
@@ -108,9 +106,7 @@ const Scoreboard = () => {
                                     {/* FAVORITE */}
                                     <td style={{ padding: "8px 6px", verticalAlign: "middle", whiteSpace: "nowrap" }}>
                                         {g.fav_logo && <img src={g.fav_logo} width="20" alt={g.favorite} title={g.favorite} style={{ marginRight: 3 }} />}
-                                        {g.favorite === g.home_team && (
-                                            <span style={{ fontSize: 11, color: "#6b7280", marginRight: 1 }}>@</span>
-                                        )}
+                                        {g.favorite === g.home_team}
                                         <span className="hide-mobile">
                                             {g.favorite === g.home_team ? `${g.favorite}` : g.favorite}
                                         </span>

@@ -14,7 +14,7 @@ export default function Home() {
                 <CountdownNextGameLock />
                 <div className='container'>
                     <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
-                        <Link to="/signup" style={{ textDecoration: 'none' }}>
+                        {/* <Link to="/signup" style={{ textDecoration: 'none' }}>
                             <button
                                 type="submit"
                                 style={{
@@ -33,7 +33,7 @@ export default function Home() {
                             >
                                 📋 Sign Up Here 🚀
                             </button>
-                        </Link>
+                        </Link> */}
                         <Link to="/picks">
                             <button
                                 type="submit"
