@@ -91,6 +91,10 @@ module.exports = function (sequelize, DataTypes) {
         selectable: {
             type: DataTypes.BOOLEAN,
             allowNull: true,
+        },
+        round_points:{
+            type: DataTypes.INTEGER,
+            allowNull: true,
         }
     });
 

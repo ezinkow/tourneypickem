@@ -130,8 +130,8 @@ export default function UserSubmit() {
                             placeholder="Phone number"
                         />
                     </div>
-            <p>Sign up is now closed</p>
-                    {/* <button
+            {/* <p>Sign up is now closed</p> */}
+                    <button
                         type="submit"
                         style={{
                             width: "100%",
@@ -148,7 +148,7 @@ export default function UserSubmit() {
                         }}
                     >
                         Sign Up
-                    </button> */}
+                    </button>
                 </form>
 
                 <p style={{ marginTop: 20, fontSize: 13, color: "#6b7280", textAlign: "center" }}>

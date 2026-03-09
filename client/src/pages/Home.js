@@ -14,7 +14,7 @@ export default function Home() {
                 <CountdownNextGameLock />
                 <div className='container'>
                     <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
-                        {/* <Link to="/signup" style={{ textDecoration: 'none' }}>
+                        <Link to="/signup" style={{ textDecoration: 'none' }}>
                             <button
                                 type="submit"
                                 style={{
@@ -33,7 +33,7 @@ export default function Home() {
                             >
                                 📋 Sign Up Here 🚀
                             </button>
-                        </Link> */}
+                        </Link>
                         <Link to="/picks">
                             <button
                                 type="submit"
@@ -56,26 +56,12 @@ export default function Home() {
                     </div>
                     <br />
                     <strong>The game:</strong><br />
-                    Runs from March 7 - March 15<br />
-                    Pick every conference tournament game <strong><u>against the spread</u></strong> from the following conferences: <br />
-                    <ul style={{ listStyleType: 'none', paddingLeft: 0, marginTop: '10px' }}>
-                        <li>A10</li>
-                        <li>American</li>
-                        <li>ACC</li>
-                        <li>Big East</li>
-                        <li>Big 10</li>
-                        <li>Big 12</li>
-                        <li>Conference USA</li>
-                        <li>Mountain West</li>
-                        <li>SEC</li>
-                    </ul>
-                    <strong>AND ALL </strong>conference championship games between March 7th and 15th.
-                    <br /><br />
+                    Runs from March 17 - April 6<br />
+                    Pick every NCAA tournament game <strong><u>against the spread</u></strong><br />
                     Games lock at scheduled tip-off time.<br />
                     Lines lock one hour before scheduled tip-off time.<br />
                     No matter what the line is when pick is submitted, the final, closed locked line will be the line everyone is using.
                     <br /><br />
-                    <h4>Conference Tournament Schedules:</h4>
                     <a href="https://www.ncaa.com/news/basketball-men/article/2026-02-11/tracking-31-ncaa-mens-basketball-conference-tournaments-auto-bids-2026-march"
                         target="_blank"
                         rel="noreferrer"
@@ -93,7 +79,7 @@ export default function Home() {
                             letterSpacing: "0.5px",
                             textDecoration: "none",
                         }}>
-                        📋 Full List of Conference Tournaments ↗
+                        📋 Tourney Bracket ↗
                     </a>
                 </div>
             </div>

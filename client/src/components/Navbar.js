@@ -31,7 +31,7 @@ export default function Navbar() {
                 <div className="navbar-inner">
                     {/* Brand */}
                     <Link to="/" className="navbar-brand">
-                        🏀 CHAMP WEEK PICK'EM ⛹🏾‍♂️
+                        🏀 TOURNEY PICK 'EM ⛹🏾‍♂️
                     </Link>
 
                     {/* Hamburger Toggle (Mobile Only) */}
@@ -51,7 +51,7 @@ export default function Navbar() {
                         <Link to="/scoreboard" onClick={() => setMenuOpen(false)}>Scoreboard</Link>
                         <Link to="/picksdisplay" onClick={() => setMenuOpen(false)}>Group Picks</Link>
                         <Link to="/standings" onClick={() => setMenuOpen(false)}>Standings</Link>
-                        {/* <Link to="/signup" onClick={() => setMenuOpen(false)}>Sign Up</Link> */}
+                        <Link to="/signup" onClick={() => setMenuOpen(false)}>Sign Up</Link>
                     </nav>
                 </div>
             </header>

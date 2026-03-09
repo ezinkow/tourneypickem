@@ -2,11 +2,22 @@ const fetch = require("node-fetch");
 const { Games } = require("../models");
 
 const TOURNAMENT_IDS = new Set([
-    "2", "3", "39", "5", "6", "9", "13", "20", "27"
+    "22"
 ]);
 
+function getRoundPoints(headline) {
+    if (headline.includes("First Four")) return 1;
+    if (headline.includes("1st Round")) return 1;
+    if (headline.includes("2nd Round")) return 2;
+    if (headline.includes("Sweet 16")) return 3;
+    if (headline.includes("Elite 8")) return 4;
+    if (headline.includes("Final Four")) return 5;
+    if (headline.includes("National Championship")) return 6;
+    return 1; // fallback
+}
+
 async function syncGames() {
-    const url = "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard?groups=50&limit=100&dates=20260307-20260315";
+    const url = "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard?groups=50&limit=100&dates=20260317-20260406";
     try {
         const response = await fetch(url);
         const data = await response.json();
@@ -23,13 +34,13 @@ async function syncGames() {
 
             // 1. DATA EXTRACTION
             const headline = comp.notes?.[0]?.headline || "";
+            const roundPoints = getRoundPoints(headline);
             const isTourneyGame = comp.type?.id;
             const tournamentId = (event.tournamentId || comp.tournamentId)?.toString();
 
             // 2. FILTER LOGIC
             const isOurTournament = TOURNAMENT_IDS.has(tournamentId);
-            const isChampionshipFinal = isTourneyGame === "6" && headline.includes("- Final");
-            if (!isOurTournament && !isChampionshipFinal) continue;
+            if (!isOurTournament) continue;
 
             // 3. TEAM NAMES
             const home = comp?.competitors?.find(c => c.homeAway === "home");
@@ -86,6 +97,7 @@ async function syncGames() {
                 home_score: parseInt(home?.score || 0),
                 away_score: parseInt(away?.score || 0),
                 status,
+                round_points: roundPoints,
                 game_clock: event.status?.type?.shortDetail || "",
                 winner: status === "STATUS_FINAL"
                     ? (parseInt(home.score) > parseInt(away.score) ? homeTeam : awayTeam)

@@ -46,10 +46,10 @@ module.exports = function (app) {
                     if (!isCorrect) return;
 
                     if (pick.missed_pick_flag == true) {
-                        points += 0.5;
+                        points += roundPoints * 0.5;
                         missed += 1;
                     } else {
-                        points += 1;
+                        points += roundPoints;
                         correct += 1;
                     }
                 });
