@@ -12,7 +12,7 @@ export default function Home() {
                 {/* <CountdownNextGameLock /> */}
                 <div className='container'>
                     <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
-                        <Link to="/signup" style={{ textDecoration: 'none' }}>
+                        <Link to="/pickem/signup" style={{ textDecoration: 'none' }}>
                             <button
                                 type="submit"
                                 style={{
