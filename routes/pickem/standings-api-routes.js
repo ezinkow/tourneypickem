@@ -1,0 +1,53 @@
+const { PicksPickem, GamesPickem, UsersPickem } = require("../../models/pickem");
+
+module.exports = function (app) {
+
+    app.get("/api/pickem/standings", async (req, res) => {
+        try {
+            const users = await UsersPickem.findAll({ attributes: ["id", "name"] });
+            const games = await GamesPickem.findAll();
+            const gameMap = {};
+            for (const g of games) gameMap[g.id] = g;
+
+            const standings = [];
+
+            for (const user of users) {
+                const picks = await PicksPickem.findAll({
+                    where: { user_id: user.id }
+                });
+
+                let points = 0;
+                let correct = 0;
+                let missed = 0;
+
+                for (const pick of picks) {
+                    const game = gameMap[pick.game_id];
+                    if (!game || !game.winner) continue;
+
+                    const roundPoints = game.round_points || 1;
+
+                    if (pick.missed_pick_flag) {
+                        points += roundPoints * 0.5;
+                        missed += 1;
+                    } else if (pick.pick === game.winner) {
+                        points += roundPoints;
+                        correct += 1;
+                    }
+                }
+
+                standings.push({
+                    name: user.name,
+                    points,
+                    correct,
+                    missed,
+                });
+            }
+
+            standings.sort((a, b) => b.points - a.points || b.correct - a.correct);
+            res.json(standings);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: "Failed to load standings" });
+        }
+    });
+};

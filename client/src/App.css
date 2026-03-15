@@ -160,6 +160,10 @@ body {
   padding: 15px;
 }
 
+ul ul {
+  padding-left: 40px; /* Adjust the value as needed */
+}
+
 /* ===============================
    5. SCOREBOARD TABLE
 ================================ */
@@ -605,7 +609,7 @@ body {
   .mypicks-desktop {
     display: none;
   }
-
+  
   .mypicks-mobile {
     display: flex;
     flex-direction: column;
@@ -624,4 +628,15 @@ body {
 
 .pick-missed {
   background-color: #fffbeb !important;
+}
+/* ===============================
+   11. Bracket Game mobile
+================================ */
+
+.bracket-desktop { display: block; }
+.bracket-mobile { display: none; }
+
+@media (max-width: 768px) {
+    .bracket-desktop { display: none; }
+    .bracket-mobile { display: block; }
 }

@@ -5,36 +5,120 @@ export default function Navbar() {
     const location = useLocation();
     const [menuOpen, setMenuOpen] = useState(false);
     const navigate = useNavigate();
+    const isPickem = location.pathname.startsWith("/pickem");
+    const isBracket = location.pathname.startsWith("/bracket");
+    const isSquares = location.pathname.startsWith("/squares");
+    const isHome = location.pathname === "/";
+    const GOLD = "#c89d3c";
 
-    const NAVBAR_HEIGHT = 65; // matches your --navbar-height CSS variable
-
-    // Close menu on navigation
-    useEffect(() => {
-        setMenuOpen(false);
-    }, [location.pathname]);
-
-    // Lock scroll when menu open
+    useEffect(() => { setMenuOpen(false); }, [location.pathname]);
     useEffect(() => {
         document.body.style.overflow = menuOpen ? "hidden" : "";
     }, [menuOpen]);
 
     const handleNavClick = (path) => {
         setMenuOpen(false);
-        if (location.pathname !== path) {
-            navigate(path);
-        }
+        if (location.pathname !== path) navigate(path);
     };
+
+    const pickemLinks = [
+        { to: "/pickem", label: "Home", emoji: "🏠" },
+        { to: "/pickem/picks", label: "Make Picks", emoji: "📝" },
+        { to: "/pickem/mypicks", label: "My Picks", emoji: "🗒️" },
+        { to: "/pickem/scoreboard", label: "Scoreboard", emoji: "🔢" },
+        { to: "/pickem/picksdisplay", label: "Group Picks", emoji: "👥" },
+        { to: "/pickem/standings", label: "Standings", emoji: "🏆" },
+        { to: "/pickem/signup", label: "Sign Up", emoji: "📋" },
+    ];
+
+    const bracketLinks = [
+        { to: "/bracket", label: "Home", emoji: "🏠" },
+        { to: "/bracket/bracket", label: "Bracket", emoji: "🗂️" },
+        { to: "/bracket/mybracket", label: "My Bracket", emoji: "📝" },
+        { to: "/bracket/standings", label: "Standings", emoji: "🏆" },
+        { to: "/bracket/signup", label: "Sign Up", emoji: "📋" },
+    ];
+
+    const squaresLinks = [
+        { to: "/squares", label: "Home", emoji: "🏠" },
+        { to: "/squares/grid", label: "Grid", emoji: "🟩" },
+        { to: "/squares/numbers", label: "Numbers", emoji: "🔢" },
+        { to: "/squares/results", label: "Results", emoji: "💰" },
+        { to: "/squares/signup", label: "Sign Up", emoji: "📋" },
+    ];
+
+    const activeLinks = isPickem ? pickemLinks
+        : isBracket ? bracketLinks
+        : isSquares ? squaresLinks
+        : [];
+
+    const brandLabel = isPickem ? "🏀 TOURNEY PICK 'EM ⛹🏾‍♂️"
+        : isBracket ? "🗂️ BRACKET CHALLENGE 🏆"
+        : isSquares ? "🟩 TOURNAMENT SQUARES 🟥"
+        : "🏀 TOURNEY GAMES 🏆";
+
+    const navBg = isBracket ? "#030831"
+        : isSquares ? "#0369a1"
+        : "#13447a";
 
     return (
         <>
-            <header className="navbar-header">
+            <header className="navbar-header" style={{ backgroundColor: navBg }}>
                 <div className="navbar-inner">
-                    {/* Brand */}
-                    <Link to="/" className="navbar-brand">
-                        🏀 TOURNEY PICK 'EM ⛹🏾‍♂️
-                    </Link>
 
-                    {/* Hamburger Toggle (Mobile Only) */}
+                    {/* Main Home link — hidden on home page */}
+                    {!isHome && (
+                        <div className="nav-links" style={{ marginRight: 8 }}>
+                            <Link to="/" style={{ color: "white", fontSize: 12, whiteSpace: "nowrap" }}>
+                                ← Home
+                            </Link>
+                        </div>
+                    )}
+
+                    {/* Brand */}
+                    <Link to="/" className="navbar-brand">{brandLabel}</Link>
+
+                    {/* Game switcher pills */}
+                    <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                        <Link
+                            to="/pickem"
+                            style={{
+                                fontSize: 11, fontWeight: 700, padding: "4px 8px",
+                                borderRadius: 12, textDecoration: "none",
+                                backgroundColor: isPickem ? GOLD : "rgba(255,255,255,0.15)",
+                                color: isPickem ? "#13447a" : "white",
+                                whiteSpace: "nowrap",
+                            }}
+                        >
+                            Pick'em
+                        </Link>
+                        <Link
+                            to="/bracket"
+                            style={{
+                                fontSize: 11, fontWeight: 700, padding: "4px 8px",
+                                borderRadius: 12, textDecoration: "none",
+                                backgroundColor: isBracket ? GOLD : "rgba(255,255,255,0.15)",
+                                color: isBracket ? "#030831" : "white",
+                                whiteSpace: "nowrap",
+                            }}
+                        >
+                            Bracket
+                        </Link>
+                        <Link
+                            to="/squares"
+                            style={{
+                                fontSize: 11, fontWeight: 700, padding: "4px 8px",
+                                borderRadius: 12, textDecoration: "none",
+                                backgroundColor: isSquares ? GOLD : "rgba(255,255,255,0.15)",
+                                color: isSquares ? "#0369a1" : "white",
+                                whiteSpace: "nowrap",
+                            }}
+                        >
+                            Squares
+                        </Link>
+                    </div>
+
+                    {/* Hamburger */}
                     <button
                         className="menu-toggle"
                         onClick={() => setMenuOpen(!menuOpen)}
@@ -43,47 +127,31 @@ export default function Navbar() {
                         {menuOpen ? "✕" : "☰"}
                     </button>
 
-                    {/* Desktop Nav Links */}
+                    {/* Desktop nav links */}
                     <nav className={`nav-links ${menuOpen ? "open" : ""}`}>
-                        <Link to="/" onClick={() => setMenuOpen(false)}>Home</Link>
-                        <Link to="/picks" onClick={() => setMenuOpen(false)}>Make Picks</Link>
-                        <Link to="/mypicks" onClick={() => setMenuOpen(false)}>My Picks</Link>
-                        <Link to="/scoreboard" onClick={() => setMenuOpen(false)}>Scoreboard</Link>
-                        <Link to="/picksdisplay" onClick={() => setMenuOpen(false)}>Group Picks</Link>
-                        <Link to="/standings" onClick={() => setMenuOpen(false)}>Standings</Link>
-                        <Link to="/signup" onClick={() => setMenuOpen(false)}>Sign Up</Link>
+                        {activeLinks.map(({ to, label }) => (
+                            <Link key={to} to={to} onClick={() => setMenuOpen(false)}>{label}</Link>
+                        ))}
                     </nav>
+
                 </div>
             </header>
 
-            {/* Overlay — closes menu when tapping outside */}
             {menuOpen && (
-                <div
-                    className="menu-overlay"
-                    onClick={() => setMenuOpen(false)}
-                />
+                <div className="menu-overlay" onClick={() => setMenuOpen(false)} />
             )}
 
-            {/* Mobile Bottom Nav Bar */}
-            <nav className="mobile-bottom-nav">
-                <button onClick={() => handleNavClick("/")} className="mobile-nav-link">
-                    🏠<span>Home</span>
-                </button>
-                <button onClick={() => handleNavClick("/picks")} className="mobile-nav-link">
-                    📝<span>Make Picks</span>
-                </button>
-                <button onClick={() => handleNavClick("/mypicks")} className="mobile-nav-link">
-                    🗒️<span>My Picks</span>
-                </button>
-                <button onClick={() => handleNavClick("/standings")} className="mobile-nav-link">
-                    🏆<span>Standings</span>
-                </button>
-                <button onClick={() => handleNavClick("/scoreboard")} className="mobile-nav-link">
-                    🔢<span>Scores</span>
-                </button>
-                <button onClick={() => handleNavClick("/picksdisplay")} className="mobile-nav-link">
-                    👥<span>Group Picks</span>
-                </button>
+            {/* Mobile bottom nav */}
+            <nav className="mobile-bottom-nav" style={{ backgroundColor: navBg }}>
+                {activeLinks.map(({ to, label, emoji }) => (
+                    <button
+                        key={to}
+                        onClick={() => handleNavClick(to)}
+                        className="mobile-nav-link"
+                    >
+                        {emoji}<span>{label}</span>
+                    </button>
+                ))}
             </nav>
         </>
     );

@@ -4,7 +4,6 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const bodyParser = require("body-parser");
-const { sequelize } = require("./models");
 
 // Initialize app
 const app = express();
@@ -22,21 +21,38 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // Routes
-require("./routes/picks-api-routes.js")(app);
-require("./routes/games-api-routes.js")(app);
-require("./routes/users-api-routes.js")(app);
-require("./routes/standings-api-routes.js")(app);
-require("./routes/scoreboard-api-routes.js")(app);
-require("./routes/adminRefreshGames.js")(app);
-require("./routes/picksdisplay-api-routes.js")(app);
 
-const syncGames = require("./services/sync.js");
+//bracket
+require("./routes/bracket/picks-api-routes.js")(app);
+require("./routes/bracket/games-api-routes.js")(app);
+require("./routes/bracket/users-api-routes.js")(app);
+require("./routes/bracket/standings-api-routes.js")(app);
+require("./routes/bracket/scoreboard-api-routes.js")(app);
+require("./routes/bracket/adminRefreshGames.js")(app);
+require("./routes/bracket/picksdisplay-api-routes.js")(app);
+
+//pickem
+require("./routes/pickem/picks-api-routes.js")(app);
+require("./routes/pickem/games-api-routes.js")(app);
+require("./routes/pickem/users-api-routes.js")(app);
+require("./routes/pickem/standings-api-routes.js")(app);
+require("./routes/pickem/scoreboard-api-routes.js")(app);
+require("./routes/pickem/adminRefreshGames.js")(app);
+require("./routes/pickem/picksdisplay-api-routes.js")(app);
+
+//squares
+require("./routes/squares/users-api-routes.js")(app);
+require("./routes/squares/grid-api-routes.js")(app);
+
+const syncPickem = require("./services/pickem/sync.js");
+const syncBracket = require("./services/bracket/sync.js");
 const lockLines = require("./jobs/lockLines");
 
 // Run sync + lock every 15 minutes
 async function runSync() {
   try {
-    await syncGames();
+    await syncPickem();
+    await syncBracket();
     await lockLines();
   } catch (err) {
     console.error("Background job failed:", err);
@@ -47,7 +63,7 @@ async function runSync() {
 runSync();
 
 // Every 2 min
-setInterval(runSync, 7 * 60 * 1000);
+setInterval(runSync, 15 * 60 * 1000);
 
 // React Router fallback
 if (process.env.NODE_ENV === "production") {
@@ -57,8 +73,6 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // Start server after syncing
-sequelize.sync({ force: false }).then(() => {
   app.listen(PORT, () => {
     console.log(`App listening on PORT ${PORT}`);
   });
-});
