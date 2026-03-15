@@ -32,7 +32,7 @@ export default function Home() {
                                 📋 Sign Up Here 🚀
                             </button>
                         </Link>
-                        <Link to="/picks">
+                        <Link to="/pickem/picks">
                             <button
                                 type="submit"
                                 style={{
