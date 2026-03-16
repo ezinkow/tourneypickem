@@ -136,4 +136,33 @@ module.exports = function (app) {
             res.status(500).json({ error: "Failed" });
         }
     });
+
+    //admin
+    app.post("/api/squares/admin/assign-numbers", async (req, res) => {
+        try {
+            const { grid_id, col_numbers, row_numbers } = req.body;
+            // col_numbers: array of 10 numbers in order [col0, col1, ... col9]
+            // row_numbers: array of 10 numbers in order [row0, row1, ... row9]
+
+            const squares = await SquaresGrid.findAll({
+                where: { grid_id },
+                order: [["square_id", "ASC"]]
+            });
+
+            for (const square of squares) {
+                const offset = grid_id === 1 ? 0 : 100;
+                const colIdx = (square.square_id - offset) % 10;
+                const rowIdx = Math.floor((square.square_id - offset) / 10);
+                await square.update({
+                    colNumber: col_numbers[colIdx],
+                    rowNumber: row_numbers[rowIdx],
+                });
+            }
+
+            res.json({ success: true, grid_id });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: "Failed to assign numbers" });
+        }
+    });
 };

@@ -28,6 +28,8 @@ import SquaresSignUp from "./pages/squares/SquaresSignUp";
 import SquaresNumbers from "./pages/squares/SquaresNumbers";
 import SquaresChangePassword from "./pages/squares/SquaresChangePassword";
 import SquaresHome from "./pages/squares/Home";
+import SquaresAdmin from "./pages/squares/SquaresAdmin";
+
 
 // Bracket pages
 import BracketHome from './pages/bracket/Home';
@@ -70,6 +72,7 @@ export default function App() {
         <Route path="/squares/signup" element={<SquaresSignUp />} />
         <Route path="/squares/numbers" element={<SquaresNumbers />} />
         <Route path="/squares/change-password" element={<SquaresChangePassword />} />
+        <Route path="/squares/admin" element={<SquaresAdmin />} />
 
       </Routes>
     </Router>
