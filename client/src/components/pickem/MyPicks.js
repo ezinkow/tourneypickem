@@ -141,7 +141,7 @@ export default function MyPicks() {
                         {p.Game?.away_team === p.Game?.favorite && (
                             <span style={{ fontSize: 10, color: "#374151" }}>(-{p.Game?.line})</span>
                         )}
-                        <span style={{ fontSize: 11, color: "#9ca3af" }}>@</span>
+                        <span style={{ fontSize: 11, color: "#9ca3af" }}>vs</span>
                         <img src={p.home_logo} height={20} alt="" />
                         {p.Game?.home_team === p.Game?.favorite && (
                             <span style={{ fontSize: 10, color: "#374151" }}>(-{p.Game?.line})</span>
@@ -272,7 +272,7 @@ export default function MyPicks() {
                                                         {p.Game?.away_team === p.Game?.favorite && (
                                                             <span style={{ fontSize: 13, color: "#374151" }}>(-{p.Game?.line})</span>
                                                         )}
-                                                        <span style={{ color: "#9ca3af" }}>@</span>
+                                                        <span style={{ color: "#9ca3af" }}>vs</span>
                                                         <img src={p.home_logo} height={22} alt="" />
                                                         {p.Game?.home_team === p.Game?.favorite && (
                                                             <span style={{ fontSize: 13, color: "#374151" }}>(-{p.Game?.line})</span>

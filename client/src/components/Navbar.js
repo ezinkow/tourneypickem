@@ -25,7 +25,7 @@ export default function Navbar() {
         { to: "/pickem", label: "Home", emoji: "🏠" },
         { to: "/pickem/picks", label: "Make Picks", emoji: "📝" },
         { to: "/pickem/mypicks", label: "My Picks", emoji: "🗒️" },
-        { to: "/pickem/scoreboard", label: "Scoreboard", emoji: "🔢" },
+        { to: "/pickem/scoreboard", label: "Score board", emoji: "🔢" },
         { to: "/pickem/picksdisplay", label: "Group Picks", emoji: "👥" },
         { to: "/pickem/standings", label: "Standings", emoji: "🏆" },
         { to: "/pickem/signup", label: "Sign Up", emoji: "📋" },
@@ -49,17 +49,17 @@ export default function Navbar() {
 
     const activeLinks = isPickem ? pickemLinks
         : isBracket ? bracketLinks
-        : isSquares ? squaresLinks
-        : [];
+            : isSquares ? squaresLinks
+                : [];
 
-    const brandLabel = isPickem ? "🏀 TOURNEY PICK 'EM ⛹🏾‍♂️"
-        : isBracket ? "🗂️ BRACKET CHALLENGE 🏆"
-        : isSquares ? "🟩 TOURNAMENT SQUARES 🟥"
-        : "🏀 TOURNEY GAMES 🏆";
+    const brandLabel = isPickem ? "🏀PICK 'EM"
+        : isBracket ? "🗂️BRACKET"
+            : isSquares ? "🟩SQUARES"
+                : "🏆TOURNEY";
 
     const navBg = isBracket ? "#030831"
         : isSquares ? "#0369a1"
-        : "#13447a";
+            : "#13447a";
 
     return (
         <>
@@ -143,15 +143,18 @@ export default function Navbar() {
 
             {/* Mobile bottom nav */}
             <nav className="mobile-bottom-nav" style={{ backgroundColor: navBg }}>
-                {activeLinks.map(({ to, label, emoji }) => (
-                    <button
-                        key={to}
-                        onClick={() => handleNavClick(to)}
-                        className="mobile-nav-link"
-                    >
-                        {emoji}<span>{label}</span>
-                    </button>
-                ))}
+                {activeLinks
+                    .filter(({ to }) => to !== "/pickem/signup")
+                    .filter(({ to }) => to !== "/bracket/signup")
+                    .map(({ to, label, emoji }) => (
+                        <button
+                            key={to}
+                            onClick={() => handleNavClick(to)}
+                            className="mobile-nav-link"
+                        >
+                            {emoji}<span>{label}</span>
+                        </button>
+                    ))}
             </nav>
         </>
     );
