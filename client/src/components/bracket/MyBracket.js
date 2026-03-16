@@ -374,8 +374,8 @@ export default function MyBracket() {
                         }}>
                             {/* Left: South + East */}
                             <div style={{ display: "flex", flexDirection: "column", gap: 40, flex: 1 }}>
-                                <BracketRegion region="South" games={gamesByRegion("South")} userPicks={picks} onPick={isLocked ? null : handlePick} readonly={isLocked} getDisplayGame={getDisplayGame} />
                                 <BracketRegion region="East" games={gamesByRegion("East")} userPicks={picks} onPick={isLocked ? null : handlePick} readonly={isLocked} getDisplayGame={getDisplayGame} />
+                                <BracketRegion region="South" games={gamesByRegion("South")} userPicks={picks} onPick={isLocked ? null : handlePick} readonly={isLocked} getDisplayGame={getDisplayGame} />
                             </div>
                             {/* Center: Final Four + Championship */}
                             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16, width: 200, flexShrink: 0, paddingTop: 40 }}>
@@ -390,8 +390,8 @@ export default function MyBracket() {
                             </div>
                             {/* Right: Midwest + West */}
                             <div style={{ display: "flex", flexDirection: "column", gap: 40, flex: 1 }}>
-                                <BracketRegion region="Midwest" games={gamesByRegion("Midwest")} userPicks={picks} onPick={isLocked ? null : handlePick} readonly={isLocked} flipped={true} getDisplayGame={getDisplayGame} />
                                 <BracketRegion region="West" games={gamesByRegion("West")} userPicks={picks} onPick={isLocked ? null : handlePick} readonly={isLocked} flipped={true} getDisplayGame={getDisplayGame} />
+                                <BracketRegion region="Midwest" games={gamesByRegion("Midwest")} userPicks={picks} onPick={isLocked ? null : handlePick} readonly={isLocked} flipped={true} getDisplayGame={getDisplayGame} />
                             </div>
                         </div>
                     </BracketScaler>

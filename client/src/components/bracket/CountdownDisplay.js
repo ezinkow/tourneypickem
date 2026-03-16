@@ -49,7 +49,7 @@ export default function PoolCountdown() {
       </div>
 
       <div className="countdown-sub">
-        First Four Tip-off
+        Round 1 Tip-off
       </div>
     </div>
   );
