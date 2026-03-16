@@ -142,10 +142,12 @@ export default function Picks() {
     [games]
   );
 
-  function formatTimeET(date) {
+  function formatDateTimeET(date) {
     if (!date) return "TBD";
-    return new Date(date).toLocaleTimeString("en-US", {
+    return new Date(date).toLocaleString("en-US", {
       timeZone: "America/New_York",
+      month: "numeric",
+      day: "numeric",
       hour: "numeric",
       minute: "2-digit",
     });
@@ -296,7 +298,7 @@ export default function Picks() {
                 {visibleGames.map((game, idx) => (
                   <tr key={game.id} style={{ backgroundColor: idx % 2 === 0 ? "white" : "#f9fafb" }}>
                     <td style={{ padding: "8px 8px", borderBottom: "1px solid #e5e7eb", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                      {game.game_clock}
+                      {formatDateTimeET(game.game_date)}
                     </td>
                     <td style={{ padding: "8px 8px", borderBottom: "1px solid #e5e7eb", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       <img src={game.away_logo} width={18} alt="" style={{ verticalAlign: "middle" }} />
@@ -305,7 +307,7 @@ export default function Picks() {
                       {" "}{game.home_team}
                     </td>
                     <td style={{ padding: "8px 8px", borderBottom: "1px solid #e5e7eb", whiteSpace: "nowrap", fontSize: 12 }}>
-                      {formatTimeET(game.line_locked_time)} ET
+                      {formatDateTimeET(game.line_locked_time)} ET
                     </td>
                     <td style={{ padding: "8px 8px", borderBottom: "1px solid #e5e7eb", whiteSpace: "nowrap" }}>
                       {new Date() >= new Date(game.line_locked_time) ? (
@@ -342,7 +344,7 @@ export default function Picks() {
                 </div>
                 <div style={{ display: "flex", gap: 10, fontSize: 11, color: "#6b7280", marginBottom: 10, flexWrap: "wrap", alignItems: "center" }}>
                   <span>🕐 {game.game_clock}</span>
-                  <span>🔒 {formatTimeET(game.line_locked_time)} ET</span>
+                  <span>🔒 {formatDateTimeET(game.line_locked_time)} ET</span>
                   <span>
                     {new Date() >= new Date(game.line_locked_time) ? (
                       <span style={{ color: "#d9534f", fontWeight: 700 }}>

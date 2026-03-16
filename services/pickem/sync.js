@@ -34,13 +34,12 @@ async function syncPickemGames() {
             // 3. TEAM NAMES
             const home = comp?.competitors?.find(c => c.homeAway === "home");
             const away = comp?.competitors?.find(c => c.homeAway === "away");
-            let homeTeam = home?.team?.shortDisplayName || "TBD";
-            let awayTeam = away?.team?.shortDisplayName || "TBD";
+
+            const homeTeam = home?.team?.shortDisplayName || "TBD";
+            const awayTeam = away?.team?.shortDisplayName || "TBD";
             const teamsKnown = homeTeam !== "TBD" && awayTeam !== "TBD";
 
-            if (homeTeam === "TBD" && headline) homeTeam = headline;
-            if (awayTeam === "TBD" && headline) awayTeam = headline;
-
+            // Don't overwrite with headline — just keep TBD for unknown teams
             const homeLogo = home?.team?.logo || null;
             const awayLogo = away?.team?.logo || null;
 
@@ -73,10 +72,10 @@ async function syncPickemGames() {
                 id: event.id,
                 game_date: event.date,
                 line_locked_time: lineLockedTime,
-                home_team: teamsKnown ? homeTeam : (existingGame?.home_team || homeTeam),
-                away_team: teamsKnown ? awayTeam : (existingGame?.away_team || awayTeam),
-                home_logo: teamsKnown ? homeLogo : (existingGame?.home_logo || homeLogo),
-                away_logo: teamsKnown ? awayLogo : (existingGame?.away_logo || awayLogo),
+                home_team: homeTeam !== "TBD" ? homeTeam : (existingGame?.home_team || "TBD"),
+                away_team: awayTeam !== "TBD" ? awayTeam : (existingGame?.away_team || "TBD"),
+                home_logo: homeLogo || existingGame?.home_logo || null,
+                away_logo: awayLogo || existingGame?.away_logo || null,
                 fav_logo: isLocked ? (existingGame?.fav_logo || favLogo) : (hasOdds ? favLogo : (teamsKnown ? favLogo : (existingGame?.fav_logo || favLogo))),
                 dog_logo: isLocked ? (existingGame?.dog_logo || dogLogo) : (hasOdds ? dogLogo : (teamsKnown ? dogLogo : (existingGame?.dog_logo || dogLogo))),
                 home_score: parseInt(home?.score || 0),
@@ -99,7 +98,7 @@ async function syncPickemGames() {
                 line: isLocked ? (existingGame?.line || currentLine) : currentLine,
                 favorite: isLocked ? (existingGame?.favorite || favorite) : (hasOdds ? favorite : (teamsKnown ? favorite : (existingGame?.favorite || favorite))),
                 underdog: isLocked ? (existingGame?.underdog || underdog) : (hasOdds ? underdog : (teamsKnown ? underdog : (existingGame?.underdog || underdog))),
-                selectable: teamsKnown
+                selectable: homeTeam !== "TBD" && awayTeam !== "TBD"
             };
 
             // Skip upsert if nothing meaningful changed
@@ -109,7 +108,9 @@ async function syncPickemGames() {
                     existingGame.home_score === payload.home_score &&
                     existingGame.away_score === payload.away_score &&
                     existingGame.winner === payload.winner &&
-                    existingGame.line === payload.line;
+                    existingGame.line === payload.line &&
+                    existingGame.home_team === payload.home_team &&
+                    existingGame.away_team === payload.away_team;
 
                 if (noChange) continue;
             }
