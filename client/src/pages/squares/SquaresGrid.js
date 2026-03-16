@@ -101,10 +101,10 @@ export default function SquaresGrid() {
     };
 
     const colNumbers = useMemo(() => {
-        const assigned = grid.filter(s => s.col_number !== null);
+        const assigned = grid.filter(s => s.colNumber !== null);
         if (assigned.length === 0) return Array(10).fill("?");
         const cols = Array(10).fill("?");
-        for (const s of assigned) cols[s.square_id % 10] = s.col_number;
+        for (const s of assigned) cols[s.square_id % 10] = s.colNumber;
         return cols;
     }, [grid]);
 
