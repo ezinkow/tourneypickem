@@ -60,7 +60,7 @@ export default function Home() {
                     Lines lock one hour before scheduled tip-off time.<br />
                     No matter what the line is when pick is submitted, the final, closed locked line will be the line everyone is using.
                     <br /><br />
-                    <a href="https://www.ncaa.com/news/basketball-men/article/2026-02-11/tracking-31-ncaa-mens-basketball-conference-tournaments-auto-bids-2026-march"
+                    <a href="https://www.ncaa.com/march-madness-live/bracket"
                         target="_blank"
                         rel="noreferrer"
                         style={{

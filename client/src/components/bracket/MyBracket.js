@@ -170,32 +170,113 @@ export default function MyBracket() {
 
     // For display: augment games with user's picks cascaded in as team names
     const getDisplayGame = (game) => {
-        // For rounds 2+, if teams aren't known yet, show the user's predicted teams
+        if (game.round === 1) return game;
+
         let homeTeam = game.home_team;
         let awayTeam = game.away_team;
+        let homeSeed = game.home_seed;
+        let awaySeed = game.away_seed;
+        let homeLogo = game.home_logo;
+        let awayLogo = game.away_logo;
+
+        const resolveTeam = (feederGame, pickedTeam) => {
+            if (!feederGame || !pickedTeam) return {};
+            // Find the team's seed and logo from the feeder game
+            if (feederGame.home_team === pickedTeam) {
+                return { seed: feederGame.home_seed, logo: feederGame.home_logo };
+            }
+            if (feederGame.away_team === pickedTeam) {
+                return { seed: feederGame.away_seed, logo: feederGame.away_logo };
+            }
+            // Team not directly in feeder — recurse to find it deeper
+            const deepFeederHome = getFeederGame(feederGame, "home");
+            const deepFeederAway = getFeederGame(feederGame, "away");
+            const fromHome = resolveTeam(deepFeederHome, pickedTeam);
+            if (fromHome.logo) return fromHome;
+            return resolveTeam(deepFeederAway, pickedTeam);
+        };
 
         if (homeTeam === "TBD" || !homeTeam) {
-            // Find the round 1 game that feeds into this slot (home side)
             const feeder = getFeederGame(game, "home");
-            if (feeder) homeTeam = picks[feeder.id] || "TBD";
-        }
-        if (awayTeam === "TBD" || !awayTeam) {
-            const feeder = getFeederGame(game, "away");
-            if (feeder) awayTeam = picks[feeder.id] || "TBD";
+            if (feeder) {
+                const picked = picks[feeder.id];
+                if (picked) {
+                    homeTeam = picked;
+                    const { seed, logo } = resolveTeam(feeder, picked);
+                    homeSeed = seed || null;
+                    homeLogo = logo || null;
+                }
+            }
         }
 
-        return { ...game, home_team: homeTeam, away_team: awayTeam };
+        if (awayTeam === "TBD" || !awayTeam) {
+            const feeder = getFeederGame(game, "away");
+            if (feeder) {
+                const picked = picks[feeder.id];
+                if (picked) {
+                    awayTeam = picked;
+                    const { seed, logo } = resolveTeam(feeder, picked);
+                    awaySeed = seed || null;
+                    awayLogo = logo || null;
+                }
+            }
+        }
+
+        return { ...game, home_team: homeTeam, away_team: awayTeam, home_seed: homeSeed, away_seed: awaySeed, home_logo: homeLogo, away_logo: awayLogo };
     };
 
     const getFeederGame = (game, side) => {
-        // For a given game and side (home/away), find the previous round game
         const prevRound = game.round - 1;
         if (prevRound < 1) return null;
-        // The two slots that feed into this game
+        if (!game.bracket_slot) return null;
+
         const slot1 = (game.bracket_slot - 1) * 2 + 1;
         const slot2 = (game.bracket_slot - 1) * 2 + 2;
+
+        // Final Four feeders are Elite 8 winners — matched by region pair
+        if (game.round === 5) {
+            // FF slot 1 = South + East Elite 8 winners
+            // FF slot 2 = Midwest + West Elite 8 winners
+            const regionPair = game.bracket_slot === 1
+                ? ["South", "East"]
+                : ["Midwest", "West"];
+
+            const feeders = games.filter(g =>
+                g.round === 4 &&
+                regionPair.includes(g.region)
+            ).sort((a, b) => {
+                // South/Midwest = home side, East/West = away side
+                const order = { South: 1, Midwest: 1, East: 0, West: 0 };
+                return order[a.region] - order[b.region];
+            });
+
+            return feeders[side === "home" ? 0 : 1] || null;
+        }
+        // Championship feeders are Final Four games — no region filter
+        if (game.round === 6) {
+            const feeders = games.filter(g =>
+                g.round === 5 &&
+                (g.bracket_slot === slot1 || g.bracket_slot === slot2)
+            );
+            return feeders[side === "home" ? 1 : 0] || null;
+        }
+
+        // For rounds 2-4, use region
+        let region = game.region;
+        if (!region && prevRound >= 1) {
+            const candidates = games.filter(g =>
+                g.round === prevRound &&
+                (g.bracket_slot === slot1 || g.bracket_slot === slot2)
+            );
+            const withPick = candidates.find(g => picks[g.id]);
+            if (withPick) region = withPick.region;
+            else region = candidates[0]?.region;
+        }
+
+        if (!region) return null;
+
         const feeders = games.filter(g =>
-            g.region === game.region &&
+            g.region === region &&
             g.round === prevRound &&
             (g.bracket_slot === slot1 || g.bracket_slot === slot2)
         );
