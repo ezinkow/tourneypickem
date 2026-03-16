@@ -5,15 +5,23 @@ const GOLD = "#c89d3c";
 const BLUE = "#0369a1";
 
 export default function SquaresNumbers() {
-    const [data, setData] = useState({});
+    const [data1, setData1] = useState({});
+    const [data2, setData2] = useState({});
+    const [activeGrid, setActiveGrid] = useState(1);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get("/api/squares/my-numbers")
-            .then(res => setData(res.data))
-            .finally(() => setLoading(false));
+        Promise.all([
+            axios.get("/api/squares/my-numbers?grid_id=1"),
+            axios.get("/api/squares/my-numbers?grid_id=2"),
+        ]).then(([res1, res2]) => {
+            setData1(res1.data);
+            setData2(res2.data);
+            setLoading(false);
+        });
     }, []);
 
+    const data = activeGrid === 1 ? data1 : data2;
     const sorted = Object.entries(data).sort((a, b) => b[1].length - a[1].length);
 
     if (loading) return <div style={{ padding: 80, textAlign: "center", color: BLUE }}>Loading...</div>;
@@ -21,7 +29,7 @@ export default function SquaresNumbers() {
     return (
         <div style={{ paddingTop: 68, paddingBottom: 80, backgroundColor: "#f8fafc", minHeight: "100vh" }}>
             <div style={{
-                background: `linear-gradient(135deg, #0369a1 0%, #0284c7 100%)`,
+                background: `linear-gradient(135deg, ${BLUE} 0%, #0284c7 100%)`,
                 color: "white", padding: "20px 24px", marginBottom: 24,
             }}>
                 <div style={{ maxWidth: 700, margin: "0 auto" }}>
@@ -33,10 +41,29 @@ export default function SquaresNumbers() {
             </div>
 
             <div style={{ maxWidth: 700, margin: "0 auto", padding: "0 16px" }}>
+
+                {/* Grid tabs */}
+                <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
+                    {[1, 2].map(g => (
+                        <button key={g} onClick={() => setActiveGrid(g)} style={{
+                            padding: "8px 24px", borderRadius: 20, border: "none",
+                            fontWeight: 700, fontSize: 13, cursor: "pointer",
+                            backgroundColor: activeGrid === g ? BLUE : "#e5e7eb",
+                            color: activeGrid === g ? "white" : "#374151",
+                        }}>
+                            Grid {g}
+                        </button>
+                    ))}
+                </div>
+
+                {sorted.length === 0 && (
+                    <p style={{ color: "#6b7280" }}>No squares claimed on Grid {activeGrid} yet.</p>
+                )}
+
                 <table style={{ borderCollapse: "collapse", width: "100%", background: "white", borderRadius: 12, overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.07)", fontSize: 14 }}>
                     <thead>
                         <tr>
-                            {["Name", "Squares", "Count"].map(h => (
+                            {["Name", "Numbers", "Count"].map(h => (
                                 <th key={h} style={{
                                     padding: "10px 16px", backgroundColor: BLUE, color: "white",
                                     borderBottom: `2px solid ${GOLD}`, textAlign: "left",
@@ -52,10 +79,13 @@ export default function SquaresNumbers() {
                                     {name}
                                 </td>
                                 <td style={{ padding: "10px 16px", color: "#374151", fontFamily: "monospace", fontSize: 13 }}>
-                                    {squares.join(", ")}
+                                    {squares[0]?.startsWith("#")
+                                        ? <span style={{ color: "#9ca3af", fontStyle: "italic" }}>TBD</span>
+                                        : squares.join(", ")
+                                    }
                                 </td>
                                 <td style={{ padding: "10px 16px", fontWeight: 700, color: GOLD, whiteSpace: "nowrap" }}>
-                                    {squares.length} · ${squares.length * 25}
+                                    {squares.length} · {squares.length * 25} cr
                                 </td>
                             </tr>
                         ))}

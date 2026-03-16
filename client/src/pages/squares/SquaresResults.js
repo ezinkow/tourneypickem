@@ -24,25 +24,33 @@ function getRoundColorHex(round) {
 }
 
 export default function SquaresResults() {
-    const [results, setResults] = useState([]);
-    const [numbers, setNumbers] = useState({});
-    const [grid, setGrid] = useState([]);
+    const [activeGrid, setActiveGrid] = useState(1);
+    const [resultsMap, setResultsMap] = useState({ 1: [], 2: [] });
+    const [numbersMap, setNumbersMap] = useState({ 1: {}, 2: {} });
+    const [gridMap, setGridMap] = useState({ 1: [], 2: [] });
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         Promise.all([
-            axios.get("/api/squares/results"),
-            axios.get("/api/squares/my-numbers"),
-            axios.get("/api/squares/grid"),
-        ]).then(([resultsRes, numbersRes, gridRes]) => {
-            setResults(resultsRes.data);
-            setNumbers(numbersRes.data);
-            setGrid(gridRes.data);
+            axios.get("/api/squares/results?grid_id=1"),
+            axios.get("/api/squares/results?grid_id=2"),
+            axios.get("/api/squares/my-numbers?grid_id=1"),
+            axios.get("/api/squares/my-numbers?grid_id=2"),
+            axios.get("/api/squares/grid?grid_id=1"),
+            axios.get("/api/squares/grid?grid_id=2"),
+        ]).then(([r1, r2, n1, n2, g1, g2]) => {
+            setResultsMap({ 1: r1.data, 2: r2.data });
+            setNumbersMap({ 1: n1.data, 2: n2.data });
+            setGridMap({ 1: g1.data, 2: g2.data });
             setLoading(false);
         });
     }, []);
 
     if (loading) return <div style={{ padding: 80, textAlign: "center", color: BLUE }}>Loading results...</div>;
+
+    const results = resultsMap[activeGrid];
+    const numbers = numbersMap[activeGrid];
+    const grid = gridMap[activeGrid];
 
     const squareCountByOwner = grid.reduce((acc, s) => {
         if (s.owner_name) acc[s.owner_name] = (acc[s.owner_name] || 0) + 1;
@@ -113,12 +121,26 @@ export default function SquaresResults() {
                 <div style={{ maxWidth: 1200, margin: "0 auto" }}>
                     <h2 style={{ margin: 0, color: GOLD, fontWeight: 900 }}>💰 Squares Results</h2>
                     <div style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", marginTop: 4 }}>
-                        Last digit of winner's score (col) × last digit of loser's score (row) · {totalPaidOut.toFixed(2)} credits won so far
+                        Last digit of winner's score (col) × last digit of loser's score (row) · {totalPaidOut.toFixed(2)} credits paid out so far
                     </div>
                 </div>
             </div>
 
             <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 12px" }}>
+
+                {/* Grid tabs */}
+                <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
+                    {[1, 2].map(g => (
+                        <button key={g} onClick={() => setActiveGrid(g)} style={{
+                            padding: "8px 24px", borderRadius: 20, border: "none",
+                            fontWeight: 700, fontSize: 13, cursor: "pointer",
+                            backgroundColor: activeGrid === g ? BLUE : "#e5e7eb",
+                            color: activeGrid === g ? "white" : "#374151",
+                        }}>
+                            Grid {g}
+                        </button>
+                    ))}
+                </div>
 
                 {!numbersAssigned && (
                     <div style={{ marginBottom: 16, padding: "10px 16px", backgroundColor: "#fef9c3", borderRadius: 8, color: "#92400e", fontWeight: 600, fontSize: 13 }}>
@@ -130,7 +152,7 @@ export default function SquaresResults() {
                     <p style={{ color: "#6b7280", marginBottom: 24 }}>No results yet — check back once games are final.</p>
                 )}
 
-                {/* force-mobile class lets table scroll without breaking sticky */}
+                {/* Main results table */}
                 <div className="force-mobile">
                     <table style={{
                         borderCollapse: "collapse", width: "100%", background: "white",
@@ -144,7 +166,7 @@ export default function SquaresResults() {
                                 {ROUNDS.map(r => (
                                     <React.Fragment key={r.round}>
                                         <th style={{ ...thStyle, backgroundColor: getRoundColor(r.round) }}>{r.label} #</th>
-                                        <th style={{ ...thStyle, backgroundColor: getRoundColor(r.round) }}>{r.label}</th>
+                                        <th style={{ ...thStyle, backgroundColor: getRoundColor(r.round) }}>{r.label} cr</th>
                                     </React.Fragment>
                                 ))}
                                 <th style={{ ...thStyle, backgroundColor: "#15803d" }}>Net</th>
@@ -159,13 +181,13 @@ export default function SquaresResults() {
                                             ? row.numbers[0].startsWith("#")
                                                 ? <span style={{ color: "#9ca3af", fontStyle: "italic" }}>
                                                     {row.squareCount} square{row.squareCount !== 1 ? "s" : ""} — TBD
-                                                </span>
+                                                  </span>
                                                 : row.numbers.join(", ")
                                             : "—"
                                         }
                                     </td>
                                     <td style={{ ...tdStyle(), fontWeight: 700, color: "#b45309" }}>
-                                        {row.totalPayout > 0 ? `${row.totalPayout.toFixed(2)}` : "—"}
+                                        {row.totalPayout > 0 ? `${row.totalPayout.toFixed(2)} cr` : "—"}
                                     </td>
                                     {ROUNDS.map(r => {
                                         const { count, payout } = row.roundStats[r.round];
@@ -187,8 +209,8 @@ export default function SquaresResults() {
                                         backgroundColor: row.totalNet > 0 ? "#f0fdf4" : row.totalNet < 0 ? "#fef2f2" : "transparent",
                                     }}>
                                         {row.totalNet >= 0
-                                            ? `+${row.totalNet.toFixed(2)}`
-                                            : `-${Math.abs(row.totalNet).toFixed(2)}`}
+                                            ? `+${row.totalNet.toFixed(2)} cr`
+                                            : `-${Math.abs(row.totalNet).toFixed(2)} cr`}
                                     </td>
                                 </tr>
                             ))}
@@ -197,7 +219,7 @@ export default function SquaresResults() {
                             <tr style={{ backgroundColor: "#f8fafc", borderTop: `2px solid ${GOLD}` }}>
                                 <td style={{ ...tdStyle("left"), fontWeight: 800 }} colSpan={2}>Totals</td>
                                 <td style={{ ...tdStyle(), fontWeight: 800, color: "#b45309" }}>
-                                    {totalPaidOut.toFixed(2)}
+                                    {totalPaidOut.toFixed(2)} cr
                                 </td>
                                 {ROUNDS.map(r => {
                                     const totalCount = summary.reduce((acc, s) => acc + s.roundStats[r.round].count, 0);
@@ -218,7 +240,7 @@ export default function SquaresResults() {
                 {/* Per-game detail */}
                 {results.length > 0 && (
                     <div style={{ marginTop: 40 }}>
-                        <h3 style={{ color: BLUE, marginBottom: 16 }}>📋 Game-by-Game Detail</h3>
+                        <h3 style={{ color: BLUE, marginBottom: 16 }}>📋 Game-by-Game Detail — Grid {activeGrid}</h3>
                         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                             {results.map(r => (
                                 <div key={r.game_id} style={{
@@ -249,7 +271,7 @@ export default function SquaresResults() {
                                         </div>
                                         <div style={{ textAlign: "center" }}>
                                             <div style={{ fontSize: 10, color: "#9ca3af", textTransform: "uppercase" }}>Payout</div>
-                                            <div style={{ fontSize: 13, fontWeight: 700, color: GOLD }}>{r.payout}</div>
+                                            <div style={{ fontSize: 13, fontWeight: 700, color: GOLD }}>{r.payout} cr</div>
                                         </div>
                                     </div>
                                 </div>

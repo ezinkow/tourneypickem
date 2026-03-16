@@ -1,16 +1,18 @@
 const { SquaresGrid } = require("../../models/squares");
 const { GamesBracket } = require("../../models/bracket");
+const { Op } = require("sequelize");
 
 const LOCK_TIME = new Date("2026-03-19T11:10:00-05:00");
-
 const ROUND_PAYOUTS = { 1: 12.5, 2: 25, 3: 50, 4: 100, 5: 200, 6: 500 };
 
 module.exports = function (app) {
 
-    // Get full grid
+    // Get full grid — filter by grid_id
     app.get("/api/squares/grid", async (req, res) => {
         try {
+            const grid_id = parseInt(req.query.grid_id) || 1;
             const squares = await SquaresGrid.findAll({
+                where: { grid_id },
                 order: [["square_id", "ASC"]]
             });
             res.json(squares);
@@ -61,14 +63,15 @@ module.exports = function (app) {
         }
     });
 
-    // Results — match final games to winning squares
+    // Results — accepts grid_id param
     app.get("/api/squares/results", async (req, res) => {
         try {
+            const grid_id = parseInt(req.query.grid_id) || 1;
             const games = await GamesBracket.findAll({
                 where: { status: "STATUS_FINAL" },
                 order: [["round", "ASC"], ["bracket_slot", "ASC"]]
             });
-            const squares = await SquaresGrid.findAll();
+            const squares = await SquaresGrid.findAll({ where: { grid_id } });
             const squareMap = {};
             for (const s of squares) {
                 if (s.rowNumber !== null && s.colNumber !== null) {
@@ -77,13 +80,8 @@ module.exports = function (app) {
             }
 
             const results = games.map(game => {
-                const winnerScore = game.winner === game.home_team
-                    ? game.home_score
-                    : game.away_score;
-                const loserScore = game.winner === game.home_team
-                    ? game.away_score
-                    : game.home_score;
-
+                const winnerScore = game.winner === game.home_team ? game.home_score : game.away_score;
+                const loserScore = game.winner === game.home_team ? game.away_score : game.home_score;
                 const winDigit = winnerScore % 10;
                 const loseDigit = loserScore % 10;
                 const key = `${winDigit}-${loseDigit}`;
@@ -114,21 +112,22 @@ module.exports = function (app) {
         }
     });
 
+    // My numbers — filter by grid_id
     app.get("/api/squares/my-numbers", async (req, res) => {
         try {
+            const grid_id = parseInt(req.query.grid_id) || 1;
             const squares = await SquaresGrid.findAll({
-                where: { owner_name: { [require("sequelize").Op.not]: null } },
+                where: { owner_name: { [Op.not]: null }, grid_id },
                 order: [["square_id", "ASC"]]
             });
 
             const grouped = {};
             for (const s of squares) {
                 if (!grouped[s.owner_name]) grouped[s.owner_name] = [];
-                // Only include if numbers have been assigned
                 if (s.rowNumber !== null && s.colNumber !== null) {
-                    grouped[s.owner_name].push(`${s.colNumber}${s.rowNumber}`);
+                    grouped[s.owner_name].push(`${s.colNumber}-${s.rowNumber}`);
                 } else {
-                    grouped[s.owner_name].push(`#${s.square_id}`); // fallback if not yet assigned
+                    grouped[s.owner_name].push(`#${s.square_id}`);
                 }
             }
 

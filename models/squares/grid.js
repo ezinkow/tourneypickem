@@ -4,6 +4,7 @@ module.exports = function (sequelize, DataTypes) {
         owner_name: { type: DataTypes.STRING, allowNull: true },
         rowNumber: { type: DataTypes.INTEGER, allowNull: true },
         colNumber: { type: DataTypes.INTEGER, allowNull: true },
+        grid_id: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 1 },
         createdAt: { type: DataTypes.DATE, allowNull: true },
     }, {
         tableName: "squares_grid",
