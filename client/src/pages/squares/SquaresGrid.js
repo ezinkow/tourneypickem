@@ -10,7 +10,7 @@ const ROW_NUM_W = 28;
 const GUTTER_W = 28;
 
 export default function SquaresGrid() {
-    const [activeGrid, setActiveGrid] = useState(1);
+    const [activeGrid, setActiveGrid] = useState(2);
     const [grid1, setGrid1] = useState([]);
     const [grid2, setGrid2] = useState([]);
     const [users, setUsers] = useState([]);
@@ -21,8 +21,8 @@ export default function SquaresGrid() {
     const [loading, setLoading] = useState(true);
     const isLocked = new Date() >= LOCK_TIME;
 
-    const grid = activeGrid === 1 ? grid1 : grid2;
-    const setGrid = activeGrid === 1 ? setGrid1 : setGrid2;
+    const grid = activeGrid === 2 ? grid2 : grid1;
+    const setGrid = activeGrid === 2 ? setGrid2 : setGrid1;
 
     useEffect(() => {
         Promise.all([
