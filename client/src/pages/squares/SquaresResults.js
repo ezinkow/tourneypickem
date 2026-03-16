@@ -13,6 +13,16 @@ const ROUNDS = [
     { round: 6, label: "Champ", payout: 500 },
 ];
 
+function getRoundColor(round) {
+    const colors = { 1: "#92400e", 2: "#b45309", 3: "#d97706", 4: "#ca8a04", 5: "#0369a1", 6: "#7c3aed" };
+    return colors[round] || "#6b7280";
+}
+
+function getRoundColorHex(round) {
+    const colors = { 1: "#fef3c7", 2: "#fde68a", 3: "#fcd34d", 4: "#f59e0b", 5: "#bfdbfe", 6: "#ede9fe" };
+    return colors[round] || "#e5e7eb";
+}
+
 export default function SquaresResults() {
     const [results, setResults] = useState([]);
     const [numbers, setNumbers] = useState({});
@@ -34,7 +44,6 @@ export default function SquaresResults() {
 
     if (loading) return <div style={{ padding: 80, textAlign: "center", color: BLUE }}>Loading results...</div>;
 
-    // Build per-person summary
     const squareCountByOwner = grid.reduce((acc, s) => {
         if (s.owner_name) acc[s.owner_name] = (acc[s.owner_name] || 0) + 1;
         return acc;
@@ -67,10 +76,10 @@ export default function SquaresResults() {
         };
     });
 
-    // Sort by totalPayout desc
     summary.sort((a, b) => b.totalPayout - a.totalPayout);
 
     const totalPaidOut = summary.reduce((acc, s) => acc + s.totalPayout, 0);
+    const numbersAssigned = grid.some(s => s.col_number !== null);
 
     const thStyle = {
         padding: "8px 10px",
@@ -104,29 +113,38 @@ export default function SquaresResults() {
                 <div style={{ maxWidth: 1200, margin: "0 auto" }}>
                     <h2 style={{ margin: 0, color: GOLD, fontWeight: 900 }}>💰 Squares Results</h2>
                     <div style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", marginTop: 4 }}>
-                        Last digit of winner's score (col) × last digit of loser's score (row) · ${totalPaidOut.toFixed(2)} paid out so far
+                        Last digit of winner's score (col) × last digit of loser's score (row) · {totalPaidOut.toFixed(2)} credits won so far
                     </div>
                 </div>
             </div>
 
             <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 12px" }}>
 
-                {results.length === 0 && (
-                    <p style={{ color: "#6b7280" }}>No results yet — check back once games are final.</p>
+                {!numbersAssigned && (
+                    <div style={{ marginBottom: 16, padding: "10px 16px", backgroundColor: "#fef9c3", borderRadius: 8, color: "#92400e", fontWeight: 600, fontSize: 13 }}>
+                        🎲 Numbers not yet assigned — square IDs shown until the draw happens
+                    </div>
                 )}
 
-                {/* Main results table */}
-                <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
-                    <table style={{ borderCollapse: "collapse", width: "100%", background: "white", fontSize: 13, boxShadow: "0 2px 8px rgba(0,0,0,0.07)", borderRadius: 8, overflow: "hidden" }}>
+                {results.length === 0 && (
+                    <p style={{ color: "#6b7280", marginBottom: 24 }}>No results yet — check back once games are final.</p>
+                )}
+
+                {/* force-mobile class lets table scroll without breaking sticky */}
+                <div className="force-mobile">
+                    <table style={{
+                        borderCollapse: "collapse", width: "100%", background: "white",
+                        fontSize: 13, boxShadow: "0 2px 8px rgba(0,0,0,0.07)",
+                    }}>
                         <thead>
                             <tr>
                                 <th style={{ ...thStyle, textAlign: "left" }}>Name</th>
                                 <th style={{ ...thStyle, textAlign: "left" }}>Numbers</th>
-                                <th style={{ ...thStyle, backgroundColor: "#b45309" }}>Total Pay</th>
+                                <th style={{ ...thStyle, backgroundColor: "#b45309" }}>Total</th>
                                 {ROUNDS.map(r => (
                                     <React.Fragment key={r.round}>
                                         <th style={{ ...thStyle, backgroundColor: getRoundColor(r.round) }}>{r.label} #</th>
-                                        <th style={{ ...thStyle, backgroundColor: getRoundColor(r.round) }}>{r.label} $</th>
+                                        <th style={{ ...thStyle, backgroundColor: getRoundColor(r.round) }}>{r.label}</th>
                                     </React.Fragment>
                                 ))}
                                 <th style={{ ...thStyle, backgroundColor: "#15803d" }}>Net</th>
@@ -137,10 +155,17 @@ export default function SquaresResults() {
                                 <tr key={row.name} style={{ backgroundColor: i % 2 === 0 ? "white" : "#f9fafb" }}>
                                     <td style={{ ...tdStyle("left"), fontWeight: 700, color: BLUE }}>{row.name}</td>
                                     <td style={{ ...tdStyle("left"), fontFamily: "monospace", fontSize: 11, color: "#374151" }}>
-                                        {row.numbers.join(", ") || "—"}
+                                        {row.numbers.length > 0
+                                            ? row.numbers[0].startsWith("#")
+                                                ? <span style={{ color: "#9ca3af", fontStyle: "italic" }}>
+                                                    {row.squareCount} square{row.squareCount !== 1 ? "s" : ""} — TBD
+                                                </span>
+                                                : row.numbers.join(", ")
+                                            : "—"
+                                        }
                                     </td>
                                     <td style={{ ...tdStyle(), fontWeight: 700, color: "#b45309" }}>
-                                        {row.totalPayout > 0 ? `$${row.totalPayout.toFixed(2)}` : "—"}
+                                        {row.totalPayout > 0 ? `${row.totalPayout.toFixed(2)}` : "—"}
                                     </td>
                                     {ROUNDS.map(r => {
                                         const { count, payout } = row.roundStats[r.round];
@@ -150,7 +175,7 @@ export default function SquaresResults() {
                                                     {count > 0 ? count : "—"}
                                                 </td>
                                                 <td style={{ ...tdStyle(), color: payout > 0 ? "#15803d" : "#d1d5db", fontWeight: payout > 0 ? 700 : 400 }}>
-                                                    {payout > 0 ? `$${payout.toFixed(2)}` : "—"}
+                                                    {payout > 0 ? `${payout.toFixed(2)}` : "—"}
                                                 </td>
                                             </React.Fragment>
                                         );
@@ -161,7 +186,9 @@ export default function SquaresResults() {
                                         color: row.totalNet > 0 ? "#15803d" : row.totalNet < 0 ? "#dc2626" : "#6b7280",
                                         backgroundColor: row.totalNet > 0 ? "#f0fdf4" : row.totalNet < 0 ? "#fef2f2" : "transparent",
                                     }}>
-                                        {row.totalNet >= 0 ? `+$${row.totalNet.toFixed(2)}` : `-$${Math.abs(row.totalNet).toFixed(2)}`}
+                                        {row.totalNet >= 0
+                                            ? `+${row.totalNet.toFixed(2)}`
+                                            : `-${Math.abs(row.totalNet).toFixed(2)}`}
                                     </td>
                                 </tr>
                             ))}
@@ -169,14 +196,16 @@ export default function SquaresResults() {
                             {/* Totals row */}
                             <tr style={{ backgroundColor: "#f8fafc", borderTop: `2px solid ${GOLD}` }}>
                                 <td style={{ ...tdStyle("left"), fontWeight: 800 }} colSpan={2}>Totals</td>
-                                <td style={{ ...tdStyle(), fontWeight: 800, color: "#b45309" }}>${totalPaidOut.toFixed(2)}</td>
+                                <td style={{ ...tdStyle(), fontWeight: 800, color: "#b45309" }}>
+                                    {totalPaidOut.toFixed(2)}
+                                </td>
                                 {ROUNDS.map(r => {
                                     const totalCount = summary.reduce((acc, s) => acc + s.roundStats[r.round].count, 0);
                                     const totalPay = summary.reduce((acc, s) => acc + s.roundStats[r.round].payout, 0);
                                     return (
                                         <React.Fragment key={r.round}>
                                             <td style={{ ...tdStyle(), fontWeight: 700 }}>{totalCount || "—"}</td>
-                                            <td style={{ ...tdStyle(), fontWeight: 700 }}>{totalPay > 0 ? `$${totalPay.toFixed(2)}` : "—"}</td>
+                                            <td style={{ ...tdStyle(), fontWeight: 700 }}>{totalPay > 0 ? totalPay.toFixed(2) : "—"}</td>
                                         </React.Fragment>
                                     );
                                 })}
@@ -220,7 +249,7 @@ export default function SquaresResults() {
                                         </div>
                                         <div style={{ textAlign: "center" }}>
                                             <div style={{ fontSize: 10, color: "#9ca3af", textTransform: "uppercase" }}>Payout</div>
-                                            <div style={{ fontSize: 13, fontWeight: 700, color: GOLD }}>${r.payout}</div>
+                                            <div style={{ fontSize: 13, fontWeight: 700, color: GOLD }}>{r.payout}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -231,14 +260,4 @@ export default function SquaresResults() {
             </div>
         </div>
     );
-}
-
-function getRoundColor(round) {
-    const colors = { 1: "#92400e", 2: "#b45309", 3: "#d97706", 4: "#ca8a04", 5: "#0369a1", 6: "#7c3aed" };
-    return colors[round] || "#6b7280";
-}
-
-function getRoundColorHex(round) {
-    const colors = { 1: "#fef3c7", 2: "#fde68a", 3: "#fcd34d", 4: "#f59e0b", 5: "#0369a1", 6: "#7c3aed" };
-    return colors[round] || "#e5e7eb";
 }

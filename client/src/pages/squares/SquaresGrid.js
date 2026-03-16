@@ -136,7 +136,7 @@ export default function SquaresGrid() {
             <div style={{ background: `linear-gradient(135deg, ${BLUE} 0%, #0284c7  100%)`, color: "white", padding: "20px 24px", marginBottom: 24 }}>
                 <div style={{ maxWidth: 900, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
                     <div>
-                        <h2 style={{ margin: 0, color: GOLD, fontWeight: 900 }}>🟩 Tournament Squares</h2>
+                        <h2 style={{ margin: 0, color: GOLD, fontWeight: 900 }}>🟩 Tourney Squares 🟥</h2>
                         <div style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", marginTop: 4 }}>
                             {claimedCount}/100 squares claimed · 25/square
                         </div>

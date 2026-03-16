@@ -121,7 +121,7 @@ export default function Home() {
                 >
                     <div style={{ fontSize: 48, marginBottom: 12 }}>🟩</div>
                     <h2 style={{ color: "#0369a1", marginBottom: 8, fontSize: 22, fontWeight: 800 }}>
-                        Tournament Squares
+                        Tourney Squares
                     </h2>
                     <p style={{ color: "#6b7280", fontSize: 14, lineHeight: 1.6, marginBottom: 20 }}>
                         Claim your squares on the 10x10 grid. Win based on the last digit
