@@ -5,13 +5,13 @@ import toast, { Toaster } from 'react-hot-toast'
 export default function UserSubmit() {
     const [real_name, setReal_name] = useState('')
     const [name, setName] = useState('')
-    const [email_address, setEmail_address] = useState('')
+    const [email, setEmail_address] = useState('')
     const [password, setPassword] = useState('')
     const [phone, setPhone] = useState('')
 
     const handleNameSubmit = event => {
         event.preventDefault()
-        axios.post('api/pickem/users/signup', { real_name, name, password, email_address, phone })
+        axios.post('api/pickem/users/signup', { real_name, name, password, email, phone })
         toast.success(`THANKS, ${real_name}, YOU'RE SIGNED UP!`, {
             duration: 10001,
             position: 'top-center',
@@ -114,7 +114,7 @@ export default function UserSubmit() {
                         <input
                             style={inputStyle}
                             type="email"
-                            value={email_address}
+                            value={email}
                             onChange={e => setEmail_address(e.target.value)}
                             placeholder="your@email.com"
                         />

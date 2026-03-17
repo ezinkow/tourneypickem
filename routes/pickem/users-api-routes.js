@@ -66,10 +66,10 @@ module.exports = function (app) {
 
     app.post("/api/pickem/users/signup", async (req, res) => {
         try {
-            const { real_name, name, password, email_address, phone } = req.body;
+            const { real_name, name, password, email, phone } = req.body;
             const existing = await UsersPickem.findOne({ where: { name } });
             if (existing) return res.status(400).json({ error: "Username taken" });
-            await UsersPickem.create({ real_name, name, password, email_address, phone });
+            await UsersPickem.create({ real_name, name, password, email, phone });
             res.json({ success: true });
         } catch (err) {
             console.error(err);
@@ -79,10 +79,11 @@ module.exports = function (app) {
 
     app.post("/api/pickem/users/change-password", async (req, res) => {
         try {
-            const { name, password } = req.body;
-            const user = await UsersPickem.findOne({ where: { name } });
-            if (!user) return res.status(404).json({ error: "User not found" });
-            await user.update({ password });
+            const { email, newPassword } = req.body;
+            if (!email || !newPassword) return res.status(400).json({ error: "Email and password required" });
+            const user = await UsersPickem.findOne({ where: { email } });
+            if (!user) return res.status(404).json({ error: "No account found with that email" });
+            await user.update({ password: newPassword });
             res.json({ success: true });
         } catch (err) {
             console.error(err);

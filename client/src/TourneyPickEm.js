@@ -63,6 +63,7 @@ export default function App() {
         <Route path="/bracket/mybracket" element={<MyBracket />} />
         <Route path="/bracket/standings" element={<BracketStandings />} />
         <Route path="/bracket/signup" element={<BracketSignUp />} />
+        <Route path="/bracket/change-password" element={<ChangePassword />} />
 
         {/* Squares */}
         {/* <Route path="/squares/grid" element={<SquaresHome />} /> */}

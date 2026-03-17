@@ -79,10 +79,11 @@ module.exports = function (app) {
 
     app.post("/api/bracket/users/change-password", async (req, res) => {
         try {
-            const { name, password } = req.body;
-            const user = await UsersBracket.findOne({ where: { name } });
-            if (!user) return res.status(404).json({ error: "User not found" });
-            await user.update({ password });
+            const { email_address, newPassword } = req.body;
+            if (!email_address || !newPassword) return res.status(400).json({ error: "Email and password required" });
+            const user = await UsersBracket.findOne({ where: { email_address } });
+            if (!user) return res.status(404).json({ error: "No account found with that email" });
+            await user.update({ password: newPassword });
             res.json({ success: true });
         } catch (err) {
             console.error(err);

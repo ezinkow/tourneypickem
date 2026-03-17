@@ -246,7 +246,7 @@ export default function Picks() {
             </button>
             <button
               type="button"
-              onClick={() => { window.location.hash = "#/change-password"; }}
+              onClick={() => { window.location.hash = "#/pickem/change-password"; }}
               style={{ padding: "8px 16px", borderRadius: 6, backgroundColor: "transparent", color: "#6b7280", border: "1px solid #d1d5db", fontWeight: 600, cursor: "pointer", fontSize: 13 }}
             >
               Forgot Password?
