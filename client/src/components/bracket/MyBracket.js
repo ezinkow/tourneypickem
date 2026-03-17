@@ -254,13 +254,13 @@ export default function MyBracket() {
                                 <input type="checkbox" checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} />
                                 Remember me
                             </label>
-                            <button type="button" onClick={() => { window.location.hash = "#/bracket/change-password"; }}
-                                style={{ padding: "6px 10px", borderRadius: 6, backgroundColor: "white", color: "#6b7280", border: "1px solid #d1d5db", fontWeight: 600, cursor: "pointer", fontSize: 12 }}>
-                                Forgot Password?
-                            </button>
                             <button onClick={verify}
                                 style={{ padding: "6px 14px", borderRadius: 6, backgroundColor: GOLD, color: BLUE, border: "none", fontWeight: 700, cursor: "pointer" }}>
                                 Verify
+                            </button>
+                            <button type="button" onClick={() => { window.location.hash = "#/bracket/change-password"; }}
+                                style={{ padding: "6px 10px", borderRadius: 6, backgroundColor: "white", color: "#6b7280", border: "1px solid #d1d5db", fontWeight: 600, cursor: "pointer", fontSize: 12 }}>
+                                Forgot Password?
                             </button>
                         </div>
                     ) : (
@@ -370,7 +370,7 @@ export default function MyBracket() {
                                                         if (isCollapsed) {
                                                             const logo = pick === displayGame.home_team ? displayGame.home_logo
                                                                 : pick === displayGame.away_team ? displayGame.away_logo
-                                                                : null;
+                                                                    : null;
                                                             return (
                                                                 <div key={game.id}
                                                                     onClick={() => toggleCollapse(roundIdx)}
@@ -386,7 +386,7 @@ export default function MyBracket() {
                                                                             ? <img src={logo} width={20} height={20} alt="" style={{ objectFit: "contain" }} />
                                                                             : <span style={{ fontSize: 8, fontWeight: 700, color: BLUE, textAlign: "center", padding: "0 2px", lineHeight: 1.2 }}>
                                                                                 {pick.substring(0, 4)}
-                                                                              </span>
+                                                                            </span>
                                                                         : <span style={{ fontSize: 10, color: "#d1d5db" }}>·</span>
                                                                     }
                                                                 </div>

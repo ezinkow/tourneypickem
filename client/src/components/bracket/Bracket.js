@@ -18,6 +18,8 @@ export default function Bracket() {
     const [userPicks, setUserPicks] = useState({});
     const [standings, setStandings] = useState([]);
     const [loading, setLoading] = useState(true);
+    const LOCK_TIME = new Date("2026-03-19T11:10:00-05:00");
+    const isLocked = new Date() >= LOCK_TIME;
 
     useEffect(() => {
         Promise.all([
@@ -45,6 +47,9 @@ export default function Bracket() {
     const gamesByRegion = (region) => games.filter(g => g.region === region);
     const finalFourGames = games.filter(g => g.round === 5);
     const championshipGame = games.find(g => g.round === 6);
+
+    // Only show other users' picks after lock
+    const displayPicks = isLocked ? userPicks : {};
 
     if (loading) return <div style={{ padding: 80, textAlign: "center", color: BLUE }}>Loading bracket...</div>;
 
@@ -84,26 +89,26 @@ export default function Bracket() {
                 <BracketScaler>
                     <div style={{ display: "flex", gap: 12, alignItems: "flex-start", width: 1600 }}>
                         <div style={{ display: "flex", flexDirection: "column", gap: 40, flex: 1 }}>
-                            <BracketRegion region="East" games={gamesByRegion("East")} userPicks={userPicks} onPick={null} readonly={true} />
-                            <BracketRegion region="South" games={gamesByRegion("South")} userPicks={userPicks} onPick={null} readonly={true} />
+                            <BracketRegion region="East" games={gamesByRegion("East")} displayPicks={displayPicks} onPick={null} readonly={true} />
+                            <BracketRegion region="South" games={gamesByRegion("South")} displayPicks={displayPicks} onPick={null} readonly={true} />
                         </div>
                         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16, width: 200, flexShrink: 0, paddingTop: 40 }}>
                             <div style={{ fontSize: 12, fontWeight: 800, color: BLUE, textTransform: "uppercase", letterSpacing: "1px", borderBottom: `2px solid ${GOLD}`, paddingBottom: 4, width: "100%", textAlign: "center", marginBottom: 8 }}>
                                 Final Four
                             </div>
                             {finalFourGames.map(g => (
-                                <BracketGame key={g.id} game={g} userPick={userPicks?.[g.id]} onPick={null} readonly={true} />
+                                <BracketGame key={g.id} game={g} userPick={displayPicks?.[g.id]} onPick={null} readonly={true} />
                             ))}
                             <div style={{ fontSize: 12, fontWeight: 800, color: GOLD, textTransform: "uppercase", letterSpacing: "1px", borderBottom: `2px solid ${GOLD}`, paddingBottom: 4, width: "100%", textAlign: "center", marginTop: 8 }}>
                                 🏆 Championship
                             </div>
                             {championshipGame && (
-                                <BracketGame game={championshipGame} userPick={userPicks?.[championshipGame.id]} onPick={null} readonly={true} />
+                                <BracketGame game={championshipGame} userPick={displayPicks?.[championshipGame.id]} onPick={null} readonly={true} />
                             )}
                         </div>
                         <div style={{ display: "flex", flexDirection: "column", gap: 40, flex: 1 }}>
-                            <BracketRegion region="West" games={gamesByRegion("West")} userPicks={userPicks} onPick={null} readonly={true} flipped={true} />
-                            <BracketRegion region="Midwest" games={gamesByRegion("Midwest")} userPicks={userPicks} onPick={null} readonly={true} flipped={true} />
+                            <BracketRegion region="West" games={gamesByRegion("West")} displayPicks={displayPicks} onPick={null} readonly={true} flipped={true} />
+                            <BracketRegion region="Midwest" games={gamesByRegion("Midwest")} displayPicks={displayPicks} onPick={null} readonly={true} flipped={true} />
                         </div>
                     </div>
                 </BracketScaler>
@@ -111,13 +116,13 @@ export default function Bracket() {
 
             {/* MOBILE */}
             <div className="bracket-mobile" style={{ padding: "0 12px" }}>
-                <MobileBracket games={games} userPicks={userPicks} readonly={true} />
+                <MobileBracket games={games} displayPicks={displayPicks} readonly={true} />
             </div>
         </div>
     );
 }
 
-function MobileBracket({ games, userPicks, readonly }) {
+function MobileBracket({ games, displayPicks, readonly }) {
     const [activeTab, setActiveTab] = useState("South");
     const [collapsedRounds, setCollapsedRounds] = useState(new Set());
 
@@ -188,7 +193,7 @@ function MobileBracket({ games, userPicks, readonly }) {
                                     {byRound[round]
                                         .sort((a, b) => a.bracket_slot - b.bracket_slot)
                                         .map(game => {
-                                            const pick = userPicks?.[game.id];
+                                            const pick = displayPicks?.[game.id];
                                             if (isCollapsed) {
                                                 const logo = pick === game.home_team ? game.home_logo
                                                     : pick === game.away_team ? game.away_logo
