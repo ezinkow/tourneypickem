@@ -6,7 +6,7 @@ const TOURNAMENT_IDS = new Set([
 ]);
 
 async function syncPickemGames() {
-    const url = "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard?groups=50&limit=306&dates=20260317-20260406";
+    const url = "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard?groups=50&limit=306&dates=20260319-20260406";
     try {
         const response = await fetch(url);
         const data = await response.json();

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 export default function PoolCountdown() {
   // 👉 Set pool start time (Central Time)
-  const poolStart = new Date("2026-03-17T22:40:00Z");
+  const poolStart = new Date("2026-03-19T16:10:00Z");
 
   const getTimeLeft = () => {
     const diff = poolStart - new Date();
@@ -49,7 +49,7 @@ export default function PoolCountdown() {
       </div>
 
       <div className="countdown-sub">
-        First Four Tip-off
+        Round 1 Tip-off
       </div>
     </div>
   );
