@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import BracketRegion from "../../components/bracket/BracketRegion";
 import BracketGame from "../../components/bracket/BracketGame";
 
 const GOLD = "#c89d3c";
 const BLUE = "#13447a";
-const REGIONS = ["South", "East", "Midwest", "West"];
-const LOCK_TIME = new Date("2026-03-19T11:10:00-05:00");
+const ROUND_LABELS = {
+    1: "1st Round", 2: "2nd Round", 3: "Sweet 16",
+    4: "Elite 8", 5: "Final Four", 6: "Championship"
+};
+const TABS = ["South", "East", "Midwest", "West", "Final Four"];
 
 export default function Bracket() {
     const [games, setGames] = useState([]);
@@ -50,16 +53,12 @@ export default function Bracket() {
             {/* Header */}
             <div style={{
                 background: `linear-gradient(135deg, ${BLUE} 0%, #1e5fa8 100%)`,
-                color: "white",
-                padding: "20px 24px",
-                marginBottom: 24,
+                color: "white", padding: "20px 24px", marginBottom: 24,
             }}>
                 <div style={{ maxWidth: 1600, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
                     <h2 style={{ margin: 0, color: GOLD, fontWeight: 900, fontSize: "clamp(18px, 3vw, 28px)" }}>
                         🗂️ 2026 NCAA Bracket
                     </h2>
-
-                    {/* User dropdown */}
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                         <span style={{ fontSize: 13, color: "rgba(255,255,255,0.7)" }}>View bracket:</span>
                         <select
@@ -67,17 +66,13 @@ export default function Bracket() {
                             onChange={e => setSelectedUser(e.target.value || null)}
                             style={{
                                 padding: "6px 12px", borderRadius: 6,
-                                border: `2px solid ${GOLD}`,
-                                backgroundColor: "white",
-                                fontSize: 13, fontWeight: 600, color: BLUE,
-                                cursor: "pointer",
+                                border: `2px solid ${GOLD}`, backgroundColor: "white",
+                                fontSize: 13, fontWeight: 600, color: BLUE, cursor: "pointer",
                             }}
                         >
                             <option value="">— Actual Results —</option>
                             {standings.map(s => (
-                                <option key={s.name} value={s.name}>
-                                    {s.name} ({s.points} pts)
-                                </option>
+                                <option key={s.name} value={s.name}>{s.name} ({s.points} pts)</option>
                             ))}
                         </select>
                     </div>
@@ -88,12 +83,10 @@ export default function Bracket() {
             <div className="bracket-desktop" style={{ overflowX: "hidden", padding: "0 8px" }}>
                 <BracketScaler>
                     <div style={{ display: "flex", gap: 12, alignItems: "flex-start", width: 1600 }}>
-                        {/* Left side: South + East */}
                         <div style={{ display: "flex", flexDirection: "column", gap: 40, flex: 1 }}>
-                            <BracketRegion region="South" games={gamesByRegion("South")} userPicks={userPicks} onPick={null} readonly={true} />
                             <BracketRegion region="East" games={gamesByRegion("East")} userPicks={userPicks} onPick={null} readonly={true} />
+                            <BracketRegion region="South" games={gamesByRegion("South")} userPicks={userPicks} onPick={null} readonly={true} />
                         </div>
-                        {/* Center: Final Four + Championship */}
                         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16, width: 200, flexShrink: 0, paddingTop: 40 }}>
                             <div style={{ fontSize: 12, fontWeight: 800, color: BLUE, textTransform: "uppercase", letterSpacing: "1px", borderBottom: `2px solid ${GOLD}`, paddingBottom: 4, width: "100%", textAlign: "center", marginBottom: 8 }}>
                                 Final Four
@@ -108,35 +101,25 @@ export default function Bracket() {
                                 <BracketGame game={championshipGame} userPick={userPicks?.[championshipGame.id]} onPick={null} readonly={true} />
                             )}
                         </div>
-                        {/* Right side: Midwest + West */}
                         <div style={{ display: "flex", flexDirection: "column", gap: 40, flex: 1 }}>
-                            <BracketRegion region="Midwest" games={gamesByRegion("Midwest")} userPicks={userPicks} onPick={null} readonly={true} flipped={true} />
                             <BracketRegion region="West" games={gamesByRegion("West")} userPicks={userPicks} onPick={null} readonly={true} flipped={true} />
+                            <BracketRegion region="Midwest" games={gamesByRegion("Midwest")} userPicks={userPicks} onPick={null} readonly={true} flipped={true} />
                         </div>
                     </div>
                 </BracketScaler>
             </div>
 
-            {/* MOBILE VIEW — tabs by region */}
+            {/* MOBILE */}
             <div className="bracket-mobile" style={{ padding: "0 12px" }}>
-                <MobileBracket
-                    games={games}
-                    userPicks={userPicks}
-                    readonly={true}
-                />
+                <MobileBracket games={games} userPicks={userPicks} readonly={true} />
             </div>
         </div>
     );
 }
 
-function MobileBracket({ games, userPicks, onPick, readonly }) {
-    const TABS = ["South", "East", "Midwest", "West", "Final Four"];
+function MobileBracket({ games, userPicks, readonly }) {
     const [activeTab, setActiveTab] = useState("South");
-
-    const ROUND_LABELS = {
-        1: "1st Round", 2: "2nd Round", 3: "Sweet 16",
-        4: "Elite 8", 5: "Final Four", 6: "Championship"
-    };
+    const [collapsedRounds, setCollapsedRounds] = useState(new Set());
 
     const tabGames = activeTab === "Final Four"
         ? games.filter(g => g.round >= 5)
@@ -148,28 +131,26 @@ function MobileBracket({ games, userPicks, onPick, readonly }) {
         byRound[g.round].push(g);
     }
 
+    const toggleCollapse = (roundIdx) => {
+        setCollapsedRounds(prev => {
+            const next = new Set(prev);
+            if (next.has(roundIdx)) next.delete(roundIdx);
+            else next.add(roundIdx);
+            return next;
+        });
+    };
+
     return (
         <div>
             {/* Tab bar */}
-            <div style={{
-                display: "flex",
-                overflowX: "auto",
-                gap: 4,
-                marginBottom: 16,
-                paddingBottom: 4,
-            }}>
+            <div style={{ display: "flex", overflowX: "auto", gap: 4, marginBottom: 16, paddingBottom: 4 }}>
                 {TABS.map(tab => (
                     <button
                         key={tab}
-                        onClick={() => setActiveTab(tab)}
+                        onClick={() => { setActiveTab(tab); setCollapsedRounds(new Set()); }}
                         style={{
-                            padding: "6px 12px",
-                            borderRadius: 20,
-                            border: "none",
-                            fontWeight: 700,
-                            fontSize: 12,
-                            whiteSpace: "nowrap",
-                            cursor: "pointer",
+                            padding: "6px 12px", borderRadius: 20, border: "none",
+                            fontWeight: 700, fontSize: 12, whiteSpace: "nowrap", cursor: "pointer",
                             backgroundColor: activeTab === tab ? BLUE : "#e5e7eb",
                             color: activeTab === tab ? "white" : "#374151",
                         }}
@@ -179,58 +160,96 @@ function MobileBracket({ games, userPicks, onPick, readonly }) {
                 ))}
             </div>
 
-            {/* Games by round */}
-            {Object.keys(byRound).sort().map(round => (
-                <div key={round} style={{ marginBottom: 24 }}>
-                    <div style={{
-                        fontSize: 12, fontWeight: 800, color: BLUE,
-                        textTransform: "uppercase", letterSpacing: "0.5px",
-                        marginBottom: 8, paddingBottom: 4,
-                        borderBottom: `2px solid ${GOLD}`,
-                    }}>
-                        {ROUND_LABELS[round]}
-                    </div>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                        {byRound[round]
-                            .sort((a, b) => a.bracket_slot - b.bracket_slot)
-                            .map(game => (
-                                <BracketGame
-                                    key={game.id}
-                                    game={game}
-                                    userPick={userPicks?.[game.id]}
-                                    onPick={onPick}
-                                    readonly={readonly}
-                                />
-                            ))}
-                    </div>
+            {/* Horizontal collapsing bracket */}
+            <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+                <div style={{ display: "flex", gap: 8, alignItems: "flex-start", paddingBottom: 16 }}>
+                    {Object.keys(byRound).sort((a, b) => a - b).map((round, roundIdx) => {
+                        const isCollapsed = collapsedRounds.has(roundIdx);
+                        return (
+                            <div key={round} style={{ flexShrink: 0 }}>
+                                {/* Round label — tap to toggle */}
+                                <div
+                                    onClick={() => toggleCollapse(roundIdx)}
+                                    style={{
+                                        fontSize: 10, fontWeight: 700,
+                                        color: isCollapsed ? BLUE : "#9ca3af",
+                                        textAlign: "center", marginBottom: 6,
+                                        textTransform: "uppercase", letterSpacing: "0.5px",
+                                        whiteSpace: "nowrap", cursor: "pointer",
+                                        padding: "2px 4px", borderRadius: 4,
+                                        backgroundColor: isCollapsed ? "#eff6ff" : "transparent",
+                                        userSelect: "none",
+                                    }}>
+                                    {isCollapsed ? "▶" : "▼"} {ROUND_LABELS[round].split(" ")[0]}
+                                </div>
+
+                                {/* Games */}
+                                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                                    {byRound[round]
+                                        .sort((a, b) => a.bracket_slot - b.bracket_slot)
+                                        .map(game => {
+                                            const pick = userPicks?.[game.id];
+                                            if (isCollapsed) {
+                                                const logo = pick === game.home_team ? game.home_logo
+                                                    : pick === game.away_team ? game.away_logo
+                                                        : null;
+                                                return (
+                                                    <div key={game.id}
+                                                        onClick={() => toggleCollapse(roundIdx)}
+                                                        style={{
+                                                            width: 36, height: 48, borderRadius: 6,
+                                                            border: `1px solid ${pick ? BLUE : "#e5e7eb"}`,
+                                                            backgroundColor: pick ? "#eff6ff" : "#f9fafb",
+                                                            display: "flex", alignItems: "center",
+                                                            justifyContent: "center", cursor: "pointer",
+                                                        }}>
+                                                        {pick
+                                                            ? logo
+                                                                ? <img src={logo} width={20} height={20} alt="" style={{ objectFit: "contain" }} />
+                                                                : <span style={{ fontSize: 8, fontWeight: 700, color: BLUE, textAlign: "center", padding: "0 2px", lineHeight: 1.2 }}>
+                                                                    {pick.substring(0, 4)}
+                                                                </span>
+                                                            : <span style={{ fontSize: 10, color: "#d1d5db" }}>·</span>
+                                                        }
+                                                    </div>
+                                                );
+                                            }
+                                            return (
+                                                <BracketGame
+                                                    key={game.id}
+                                                    game={game}
+                                                    userPick={pick}
+                                                    onPick={null}
+                                                    readonly={readonly}
+                                                />
+                                            );
+                                        })}
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
-            ))}
+            </div>
         </div>
     );
-
 }
 
 function BracketScaler({ children }) {
     const [scale, setScale] = useState(1);
-
     useEffect(() => {
         const update = () => {
             const available = window.innerWidth - 32;
-            const contentWidth = 1600;
-            setScale(Math.min(1, available / contentWidth));
+            setScale(Math.min(1, available / 1600));
         };
         update();
         window.addEventListener("resize", update);
         return () => window.removeEventListener("resize", update);
     }, []);
-
     return (
         <div style={{ width: "100%", overflow: "hidden" }}>
             <div style={{
-                width: 1600,
-                transformOrigin: "top left",
-                transform: `scale(${scale})`,
-                paddingBottom: 40,
+                width: 1600, transformOrigin: "top left",
+                transform: `scale(${scale})`, paddingBottom: 40,
             }}>
                 {children}
             </div>
