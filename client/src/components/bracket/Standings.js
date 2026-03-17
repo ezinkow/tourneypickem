@@ -7,6 +7,8 @@ const BLUE = "#13447a";
 export default function BracketStandings() {
     const [standings, setStandings] = useState([]);
     const [loading, setLoading] = useState(true);
+    const LOCK_TIME = new Date("2026-03-19T11:10:00-05:00");
+    const isLocked = new Date() >= LOCK_TIME;
 
     useEffect(() => {
         axios.get("/api/bracket/standings")
@@ -36,7 +38,7 @@ export default function BracketStandings() {
                 }}>
                     <thead>
                         <tr>
-                            {["Rank", "Name", "Points", "Correct", "Champ"].map(h => (
+                            {["Rank", "Name", "Points", "Correct", ...(isLocked ? ["Champ"] : [])].map(h => (
                                 <th key={h} style={{
                                     position: "sticky", top: 65, zIndex: 4,
                                     padding: "10px 14px",
@@ -64,10 +66,14 @@ export default function BracketStandings() {
                                 <td style={{ padding: "10px 14px", fontWeight: 700, color: BLUE }}>{s.points}</td>
                                 <td style={{ padding: "10px 14px", color: "#16a34a", fontWeight: 600 }}>{s.correct}</td>
                                 <td style={{ padding: "10px 14px", color: "#374151" }}>
-                                    {s.predictedWinner
-                                        ? <span style={{ fontWeight: 600 }}>🏆 {s.predictedWinner}</span>
-                                        : <span style={{ color: "#9ca3af" }}>—</span>
-                                    }
+                                    {isLocked && (
+                                        <td style={{ padding: "10px 14px", color: "#374151" }}>
+                                            {s.predictedWinner
+                                                ? <span style={{ fontWeight: 600 }}>🏆 {s.predictedWinner}</span>
+                                                : <span style={{ color: "#9ca3af" }}>—</span>
+                                            }
+                                        </td>
+                                    )}
                                 </td>
                             </tr>
                         ))}
@@ -96,7 +102,7 @@ export default function BracketStandings() {
                                 </span>
                                 <span style={{ fontWeight: 700, fontSize: 15 }}>{s.name}</span>
                             </div>
-                            {s.predictedWinner && (
+                            {isLocked && s.predictedWinner && (
                                 <div style={{ fontSize: 12, color: "#6b7280" }}>
                                     🏆 {s.predictedWinner}
                                 </div>
