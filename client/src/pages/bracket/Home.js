@@ -63,6 +63,7 @@ export default function Home() {
                             <li>Example 2: You pick a 4 seed to win in round 2. The 4 seed wins, you get 6 points (2 + 4)</li>
                         </ul>
                         <li>Most points at the end wins!</li>
+                        <li>25/bracket. Max 2 brackets</li>
                     </ul>
                     <br /><br />
                     <a href="https://www.ncaa.com/march-madness-live/scores"

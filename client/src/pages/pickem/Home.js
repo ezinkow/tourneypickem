@@ -54,12 +54,14 @@ export default function Home() {
                     </div>
                     <br />
                     <strong>The game:</strong><br />
-                    Runs from March 17 - April 6<br />
-                    Pick every NCAA tournament game <strong><u>against the spread</u></strong><br />
-                    Games lock at scheduled tip-off time.<br />
-                    Lines lock one hour before scheduled tip-off time.<br />
-                    No matter what the line is when pick is submitted, the final, closed locked line will be the line everyone is using.
-                    <br /><br />
+                    <div style={{marginLeft:'10px'}}>
+                        <li>Runs from March 17 - April 6</li>
+                        <li>Pick every NCAA tournament game <strong><u>against the spread</u></strong></li>
+                        <li>Games lock at scheduled tip-off time.</li>
+                        <li>Lines lock one hour before scheduled tip-off time.</li>
+                        <li>No matter what the line is when pick is submitted, the final, closed locked line will be the line everyone is using.</li>
+                        <li>100/entry</li>
+                    </div>
                     <a href="https://www.ncaa.com/march-madness-live/bracket"
                         target="_blank"
                         rel="noreferrer"
