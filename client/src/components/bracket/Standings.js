@@ -21,6 +21,7 @@ export default function BracketStandings() {
             <h2 style={{ color: BLUE, marginBottom: 4 }}>🏆 Bracket Standings</h2>
             <p style={{ color: "#6b7280", fontSize: 13, marginBottom: 20 }}>
                 Points: 1pt R1 · 2pt R2 · 4pt Sweet 16 · 8pt Elite 8 · 16pt Final Four · 32pt Championship
+                <br />PLUS: Team's seed value
             </p>
 
             {standings.length === 0 && (
@@ -29,7 +30,10 @@ export default function BracketStandings() {
 
             {/* Desktop table */}
             <div className="mypicks-desktop">
-                <table style={{ borderCollapse: "collapse", width: "100%", background: "white", fontSize: 14, borderRadius: 12, overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.07)" }}>
+                <table style={{
+                    borderCollapse: "collapse", width: "100%", background: "white",
+                    fontSize: 14, boxShadow: "0 2px 8px rgba(0,0,0,0.07)"
+                }}>
                     <thead>
                         <tr>
                             {["Rank", "Name", "Points", "Correct", "Champ"].map(h => (
@@ -105,6 +109,6 @@ export default function BracketStandings() {
                     </div>
                 ))}
             </div>
-        </div>
+        </div >
     );
 }

@@ -62,7 +62,7 @@ export default function Home() {
                         borderTop: `4px solid ${GOLD}`,
                     }}>
                         <h3 style={{ color: BLUE, marginTop: 0, marginBottom: 16 }}>📋 Game Rules</h3>
-                        <li>Runs from March 17 - April 6</li>
+                        <li>Runs from March 19 - April 6</li>
                         <li>Pick every NCAA tournament game <strong><u>against the spread</u></strong></li>
                         <li>Games lock at scheduled tip-off time.</li>
                         <li>Lines lock one hour before scheduled tip-off time.</li>
