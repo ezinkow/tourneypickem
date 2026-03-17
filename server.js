@@ -30,6 +30,7 @@ require("./routes/bracket/standings-api-routes.js")(app);
 require("./routes/bracket/scoreboard-api-routes.js")(app);
 require("./routes/bracket/adminRefreshGames.js")(app);
 require("./routes/bracket/picksdisplay-api-routes.js")(app);
+require("./routes/bracket/tiebreaker-api-routes.js")(app);
 
 //pickem
 require("./routes/pickem/picks-api-routes.js")(app);

@@ -7,6 +7,7 @@ import BracketRegion from "../../components/bracket/BracketRegion";
 const GOLD = "#c89d3c";
 const BLUE = "#13447a";
 const LOCK_TIME = new Date("2026-03-19T11:10:00-05:00");
+const CHAMP_TIPOFF = new Date("2026-04-06T21:20:00-05:00");
 const ROUND_LABELS = {
     1: "1st Round", 2: "2nd Round", 3: "Sweet 16",
     4: "Elite 8", 5: "Final Four", 6: "Championship"
@@ -25,7 +26,25 @@ export default function MyBracket() {
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
     const [collapsedRounds, setCollapsedRounds] = useState(new Set());
+    const [tiebreakerWin, setTiebreakerWin] = useState("");
+    const [tiebreakerLoss, setTiebreakerLoss] = useState("");
+    const [tiebreakerSaved, setTiebreakerSaved] = useState(false);
+
     const isLocked = new Date() >= LOCK_TIME;
+    const isTiebreakerLocked = new Date() >= CHAMP_TIPOFF;
+    const showTiebreaker = !isLocked; // show once bracket is locked
+
+    const champGame = games.find(g => g.round === 6);
+
+    const loadTiebreaker = async (name) => {
+        try {
+            const res = await axios.get("/api/bracket/tiebreaker", { params: { name } });
+            if (res.data) {
+                setTiebreakerWin(res.data.win_score ?? "");
+                setTiebreakerLoss(res.data.loss_score ?? "");
+            }
+        } catch { }
+    };
 
     useEffect(() => {
         axios.get("/api/bracket/games").then(res => setGames(res.data));
@@ -37,8 +56,11 @@ export default function MyBracket() {
             const { name, token } = JSON.parse(saved);
             axios.post("/api/bracket/users/verify-token", { name, token })
                 .then(res => {
-                    if (res.data.success) { setUser(name); setAuthenticated(true); }
-                    else localStorage.removeItem("rememberedUserBracket");
+                    if (res.data.success) {
+                        setUser(name);
+                        setAuthenticated(true);
+                        loadTiebreaker(name);
+                    } else localStorage.removeItem("rememberedUserBracket");
                 })
                 .catch(() => localStorage.removeItem("rememberedUserBracket"));
         }
@@ -65,6 +87,7 @@ export default function MyBracket() {
             if (rememberMe) {
                 localStorage.setItem("rememberedUserBracket", JSON.stringify({ name: user, token: res.data.token }));
             }
+            loadTiebreaker(user);
         } catch { toast.error("Verify failed"); }
     };
 
@@ -78,6 +101,8 @@ export default function MyBracket() {
         setAuthenticated(false);
         setUser("SELECT YOUR NAME");
         setPicks({});
+        setTiebreakerWin("");
+        setTiebreakerLoss("");
     };
 
     const handlePick = (gameId, teamName) => {
@@ -128,6 +153,20 @@ export default function MyBracket() {
             toast.success("Bracket saved!");
         } catch { toast.error("Save failed"); }
         finally { setSaving(false); }
+    };
+
+    const handleSaveTiebreaker = async () => {
+        if (!tiebreakerWin || !tiebreakerLoss) return toast.error("Enter both scores");
+        try {
+            await axios.post("/api/bracket/tiebreaker", {
+                name: user,
+                win_score: parseInt(tiebreakerWin),
+                loss_score: parseInt(tiebreakerLoss),
+            });
+            setTiebreakerSaved(true);
+            toast.success("Tiebreaker saved!");
+            setTimeout(() => setTiebreakerSaved(false), 3000);
+        } catch { toast.error("Save failed"); }
     };
 
     const getDisplayGame = (game) => {
@@ -226,6 +265,54 @@ export default function MyBracket() {
         return champGame ? picks[champGame.id] : null;
     })();
 
+    const TiebreakerBlock = () => (
+        <div style={{
+            background: "white", borderRadius: 8, padding: "10px 12px",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.07)",
+            border: `1px solid ${GOLD}`,
+            marginTop: 12, width: "100%",
+        }}>
+            <div style={{ fontSize: 10, fontWeight: 800, color: BLUE, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>
+                🏆 Champ Score Tiebreaker
+                {isTiebreakerLocked && <span style={{ color: "#dc2626", marginLeft: 6 }}>— Locked</span>}
+            </div>
+            <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                <input
+                    type="number"
+                    value={tiebreakerWin}
+                    onChange={e => setTiebreakerWin(e.target.value)}
+                    disabled={isTiebreakerLocked}
+                    placeholder="Win"
+                    style={{
+                        width: 56, padding: "5px 4px", borderRadius: 5,
+                        border: "1px solid #d1d5db", fontSize: 13, fontWeight: 700,
+                        textAlign: "center", opacity: isTiebreakerLocked ? 0.6 : 1,
+                    }}
+                />
+                <span style={{ fontSize: 12, color: "#9ca3af", fontWeight: 300 }}>—</span>
+                <input
+                    type="number"
+                    value={tiebreakerLoss}
+                    onChange={e => setTiebreakerLoss(e.target.value)}
+                    disabled={isTiebreakerLocked}
+                    placeholder="Loss"
+                    style={{
+                        width: 56, padding: "5px 4px", borderRadius: 5,
+                        border: "1px solid #d1d5db", fontSize: 13, fontWeight: 700,
+                        textAlign: "center", opacity: isTiebreakerLocked ? 0.6 : 1,
+                    }}
+                />
+                {!isTiebreakerLocked && (
+                    <button onClick={handleSaveTiebreaker}
+                        style={{ padding: "5px 10px", borderRadius: 5, backgroundColor: BLUE, color: "white", border: "none", fontWeight: 600, cursor: "pointer", fontSize: 11 }}>
+                        Save
+                    </button>
+                )}
+                {tiebreakerSaved && <span style={{ fontSize: 11, color: "#16a34a", fontWeight: 600 }}>✅</span>}
+            </div>
+        </div>
+    );
+
     return (
         <div style={{ paddingTop: 68, paddingBottom: 80, backgroundColor: "#f8fafc", minHeight: "100vh" }}>
             <Toaster />
@@ -290,28 +377,35 @@ export default function MyBracket() {
                 ) : loading ? (
                     <div style={{ textAlign: "center", padding: 60, color: BLUE }}>Loading your bracket...</div>
                 ) : (
-                    <BracketScaler>
-                        <div style={{ display: "flex", gap: 12, alignItems: "flex-start", width: 1600 }}>
-                            <div style={{ display: "flex", flexDirection: "column", gap: 40, flex: 1 }}>
-                                <BracketRegion region="East" games={gamesByRegion("East")} userPicks={picks} onPick={isLocked ? null : handlePick} readonly={isLocked} getDisplayGame={getDisplayGame} />
-                                <BracketRegion region="South" games={gamesByRegion("South")} userPicks={picks} onPick={isLocked ? null : handlePick} readonly={isLocked} getDisplayGame={getDisplayGame} />
+                    <>
+                        <BracketScaler>
+                            <div style={{ display: "flex", gap: 12, alignItems: "flex-start", width: 1600 }}>
+                                <div style={{ display: "flex", flexDirection: "column", gap: 40, flex: 1 }}>
+                                    <BracketRegion region="East" games={gamesByRegion("East")} userPicks={picks} onPick={isLocked ? null : handlePick} readonly={isLocked} getDisplayGame={getDisplayGame} />
+                                    <BracketRegion region="South" games={gamesByRegion("South")} userPicks={picks} onPick={isLocked ? null : handlePick} readonly={isLocked} getDisplayGame={getDisplayGame} />
+                                </div>
+                                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16, width: 200, flexShrink: 0, paddingTop: 40 }}>
+                                    <div style={{ fontSize: 12, fontWeight: 800, color: BLUE, textTransform: "uppercase", letterSpacing: "1px", borderBottom: `2px solid ${GOLD}`, paddingBottom: 4, width: "100%", textAlign: "center", marginBottom: 8 }}>Final Four</div>
+                                    {finalFourGames.map(g => (
+                                        <BracketGame key={g.id} game={getDisplayGame(g)} userPick={picks[g.id]} onPick={isLocked ? null : handlePick} readonly={isLocked} />
+                                    ))}
+                                    <div style={{ fontSize: 12, fontWeight: 800, color: GOLD, textTransform: "uppercase", letterSpacing: "1px", borderBottom: `2px solid ${GOLD}`, paddingBottom: 4, width: "100%", textAlign: "center", marginTop: 8 }}>🏆 Championship</div>
+                                    {championshipGame && (
+                                        <BracketGame game={getDisplayGame(championshipGame)} userPick={picks[championshipGame.id]} onPick={isLocked ? null : handlePick} readonly={isLocked} />
+                                    )}
+                                    {showTiebreaker && (
+                                        <div style={{ maxWidth: 500, margin: "0 auto", padding: "3px 3px" }}>
+                                            <TiebreakerBlock />
+                                        </div>
+                                    )}
+                                </div>
+                                <div style={{ display: "flex", flexDirection: "column", gap: 40, flex: 1 }}>
+                                    <BracketRegion region="West" games={gamesByRegion("West")} userPicks={picks} onPick={isLocked ? null : handlePick} readonly={isLocked} flipped={true} getDisplayGame={getDisplayGame} />
+                                    <BracketRegion region="Midwest" games={gamesByRegion("Midwest")} userPicks={picks} onPick={isLocked ? null : handlePick} readonly={isLocked} flipped={true} getDisplayGame={getDisplayGame} />
+                                </div>
                             </div>
-                            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16, width: 200, flexShrink: 0, paddingTop: 40 }}>
-                                <div style={{ fontSize: 12, fontWeight: 800, color: BLUE, textTransform: "uppercase", letterSpacing: "1px", borderBottom: `2px solid ${GOLD}`, paddingBottom: 4, width: "100%", textAlign: "center", marginBottom: 8 }}>Final Four</div>
-                                {finalFourGames.map(g => (
-                                    <BracketGame key={g.id} game={getDisplayGame(g)} userPick={picks[g.id]} onPick={isLocked ? null : handlePick} readonly={isLocked} />
-                                ))}
-                                <div style={{ fontSize: 12, fontWeight: 800, color: GOLD, textTransform: "uppercase", letterSpacing: "1px", borderBottom: `2px solid ${GOLD}`, paddingBottom: 4, width: "100%", textAlign: "center", marginTop: 8 }}>🏆 Championship</div>
-                                {championshipGame && (
-                                    <BracketGame game={getDisplayGame(championshipGame)} userPick={picks[championshipGame.id]} onPick={isLocked ? null : handlePick} readonly={isLocked} />
-                                )}
-                            </div>
-                            <div style={{ display: "flex", flexDirection: "column", gap: 40, flex: 1 }}>
-                                <BracketRegion region="West" games={gamesByRegion("West")} userPicks={picks} onPick={isLocked ? null : handlePick} readonly={isLocked} flipped={true} getDisplayGame={getDisplayGame} />
-                                <BracketRegion region="Midwest" games={gamesByRegion("Midwest")} userPicks={picks} onPick={isLocked ? null : handlePick} readonly={isLocked} flipped={true} getDisplayGame={getDisplayGame} />
-                            </div>
-                        </div>
-                    </BracketScaler>
+                        </BracketScaler>
+                    </>
                 )}
             </div>
 
@@ -344,23 +438,18 @@ export default function MyBracket() {
                                     const isCollapsed = collapsedRounds.has(roundIdx);
                                     return (
                                         <div key={round} style={{ flexShrink: 0 }}>
-                                            {/* Round label — tap to toggle */}
-                                            <div
-                                                onClick={() => toggleCollapse(roundIdx)}
-                                                style={{
-                                                    fontSize: 10, fontWeight: 700,
-                                                    color: isCollapsed ? BLUE : "#9ca3af",
-                                                    textAlign: "center", marginBottom: 6,
-                                                    textTransform: "uppercase", letterSpacing: "0.5px",
-                                                    whiteSpace: "nowrap", cursor: "pointer",
-                                                    padding: "2px 4px", borderRadius: 4,
-                                                    backgroundColor: isCollapsed ? "#eff6ff" : "transparent",
-                                                    userSelect: "none",
-                                                }}>
+                                            <div onClick={() => toggleCollapse(roundIdx)} style={{
+                                                fontSize: 10, fontWeight: 700,
+                                                color: isCollapsed ? BLUE : "#9ca3af",
+                                                textAlign: "center", marginBottom: 6,
+                                                textTransform: "uppercase", letterSpacing: "0.5px",
+                                                whiteSpace: "nowrap", cursor: "pointer",
+                                                padding: "2px 4px", borderRadius: 4,
+                                                backgroundColor: isCollapsed ? "#eff6ff" : "transparent",
+                                                userSelect: "none",
+                                            }}>
                                                 {isCollapsed ? "▶" : "▼"} {ROUND_LABELS[round].split(" ")[0]}
                                             </div>
-
-                                            {/* Games */}
                                             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                                                 {byRound[round]
                                                     .sort((a, b) => a.bracket_slot - b.bracket_slot)
@@ -372,15 +461,13 @@ export default function MyBracket() {
                                                                 : pick === displayGame.away_team ? displayGame.away_logo
                                                                     : null;
                                                             return (
-                                                                <div key={game.id}
-                                                                    onClick={() => toggleCollapse(roundIdx)}
-                                                                    style={{
-                                                                        width: 36, height: 48, borderRadius: 6,
-                                                                        border: `1px solid ${pick ? BLUE : "#e5e7eb"}`,
-                                                                        backgroundColor: pick ? "#eff6ff" : "#f9fafb",
-                                                                        display: "flex", alignItems: "center",
-                                                                        justifyContent: "center", cursor: "pointer",
-                                                                    }}>
+                                                                <div key={game.id} onClick={() => toggleCollapse(roundIdx)} style={{
+                                                                    width: 36, height: 48, borderRadius: 6,
+                                                                    border: `1px solid ${pick ? BLUE : "#e5e7eb"}`,
+                                                                    backgroundColor: pick ? "#eff6ff" : "#f9fafb",
+                                                                    display: "flex", alignItems: "center",
+                                                                    justifyContent: "center", cursor: "pointer",
+                                                                }}>
                                                                     {pick
                                                                         ? logo
                                                                             ? <img src={logo} width={20} height={20} alt="" style={{ objectFit: "contain" }} />
@@ -408,6 +495,9 @@ export default function MyBracket() {
                                 })}
                             </div>
                         </div>
+
+                        {/* Tiebreaker on mobile */}
+                        {showTiebreaker && <TiebreakerBlock />}
                     </>
                 )}
             </div>

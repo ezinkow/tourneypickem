@@ -4,6 +4,7 @@ import toast, { Toaster } from "react-hot-toast";
 import Instructions from "./Instructions";
 
 const isLocked = iso => iso && new Date() >= new Date(iso);
+const FINAL_FOUR_IDS = ["401856598", "401856599"];
 
 const PickButtons = ({ game, picks, updatePick }) => (
   <div style={{ display: "flex", gap: 6 }}>
@@ -58,6 +59,23 @@ export default function Picks() {
   const [games, setGames] = useState([]);
   const [picks, setPicks] = useState([]);
   const [rememberMe, setRememberMe] = useState(false);
+  const [tiebreakerWin, setTiebreakerWin] = useState("");
+  const [tiebreakerLoss, setTiebreakerLoss] = useState("");
+  const [tiebreakerSaved, setTiebreakerSaved] = useState(false);
+
+  const finalFourDone = games.filter(g =>
+    FINAL_FOUR_IDS.includes(g.id) && g.status === "STATUS_FINAL"
+  ).length === 2;
+
+  const loadTiebreaker = async (name) => {
+    try {
+      const res = await axios.get("/api/pickem/tiebreaker", { params: { name } });
+      if (res.data) {
+        setTiebreakerWin(res.data.win_score ?? "");
+        setTiebreakerLoss(res.data.loss_score ?? "");
+      }
+    } catch { }
+  };
 
   useEffect(() => {
     axios.get("/api/pickem/games").then(res => setGames(res.data));
@@ -90,6 +108,7 @@ export default function Picks() {
                 }));
               setPicks(existingPicks);
             });
+            loadTiebreaker(name);
           } else {
             localStorage.removeItem("rememberedUser");
           }
@@ -105,10 +124,7 @@ export default function Picks() {
       setAuthenticated(true);
       toast.success("Identity verified!");
       if (rememberMe) {
-        localStorage.setItem("rememberedUser", JSON.stringify({
-          name: user,
-          token: res.data.token
-        }));
+        localStorage.setItem("rememberedUser", JSON.stringify({ name: user, token: res.data.token }));
       }
       const picksRes = await axios.get("/api/pickem/picks", { params: { name: user } });
       const existingPicks = picksRes.data
@@ -123,6 +139,7 @@ export default function Picks() {
           line: games.find(g => g.id === p.game_id)?.line || null,
         }));
       setPicks(existingPicks);
+      loadTiebreaker(user);
     } catch {
       toast.error("Verify failed");
     }
@@ -138,6 +155,24 @@ export default function Picks() {
     setAuthenticated(false);
     setUser("SELECT YOUR NAME");
     setPicks([]);
+    setTiebreakerWin("");
+    setTiebreakerLoss("");
+  };
+
+  const handleSaveTiebreaker = async () => {
+    if (!tiebreakerWin || !tiebreakerLoss) return toast.error("Enter both scores");
+    try {
+      await axios.post("/api/pickem/tiebreaker", {
+        name: user,
+        win_score: parseInt(tiebreakerWin),
+        loss_score: parseInt(tiebreakerLoss),
+      });
+      setTiebreakerSaved(true);
+      toast.success("Tiebreaker saved!");
+      setTimeout(() => setTiebreakerSaved(false), 3000);
+    } catch {
+      toast.error("Save failed");
+    }
   };
 
   const visibleGames = useMemo(
@@ -189,17 +224,12 @@ export default function Picks() {
 
   const controlBar = (
     <div style={{ marginBottom: 15, display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-      <button
-        onClick={handleSubmit}
-        style={{ padding: "8px 18px", borderRadius: 6, backgroundColor: "#16a34a", color: "white", border: "none", fontWeight: 600, cursor: "pointer" }}
-      >
+      <button onClick={handleSubmit}
+        style={{ padding: "8px 18px", borderRadius: 6, backgroundColor: "#16a34a", color: "white", border: "none", fontWeight: 600, cursor: "pointer" }}>
         Submit Picks
       </button>
-      <button
-        type="button"
-        onClick={() => setPicks([])}
-        style={{ padding: "6px 14px", borderRadius: 6, backgroundColor: "#f3f4f6", color: "#374151", border: "1px solid #d1d5db", fontWeight: 600, cursor: "pointer", fontSize: 13 }}
-      >
+      <button type="button" onClick={() => setPicks([])}
+        style={{ padding: "6px 14px", borderRadius: 6, backgroundColor: "#f3f4f6", color: "#374151", border: "1px solid #d1d5db", fontWeight: 600, cursor: "pointer", fontSize: 13 }}>
         Clear All
       </button>
       <span style={{ fontSize: 13, color: "#6b7280" }}>
@@ -214,59 +244,36 @@ export default function Picks() {
       <div style={{ padding: "0 12px" }}>
         <Instructions />
         <h2 style={{ color: "var(--primary-navy)", marginBottom: 12 }}>🏀 Make Your Picks 🗑️</h2>
-
         {!authenticated && (
           <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 16, flexWrap: "wrap" }}>
-            <select
-              value={user}
-              onChange={e => setUser(e.target.value)}
-              style={{ padding: "8px 12px", borderRadius: 6, border: "1px solid #ccc", fontSize: 14 }}
-            >
+            <select value={user} onChange={e => setUser(e.target.value)}
+              style={{ padding: "8px 12px", borderRadius: 6, border: "1px solid #ccc", fontSize: 14 }}>
               <option value="SELECT YOUR NAME" disabled>SELECT YOUR NAME</option>
-              {users.map(n => (
-                <option key={n.name} value={n.name}>{n.name}</option>
-              ))}
+              {users.map(n => <option key={n.name} value={n.name}>{n.name}</option>)}
             </select>
-            <input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              placeholder="Password"
-              onKeyDown={e => e.key === "Enter" && verify()}
-              style={{ padding: "8px 12px", borderRadius: 6, border: "1px solid #ccc", fontSize: 14, minWidth: 140 }}
-            />
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)}
+              placeholder="Password" onKeyDown={e => e.key === "Enter" && verify()}
+              style={{ padding: "8px 12px", borderRadius: 6, border: "1px solid #ccc", fontSize: 14, minWidth: 140 }} />
             <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "#374151", cursor: "pointer" }}>
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={e => setRememberMe(e.target.checked)}
-              />
+              <input type="checkbox" checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} />
               Remember me
             </label>
-            <button
-              onClick={verify}
-              style={{ padding: "8px 16px", borderRadius: 6, backgroundColor: "#13447a", color: "white", border: "none", fontWeight: 600, cursor: "pointer" }}
-            >
+            <button onClick={verify}
+              style={{ padding: "8px 16px", borderRadius: 6, backgroundColor: "#13447a", color: "white", border: "none", fontWeight: 600, cursor: "pointer" }}>
               Verify Identity
             </button>
-            <button
-              type="button"
-              onClick={() => { window.location.hash = "#/pickem/change-password"; }}
-              style={{ padding: "8px 16px", borderRadius: 6, backgroundColor: "transparent", color: "#6b7280", border: "1px solid #d1d5db", fontWeight: 600, cursor: "pointer", fontSize: 13 }}
-            >
+            <button type="button" onClick={() => { window.location.hash = "#/pickem/change-password"; }}
+              style={{ padding: "8px 16px", borderRadius: 6, backgroundColor: "transparent", color: "#6b7280", border: "1px solid #d1d5db", fontWeight: 600, cursor: "pointer", fontSize: 13 }}>
               Forgot Password?
             </button>
           </div>
         )}
-
         {authenticated && (
           <>
             <h4 style={{ marginBottom: 10 }}>
               User: {user}
-              <button
-                onClick={logout}
-                style={{ marginLeft: 12, fontSize: 12, padding: "3px 10px", borderRadius: 6, border: "1px solid #d1d5db", cursor: "pointer", color: "#6b7280", backgroundColor: "transparent" }}
-              >
+              <button onClick={logout}
+                style={{ marginLeft: 12, fontSize: 12, padding: "3px 10px", borderRadius: 6, border: "1px solid #d1d5db", cursor: "pointer", color: "#6b7280", backgroundColor: "transparent" }}>
                 Log out
               </button>
             </h4>
@@ -368,6 +375,58 @@ export default function Picks() {
               </div>
             ))}
           </div>
+
+          {/* TIEBREAKER — only shown after both Final Four games are final */}
+          {finalFourDone && (
+            <div style={{ padding: "0 12px", marginTop: 24 }}>
+              <div style={{
+                background: "white", borderRadius: 12, padding: "16px 20px",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.07)",
+                borderLeft: "4px solid #c89d3c",
+              }}>
+                <h4 style={{ color: "#13447a", margin: "0 0 6px 0", fontSize: 15 }}>🏆 Tiebreaker</h4>
+                <p style={{ color: "#6b7280", fontSize: 13, margin: "0 0 12px 0" }}>
+                  Predict the final score of the NCAA Championship game. Used to break ties.
+                </p>
+                <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                    <label style={{ fontSize: 11, fontWeight: 700, color: "#6b7280", textTransform: "uppercase" }}>
+                      Winning Score
+                    </label>
+                    <input
+                      type="number"
+                      value={tiebreakerWin}
+                      onChange={e => setTiebreakerWin(e.target.value)}
+                      placeholder="e.g. 78"
+                      style={{ width: 90, padding: "8px 10px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: 16, fontWeight: 700, textAlign: "center" }}
+                    />
+                  </div>
+                  <div style={{ fontSize: 20, fontWeight: 700, color: "#9ca3af", alignSelf: "flex-end", paddingBottom: 8 }}>—</div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                    <label style={{ fontSize: 11, fontWeight: 700, color: "#6b7280", textTransform: "uppercase" }}>
+                      Losing Score
+                    </label>
+                    <input
+                      type="number"
+                      value={tiebreakerLoss}
+                      onChange={e => setTiebreakerLoss(e.target.value)}
+                      placeholder="e.g. 65"
+                      style={{ width: 90, padding: "8px 10px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: 16, fontWeight: 700, textAlign: "center" }}
+                    />
+                  </div>
+                  <button onClick={handleSaveTiebreaker}
+                    style={{ alignSelf: "flex-end", padding: "8px 18px", borderRadius: 6, backgroundColor: "#13447a", color: "white", border: "none", fontWeight: 600, cursor: "pointer", fontSize: 13 }}>
+                    Save
+                  </button>
+                  {tiebreakerSaved && (
+                    <span style={{ alignSelf: "flex-end", fontSize: 13, color: "#16a34a", fontWeight: 600, paddingBottom: 8 }}>
+                      ✅ Saved
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>

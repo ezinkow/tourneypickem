@@ -1,4 +1,4 @@
-const { PicksPickem, GamesPickem, UsersPickem } = require("../../models/pickem");
+const { PicksPickem, GamesPickem, UsersPickem, TiebreakerPickem } = require("../../models/pickem");
 
 module.exports = function (app) {
 
@@ -65,7 +65,7 @@ module.exports = function (app) {
             res.status(500).json({ error: "failed" });
         }
     });
-    
+
     // Bulk upsert picks
     app.post("/api/pickem/picks/bulk", async (req, res) => {
         try {
@@ -85,6 +85,30 @@ module.exports = function (app) {
         } catch (err) {
             console.error(err);
             res.status(500).json({ error: "Failed to save picks" });
+        }
+    });
+
+    app.get("/api/pickem/tiebreaker", async (req, res) => {
+        try {
+            const { name } = req.query;
+            const user = await UsersPickem.findOne({ where: { name } });
+            if (!user) return res.json(null);
+            const record = await TiebreakerPickem.findOne({ where: { user_id: user.id } });
+            res.json(record || null);
+        } catch (err) {
+            res.status(500).json({ error: "Failed" });
+        }
+    });
+
+    app.post("/api/pickem/tiebreaker", async (req, res) => {
+        try {
+            const { name, win_score, loss_score } = req.body;
+            const user = await UsersPickem.findOne({ where: { name } });
+            if (!user) return res.status(404).json({ error: "User not found" });
+            await TiebreakerPickem.upsert({ user_id: user.id, win_score, loss_score });
+            res.json({ success: true });
+        } catch (err) {
+            res.status(500).json({ error: "Failed" });
         }
     });
 };
