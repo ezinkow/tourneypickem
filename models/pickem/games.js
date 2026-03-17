@@ -17,6 +17,7 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.TEXT,
             allowNull: true,
         },
+        home_seed: { type: DataTypes.INTEGER, allowNull: true },
         away_team: {
             type: DataTypes.TEXT,
             allowNull: true,
@@ -25,6 +26,7 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.TEXT,
             allowNull: true,
         },
+        away_seed: { type: DataTypes.INTEGER, allowNull: true },
         favorite: {
             type: DataTypes.TEXT,
             allowNull: true,

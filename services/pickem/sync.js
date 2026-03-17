@@ -43,6 +43,9 @@ async function syncPickemGames() {
             const homeLogo = home?.team?.logo || null;
             const awayLogo = away?.team?.logo || null;
 
+            const homeSeed = home?.curatedRank?.current < 99 ? home.curatedRank.current : null;
+            const awaySeed = away?.curatedRank?.current < 99 ? away.curatedRank.current : null;
+
             // 4. DATE & LOCK LOGIC
             const eventDate = new Date(event.date);
             const lineLockedTime = new Date(eventDate.getTime() - 60 * 60 * 1000);
@@ -76,6 +79,8 @@ async function syncPickemGames() {
                 away_team: awayTeam !== "TBD" ? awayTeam : (existingGame?.away_team || "TBD"),
                 home_logo: homeLogo || existingGame?.home_logo || null,
                 away_logo: awayLogo || existingGame?.away_logo || null,
+                home_seed: homeSeed || existingGame?.home_seed || null,
+                away_seed: awaySeed || existingGame?.away_seed || null,
                 fav_logo: isLocked ? (existingGame?.fav_logo || favLogo) : (hasOdds ? favLogo : (teamsKnown ? favLogo : (existingGame?.fav_logo || favLogo))),
                 dog_logo: isLocked ? (existingGame?.dog_logo || dogLogo) : (hasOdds ? dogLogo : (teamsKnown ? dogLogo : (existingGame?.dog_logo || dogLogo))),
                 home_score: parseInt(home?.score || 0),
@@ -110,7 +115,9 @@ async function syncPickemGames() {
                     existingGame.winner === payload.winner &&
                     existingGame.line === payload.line &&
                     existingGame.home_team === payload.home_team &&
-                    existingGame.away_team === payload.away_team;
+                    existingGame.away_team === payload.away_team &&
+                    existingGame.home_seed === payload.home_seed &&
+                    existingGame.away_seed === payload.away_seed;
 
                 if (noChange) continue;
             }

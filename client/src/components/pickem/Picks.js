@@ -8,9 +8,9 @@ const isLocked = iso => iso && new Date() >= new Date(iso);
 const PickButtons = ({ game, picks, updatePick }) => (
   <div style={{ display: "flex", gap: 6 }}>
     {[
-      { value: game.underdog, logo: game.dog_logo, spread: game.line ? `+${game.line}` : "" },
-      { value: game.favorite, logo: game.fav_logo, spread: game.line ? `-${game.line}` : "" },
-    ].map(({ value, logo, spread }) => {
+      { value: game.underdog, logo: game.dog_logo, spread: game.line ? `+${game.line}` : "", seed: game.underdog === game.home_team ? game.home_seed : game.away_seed },
+      { value: game.favorite, logo: game.fav_logo, spread: game.line ? `-${game.line}` : "", seed: game.favorite === game.home_team ? game.home_seed : game.away_seed },
+    ].map(({ value, logo, spread, seed }) => {
       const selected = picks.find(p => p.game === game.id)?.pick === value;
       const disabled = !game.selectable || value === "TBD";
       return (
@@ -32,7 +32,12 @@ const PickButtons = ({ game, picks, updatePick }) => (
         >
           {logo && <img src={logo} width={16} height={16} alt="" style={{ objectFit: "contain", flexShrink: 0 }} />}
           <span style={{ fontSize: 11, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", minWidth: 0 }}>
-            {value === "TBD" ? "TBD" : value}
+            {value === "TBD" ? "TBD" : (
+              <>
+                {seed && <sup style={{ fontSize: 8, color: "#9ca3af", marginRight: 1 }}>{seed}</sup>}
+                {value}
+              </>
+            )}
           </span>
           {!disabled && spread && (
             <span style={{ fontSize: 10, color: "#6b7280", flexShrink: 0, marginLeft: "auto", paddingLeft: 2 }}>
@@ -301,10 +306,12 @@ export default function Picks() {
                       {formatDateTimeET(game.game_date)}
                     </td>
                     <td style={{ padding: "8px 8px", borderBottom: "1px solid #e5e7eb", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      <img src={game.away_logo} width={18} alt="" style={{ verticalAlign: "middle" }} />
-                      {" "}{game.away_team}{" vs "}
-                      <img src={game.home_logo} width={18} alt="" style={{ verticalAlign: "middle" }} />
-                      {" "}{game.home_team}
+                      <img src={game.away_logo} width={18} alt="" style={{ verticalAlign: "middle" }} />{" "}
+                      {game.away_seed && <sup style={{ fontSize: 9, color: "#9ca3af", marginRight: 2 }}>{game.away_seed}</sup>}
+                      {game.away_team}{" vs "}
+                      <img src={game.home_logo} width={18} alt="" style={{ verticalAlign: "middle" }} />{" "}
+                      {game.home_seed && <sup style={{ fontSize: 9, color: "#9ca3af", marginRight: 2 }}>{game.home_seed}</sup>}
+                      {game.home_team}
                     </td>
                     <td style={{ padding: "8px 8px", borderBottom: "1px solid #e5e7eb", whiteSpace: "nowrap", fontSize: 12 }}>
                       {formatDateTimeET(game.line_locked_time)} ET
@@ -337,9 +344,11 @@ export default function Picks() {
               }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
                   <img src={game.away_logo} width={20} alt="" />
+                  {game.away_seed && <sup style={{ fontSize: 9, color: "#9ca3af" }}>{game.away_seed}</sup>}
                   <span>{game.away_team}</span>
                   <span style={{ color: "#9ca3af", fontSize: 11 }}>VS</span>
                   <img src={game.home_logo} width={20} alt="" />
+                  {game.home_seed && <sup style={{ fontSize: 9, color: "#9ca3af" }}>{game.home_seed}</sup>}
                   <span>{game.home_team}</span>
                 </div>
                 <div style={{ display: "flex", gap: 10, fontSize: 11, color: "#6b7280", marginBottom: 10, flexWrap: "wrap", alignItems: "center" }}>
