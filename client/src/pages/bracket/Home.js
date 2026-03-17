@@ -4,6 +4,9 @@ import CountdownDisplay from '../../components/bracket/CountdownDisplay'
 import CountdownNextGameLock from '../../components/bracket/CountdownNextGameLock'
 import Button from 'react-bootstrap/esm/Button'
 
+const GOLD = "#c89d3c";
+const BLUE = "#0369a1";
+
 export default function Home() {
     return (
         <div>
@@ -53,18 +56,24 @@ export default function Home() {
                         </Link>
                     </div>
                     <br />
-                    <ul>
-                        <strong>The Game:</strong>
-                        <li>Predict the outcome of the Men's NCAA Tournament</li>
-                        <li>Points double each round (Round 1 = 1 point, Sweet 16 = 8 points, etc.)</li>
-                        <li>You <strong>also get</strong> points equal to the seed of your correct pick</li>
-                        <ul>
-                            <li>Example 1: You pick a 12 seed to win in round 1. The 12 seed wins, you get 13 points (1 + 12)</li>
-                            <li>Example 2: You pick a 4 seed to win in round 2. The 4 seed wins, you get 6 points (2 + 4)</li>
+                    <div style={{
+                        background: "white", borderRadius: 16, padding: "24px 28px",
+                        boxShadow: "0 2px 12px rgba(0,0,0,0.07)", marginBottom: 24,
+                        borderTop: `4px solid ${GOLD}`
+                    }}>
+                        < ul >
+                            <h3 style={{ color: BLUE, marginTop: 0, marginBottom: 16 }}>📋 Game Rules</h3>
+                            <li>Predict the outcome of the Men's NCAA Tournament</li>
+                            <li>Points double each round (Round 1 = 1 point, Sweet 16 = 8 points, etc.)</li>
+                            <li>You <strong>also get</strong> points equal to the seed of your correct pick</li>
+                            <ul>
+                                <li>Example 1: You pick a 12 seed to win in round 1. The 12 seed wins, you get 13 points (1 + 12)</li>
+                                <li>Example 2: You pick a 4 seed to win in round 2. The 4 seed wins, you get 6 points (2 + 4)</li>
+                            </ul>
+                            <li>Most points at the end wins!</li>
+                            <li>25/bracket. Max 2 brackets</li>
                         </ul>
-                        <li>Most points at the end wins!</li>
-                        <li>25/bracket. Max 2 brackets</li>
-                    </ul>
+                    </div>
                     <br /><br />
                     <a href="https://www.ncaa.com/march-madness-live/scores"
                         target="_blank"
@@ -86,7 +95,7 @@ export default function Home() {
                         📋 Tourney Scores ↗
                     </a>
                 </div>
-            </div>
+            </div >
         </div >
     )
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import CountdownDisplay from '../../components/bracket/CountdownDisplay'
 
 const GOLD = "#c89d3c";
 const BLUE = "#0369a1";
@@ -7,19 +8,7 @@ const BLUE = "#0369a1";
 export default function SquaresHome() {
     return (
         <div style={{ paddingTop: 68, paddingBottom: 80, backgroundColor: "#f8fafc", minHeight: "100vh" }}>
-
-            {/* Header */}
-            <div style={{
-                background: `linear-gradient(135deg, #0369a1 0%, #0284c7 100%)`,
-                color: "white", padding: "32px 24px", marginBottom: 32, textAlign: "center",
-            }}>
-                <h1 style={{ margin: 0, color: GOLD, fontWeight: 900, fontSize: "clamp(22px, 4vw, 36px)" }}>
-                    🟩 Tournament Squares 🟥
-                </h1>
-                <p style={{ color: "rgba(255,255,255,0.7)", marginTop: 8, fontSize: 15 }}>
-                    March 19 – April 6, 2026
-                </p>
-            </div>
+            <CountdownDisplay />
 
             <div style={{ maxWidth: 700, margin: "0 auto", padding: "0 16px" }}>
 

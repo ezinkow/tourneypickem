@@ -4,6 +4,9 @@ import CountdownDisplay from '../../components/pickem/CountdownDisplay'
 import CountdownNextGameLock from '../../components/pickem/CountdownNextGameLock'
 import Button from 'react-bootstrap/esm/Button'
 
+const GOLD = "#c89d3c";
+const BLUE = "#0369a1";
+
 export default function Home() {
     return (
         <div>
@@ -53,8 +56,12 @@ export default function Home() {
                         </Link>
                     </div>
                     <br />
-                    <strong>The game:</strong><br />
-                    <div style={{marginLeft:'10px'}}>
+                    <div style={{
+                        background: "white", borderRadius: 16, padding: "24px 28px",
+                        boxShadow: "0 2px 12px rgba(0,0,0,0.07)", marginBottom: 24,
+                        borderTop: `4px solid ${GOLD}`,
+                    }}>
+                        <h3 style={{ color: BLUE, marginTop: 0, marginBottom: 16 }}>📋 Game Rules</h3>
                         <li>Runs from March 17 - April 6</li>
                         <li>Pick every NCAA tournament game <strong><u>against the spread</u></strong></li>
                         <li>Games lock at scheduled tip-off time.</li>
