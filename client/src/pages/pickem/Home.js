@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import CountdownDisplay from '../../components/pickem/CountdownDisplay'
+import CountdownDisplay from '../../components/CountdownDisplay'
 import CountdownNextGameLock from '../../components/pickem/CountdownNextGameLock'
 import Button from 'react-bootstrap/esm/Button'
 

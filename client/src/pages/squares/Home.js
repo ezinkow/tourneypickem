@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import CountdownDisplay from '../../components/bracket/CountdownDisplay'
+import CountdownDisplay from '../../components/CountdownDisplay'
 
 const GOLD = "#c89d3c";
 const BLUE = "#0369a1";
