@@ -235,6 +235,9 @@ export default function Picks() {
       <span style={{ fontSize: 13, color: "#6b7280" }}>
         {picks.length} / {visibleGames.filter(g => g.selectable).length} available games picked
       </span>
+      <span style={{ fontSize: 13, color: "#6b7280" }}>
+        All times ET
+      </span>
     </div>
   );
 
@@ -288,15 +291,16 @@ export default function Picks() {
           <div className="mypicks-desktop">
             <table style={{ borderCollapse: "collapse", width: "100%", background: "white", fontSize: 13, marginTop: 8, tableLayout: "fixed" }}>
               <colgroup>
+                <col style={{ width: "13%" }} />
+                <col style={{ width: "33%" }} />
                 <col style={{ width: "12%" }} />
-                <col style={{ width: "40%" }} />
-                <col style={{ width: "10%" }} />
                 <col style={{ width: "8%" }} />
+                <col style={{ width: "4%" }} />
                 <col style={{ width: "30%" }} />
               </colgroup>
               <thead>
                 <tr>
-                  {["Game Start", "Game", "Line Locks", "Line", "Pick"].map(h => (
+                  {["Game Start", "Game", "Line Locks", "Line", "Pts", "Pick"].map(h => (
                     <th key={h} style={{
                       position: "sticky", top: 65, zIndex: 4,
                       padding: "8px 8px", backgroundColor: "#13447a", color: "white",
@@ -310,7 +314,7 @@ export default function Picks() {
                 {visibleGames.map((game, idx) => (
                   <tr key={game.id} style={{ backgroundColor: idx % 2 === 0 ? "white" : "#f9fafb" }}>
                     <td style={{ padding: "8px 8px", borderBottom: "1px solid #e5e7eb", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                      {formatDateTimeET(game.game_date)}
+                      {formatDateTimeET(game.game_date)} ET
                     </td>
                     <td style={{ padding: "8px 8px", borderBottom: "1px solid #e5e7eb", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       <img src={game.away_logo} width={18} alt="" style={{ verticalAlign: "middle" }} />{" "}
@@ -331,6 +335,11 @@ export default function Picks() {
                       ) : game.line ? (
                         <><img src={game.fav_logo} width={18} alt="fav" style={{ verticalAlign: "middle" }} /> -{game.line}</>
                       ) : "TBD"}
+                    </td>
+                    <td style={{ padding: "8px 8px", borderBottom: "1px solid #e5e7eb", whiteSpace: "nowrap", textAlign: "center" }}>
+                      <span style={{ fontWeight: 700, color: "#c89d3c", fontSize: 13 }}>
+                        {game.round_points || "—"}
+                      </span>
                     </td>
                     <td style={{ padding: "8px 8px", borderBottom: "1px solid #e5e7eb" }}>
                       <PickButtons game={game} picks={picks} updatePick={updatePick} />
@@ -359,8 +368,9 @@ export default function Picks() {
                   <span>{game.home_team}</span>
                 </div>
                 <div style={{ display: "flex", gap: 10, fontSize: 11, color: "#6b7280", marginBottom: 10, flexWrap: "wrap", alignItems: "center" }}>
-                  <span>🕐 {game.game_clock}</span>
-                  <span>🔒 {formatDateTimeET(game.line_locked_time)} ET</span>
+                  <span>🕐 {formatDateTimeET(game.game_date)}</span>
+                  <span>🔒 {formatDateTimeET(game.line_locked_time)}</span>
+                  <span style={{ fontWeight: 700, color: "#c89d3c" }}>⭐ {game.round_points || "—"} pts</span>
                   <span>
                     {new Date() >= new Date(game.line_locked_time) ? (
                       <span style={{ color: "#d9534f", fontWeight: 700 }}>
