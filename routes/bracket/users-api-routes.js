@@ -66,10 +66,10 @@ module.exports = function (app) {
 
     app.post("/api/bracket/users/signup", async (req, res) => {
         try {
-            const { real_name, name, password, email_address, phone } = req.body;
+            const { real_name, name, password, email, phone } = req.body;
             const existing = await UsersBracket.findOne({ where: { name } });
             if (existing) return res.status(400).json({ error: "Username taken" });
-            await UsersBracket.create({ real_name, name, password, email_address, phone });
+            await UsersBracket.create({ real_name, name, password, email, phone });
             res.json({ success: true });
         } catch (err) {
             console.error(err);
@@ -79,9 +79,9 @@ module.exports = function (app) {
 
     app.post("/api/bracket/users/change-password", async (req, res) => {
         try {
-            const { email_address, newPassword } = req.body;
-            if (!email_address || !newPassword) return res.status(400).json({ error: "Email and password required" });
-            const user = await UsersBracket.findOne({ where: { email_address } });
+            const { email, newPassword } = req.body;
+            if (!email || !newPassword) return res.status(400).json({ error: "Email and password required" });
+            const user = await UsersBracket.findOne({ where: { email } });
             if (!user) return res.status(404).json({ error: "No account found with that email" });
             await user.update({ password: newPassword });
             res.json({ success: true });
