@@ -19,7 +19,7 @@ import PickemScoreboard from './pages/pickem/Scoreboard';
 import UserPicksDisplay from './pages/pickem/UserPicksDisplay';
 import PickemSignUp from './pages/pickem/SignUp';
 import PickemAdminRefresh from './pages/pickem/AdminRefresh';
-import ChangePassword from './pages/pickem/ChangePassword';
+import PickemChangePassword from './pages/pickem/ChangePassword';
 
 // Squares pages
 import SquaresGrid from "./pages/squares/SquaresGrid";
@@ -37,6 +37,7 @@ import BracketChallenge from './pages/bracket/Bracket';
 import MyBracket from './pages/bracket/MyBracket';
 import BracketStandings from './pages/bracket/Standings';
 import BracketSignUp from './pages/bracket/SignUp';
+import BracketChangePassword from './pages/bracket/ChangePassword';
 
 export default function App() {
   return (
@@ -55,7 +56,7 @@ export default function App() {
         <Route path="/pickem/picksdisplay" element={<UserPicksDisplay />} />
         <Route path="/pickem/signup" element={<PickemSignUp />} />
         <Route path="/pickem/adminrefresh" element={<PickemAdminRefresh />} />
-        <Route path="/pickem/change-password" element={<ChangePassword />} />
+        <Route path="/pickem/change-password" element={<PickemChangePassword />} />
 
         {/* Bracket */}
         <Route path="/bracket" element={<BracketHome />} />
@@ -63,7 +64,7 @@ export default function App() {
         <Route path="/bracket/mybracket" element={<MyBracket />} />
         <Route path="/bracket/standings" element={<BracketStandings />} />
         <Route path="/bracket/signup" element={<BracketSignUp />} />
-        <Route path="/bracket/change-password" element={<ChangePassword />} />
+        <Route path="/bracket/change-password" element={<BracketChangePassword />} />
 
         {/* Squares */}
         {/* <Route path="/squares/grid" element={<SquaresHome />} /> */}
