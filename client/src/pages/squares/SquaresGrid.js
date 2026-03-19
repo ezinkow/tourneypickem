@@ -10,7 +10,7 @@ const ROW_NUM_W = 28;
 const GUTTER_W = 28;
 
 export default function SquaresGrid() {
-    const [activeGrid, setActiveGrid] = useState(2);
+    const [activeGrid, setActiveGrid] = useState(1);
     const [grid1, setGrid1] = useState([]);
     const [grid2, setGrid2] = useState([]);
     const [users, setUsers] = useState([]);

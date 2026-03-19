@@ -14,7 +14,7 @@ export default function SquaresHome() {
 
                 {/* Action buttons */}
                 <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 32 }}>
-                    <Link to="/squares/signup" style={{ textDecoration: "none", flex: 1, minWidth: 160 }}>
+                    {/* <Link to="/squares/signup" style={{ textDecoration: "none", flex: 1, minWidth: 160 }}>
                         <button style={{
                             width: "100%", padding: "12px", backgroundColor: BLUE, color: "white",
                             border: "none", borderRadius: 8, fontSize: 14, fontWeight: 700,
@@ -22,14 +22,14 @@ export default function SquaresHome() {
                         }}>
                             📋 Sign Up
                         </button>
-                    </Link>
+                    </Link> */}
                     <Link to="/squares/grid" style={{ textDecoration: "none", flex: 1, minWidth: 160 }}>
                         <button style={{
                             width: "100%", padding: "12px", backgroundColor: GOLD, color: BLUE,
                             border: "none", borderRadius: 8, fontSize: 14, fontWeight: 700,
                             cursor: "pointer", textTransform: "uppercase", letterSpacing: "0.5px",
                         }}>
-                            🟩 Claim Squares
+                            🟩 See Grids
                         </button>
                     </Link>
                     <Link to="/squares/results" style={{ textDecoration: "none", flex: 1, minWidth: 160 }}>

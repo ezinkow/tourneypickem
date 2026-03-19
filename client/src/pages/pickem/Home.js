@@ -69,7 +69,7 @@ export default function Home() {
                         <li>No matter what the line is when pick is submitted, the final, closed locked line will be the line everyone is using.</li>
                         <li>100/entry</li>
                     </div>
-                    <a href="https://www.ncaa.com/march-madness-live/bracket"
+                    <a href="https://www.ncaa.com/march-madness-live/scores"
                         target="_blank"
                         rel="noreferrer"
                         style={{
@@ -86,7 +86,7 @@ export default function Home() {
                             letterSpacing: "0.5px",
                             textDecoration: "none",
                         }}>
-                        📋 Tourney Bracket ↗
+                        📋 Tourney Scores ↗
                     </a>
                 </div>
             </div>

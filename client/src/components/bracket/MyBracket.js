@@ -324,7 +324,7 @@ export default function MyBracket() {
                         <h2 style={{ margin: 0, color: GOLD, fontWeight: 900 }}>📝 My Bracket</h2>
                         {isLocked
                             ? <div style={{ marginTop: 6, fontSize: 13, color: "#fca5a5" }}>🔒 Bracket locked — tournament has started</div>
-                            : <div style={{ marginTop: 6, fontSize: 13, color: "rgba(255,255,255,0.7)" }}>Locks March 19 at 11:10 AM CT</div>
+                            : <div style={{ marginTop: 6, fontSize: 13, color: "rgba(255,255,255,0.7)" }}>Locks March 19 at 11:15 AM CT</div>
                         }
                     </div>
                     {!authenticated ? (

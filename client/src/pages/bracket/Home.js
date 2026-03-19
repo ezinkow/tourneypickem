@@ -75,7 +75,7 @@ export default function Home() {
                         </ul>
                     </div>
                     <br /><br />
-                    <a href="https://www.ncaa.com/march-madness-live/scores"
+                    <a href="https://www.ncaa.com/march-madness-live/bracket"
                         target="_blank"
                         rel="noreferrer"
                         style={{
@@ -92,7 +92,7 @@ export default function Home() {
                             letterSpacing: "0.5px",
                             textDecoration: "none",
                         }}>
-                        📋 Tourney Scores ↗
+                        📋 Tourney Bracket ↗
                     </a>
                 </div>
             </div >
