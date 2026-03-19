@@ -64,7 +64,7 @@ export default function Home() {
                         < ul >
                             <h3 style={{ color: BLUE, marginTop: 0, marginBottom: 16 }}>📋 Game Rules</h3>
                             <li>Predict the outcome of the Men's NCAA Tournament</li>
-                            <li>Points double each round (Round 1 = 1 point, Sweet 16 = 8 points, etc.)</li>
+                            <li>Points double each round (Round 1 = 1 point, Round 2 = 2 points, Sweet 16 = 4 points, etc.)</li>
                             <li>You <strong>also get</strong> points equal to the seed of your correct pick</li>
                             <ul>
                                 <li>Example 1: You pick a 12 seed to win in round 1. The 12 seed wins, you get 13 points (1 + 12)</li>
