@@ -6,7 +6,7 @@ import BracketRegion from "../../components/bracket/BracketRegion";
 
 const GOLD = "#c89d3c";
 const BLUE = "#13447a";
-const LOCK_TIME = new Date("2026-03-19T11:10:00-05:00");
+const LOCK_TIME = new Date("2026-03-19T11:18:00-05:00");
 const CHAMP_TIPOFF = new Date("2026-04-06T21:20:00-05:00");
 const ROUND_LABELS = {
     1: "1st Round", 2: "2nd Round", 3: "Sweet 16",
