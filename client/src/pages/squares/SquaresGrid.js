@@ -4,7 +4,7 @@ import toast, { Toaster } from "react-hot-toast";
 
 const GOLD = "#c89d3c";
 const BLUE = "#0369a1";
-const LOCK_TIME = new Date("2026-03-19T11:10:00-05:00");
+const LOCK_TIME = new Date("2026-03-19T09:10:00-05:00");
 const SQ = 52;
 const ROW_NUM_W = 28;
 const GUTTER_W = 28;
@@ -195,12 +195,6 @@ export default function SquaresGrid() {
                             style={{ padding: "8px 16px", borderRadius: 6, backgroundColor: "transparent", color: "#6b7280", border: "1px solid #d1d5db", fontWeight: 600, cursor: "pointer", fontSize: 13 }}>
                             Forgot Password?
                         </button>
-                    </div>
-                )}
-
-                {isLocked && (
-                    <div style={{ marginBottom: 16, padding: "10px 16px", backgroundColor: "#fef2f2", borderRadius: 8, color: "#dc2626", fontWeight: 600, fontSize: 13 }}>
-                        🔒 Squares are locked — tournament has started
                     </div>
                 )}
 
