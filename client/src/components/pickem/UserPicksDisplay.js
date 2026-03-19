@@ -11,7 +11,7 @@ export default function PlayerPicksMatrix() {
       setGames(
         r.data
           .filter(g => g.status === "STATUS_FINAL" || g.status === "STATUS_HALFTIME" || g.status === "STATUS_IN_PROGRESS")
-          .sort((a, b) => new Date(a.game_date) - new Date(b.game_date))
+          .sort((b, a) => new Date(a.game_date) - new Date(b.game_date))
       )
     );
     axios.get("/api/pickem/picks/all").then(r => setPicks(r.data));

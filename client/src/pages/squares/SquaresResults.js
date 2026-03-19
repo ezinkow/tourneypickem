@@ -153,35 +153,59 @@ export default function SquaresResults() {
                 )}
 
                 {/* Main results table */}
-                <div className="force-mobile">
+                {/* <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch", width: "100%" }}>
                     <table style={{
-                        borderCollapse: "collapse", width: "100%", background: "white",
+                        borderCollapse: "collapse", minWidth: 700, background: "white",
                         fontSize: 13, boxShadow: "0 2px 8px rgba(0,0,0,0.07)",
                     }}>
                         <thead>
                             <tr>
-                                <th style={{ ...thStyle, textAlign: "left" }}>Name</th>
-                                <th style={{ ...thStyle, textAlign: "left" }}>Numbers</th>
-                                <th style={{ ...thStyle, backgroundColor: "#b45309" }}>Total</th>
+                                <th style={{ ...thStyle, textAlign: "left", minWidth: 80 }}>Name</th>
+                                <th style={{ ...thStyle, textAlign: "left", maxWidth: 160, minWidth: 100 }}>Numbers</th>
+                                <th style={{ ...thStyle, backgroundColor: "#b45309", minWidth: 70 }}>Total</th>
                                 {ROUNDS.map(r => (
                                     <React.Fragment key={r.round}>
-                                        <th style={{ ...thStyle, backgroundColor: getRoundColor(r.round) }}>{r.label} #</th>
-                                        <th style={{ ...thStyle, backgroundColor: getRoundColor(r.round) }}>{r.label} cr</th>
+                                        <th style={{ ...thStyle, backgroundColor: getRoundColor(r.round), minWidth: 44 }}>{r.label} #</th>
+                                        <th style={{ ...thStyle, backgroundColor: getRoundColor(r.round), minWidth: 60 }}>{r.label} cr</th>
                                     </React.Fragment>
                                 ))}
-                                <th style={{ ...thStyle, backgroundColor: "#15803d" }}>Net</th>
+                                <th style={{ ...thStyle, backgroundColor: "#15803d", minWidth: 80 }}>Net</th>
                             </tr>
-                        </thead>
+                        </thead> */}
+
+                        {/* Main results table */}
+                        <div className="force-mobile">
+                            <table style={{
+                                borderCollapse: "collapse", width: "100%", background: "white",
+                                fontSize: 13, boxShadow: "0 2px 8px rgba(0,0,0,0.07)",
+                            }}>
+                                <thead>
+                                    <tr>
+                                        <th style={{ ...thStyle, textAlign: "left" }}>Name</th>
+                                        <th style={{ ...thStyle, textAlign: "left" }}>Numbers</th>
+                                        <th style={{ ...thStyle, backgroundColor: "#b45309" }}>Total</th>
+                                        {ROUNDS.map(r => (
+                                            <React.Fragment key={r.round}>
+                                                <th style={{ ...thStyle, backgroundColor: getRoundColor(r.round) }}>{r.label} #</th>
+                                                <th style={{ ...thStyle, backgroundColor: getRoundColor(r.round) }}>{r.label} cr</th>
+                                            </React.Fragment>
+                                        ))}
+                                        <th style={{ ...thStyle, backgroundColor: "#15803d" }}>Net</th>
+                                    </tr>
+                                </thead>
                         <tbody>
                             {summary.map((row, i) => (
                                 <tr key={row.name} style={{ backgroundColor: i % 2 === 0 ? "white" : "#f9fafb" }}>
                                     <td style={{ ...tdStyle("left"), fontWeight: 700, color: BLUE }}>{row.name}</td>
-                                    <td style={{ ...tdStyle("left"), fontFamily: "monospace", fontSize: 11, color: "#374151" }}>
+                                    <td style={{
+                                        ...tdStyle("left"), fontFamily: "monospace", fontSize: 11, color: "#374151",
+                                        maxWidth: 160, whiteSpace: "normal", wordBreak: "break-word", lineHeight: 1.6, fontFamily: "monospace", fontSize: 11, color: "#374151"
+                                    }}>
                                         {row.numbers.length > 0
                                             ? row.numbers[0].startsWith("#")
                                                 ? <span style={{ color: "#9ca3af", fontStyle: "italic" }}>
                                                     {row.squareCount} square{row.squareCount !== 1 ? "s" : ""} — TBD
-                                                  </span>
+                                                </span>
                                                 : row.numbers.join(", ")
                                             : "—"
                                         }

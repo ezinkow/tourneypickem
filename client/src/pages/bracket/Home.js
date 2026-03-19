@@ -7,6 +7,9 @@ import Button from 'react-bootstrap/esm/Button'
 const GOLD = "#c89d3c";
 const BLUE = "#0369a1";
 
+const GAME_LOCK_SWITCHOVER = new Date("2026-03-19T16:15:00Z"); // 11:15 AM CT in UTC
+const gameLocked = new Date() >= GAME_LOCK_SWITCHOVER;
+
 export default function Home() {
     return (
         <div>

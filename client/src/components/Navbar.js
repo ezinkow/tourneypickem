@@ -10,6 +10,8 @@ export default function Navbar() {
     const isSquares = location.pathname.startsWith("/squares");
     const isHome = location.pathname === "/";
     const GOLD = "#c89d3c";
+    const SIGNUP_LOCK = new Date("2026-03-19T16:15:00Z"); // 11:15 AM CT in UTC
+    const signupLocked = new Date() >= SIGNUP_LOCK;
 
     useEffect(() => { setMenuOpen(false); }, [location.pathname]);
     useEffect(() => {
@@ -47,10 +49,10 @@ export default function Navbar() {
         { to: "/squares/signup", label: "Sign Up", emoji: "📋" },
     ];
 
-    const activeLinks = isPickem ? pickemLinks
+    const activeLinks = (isPickem ? pickemLinks
         : isBracket ? bracketLinks
             : isSquares ? squaresLinks
-                : [];
+                : []).filter(({ to }) => !signupLocked || !to.endsWith("/signup"));
 
     const brandLabel = isPickem ? "🏀PICK 'EM"
         : isBracket ? "🗂️BRACKET"
