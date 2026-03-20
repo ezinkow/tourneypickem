@@ -2,56 +2,36 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import CountdownDisplay from '../../components/CountdownDisplay'
 import CountdownNextGameLock from '../../components/pickem/CountdownNextGameLock'
-import Button from 'react-bootstrap/esm/Button'
 
 const GOLD = "#c89d3c";
 const BLUE = "#0369a1";
+const GAME_LOCK_SWITCHOVER = new Date("2026-03-19T16:15:00Z"); // 11:15 AM CT
 
 export default function Home() {
+    const gameLocked = new Date() >= GAME_LOCK_SWITCHOVER;
+
     return (
         <div>
-            <div className="page-content">   {/* ← ADD THIS */}
-                {/* <CountdownDisplay /> */}
-                <CountdownNextGameLock />
+            <div className="page-content">
+                {gameLocked ? <CountdownNextGameLock /> : <CountdownDisplay />}
                 <div className='container'>
-                    <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
-                        <Link to="/pickem/signup" style={{ textDecoration: 'none' }}>
+                    <div style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}>
+                        <Link to="/pickem/picks" style={{ textDecoration: 'none' }}>
                             <button
-                                type="submit"
+                                type="button"
                                 style={{
-                                    width: "100%",
-                                    padding: "12px",
+                                    padding: "14px 32px",
                                     backgroundColor: "var(--primary-navy)",
                                     color: "white",
                                     border: "none",
                                     borderRadius: 8,
-                                    fontSize: 15,
-                                    fontWeight: 700,
-                                    cursor: "pointer",
-                                    textTransform: "uppercase",
-                                    letterSpacing: "0.5px",
-                                }}
-                            >
-                                📋 Sign Up Here 🚀
-                            </button>
-                        </Link>
-                        <Link to="/pickem/picks">
-                            <button
-                                type="submit"
-                                style={{
-                                    width: "100%",
-                                    padding: "12px",
-                                    backgroundColor: "var(--primary-navy)",
-                                    color: "white",
-                                    border: "none",
-                                    borderRadius: 8,
-                                    fontSize: 15,
+                                    fontSize: 16,
                                     fontWeight: 700,
                                     cursor: "pointer",
                                     textTransform: "uppercase",
                                     letterSpacing: "0.5px",
                                 }}>
-                                🏀 Make Your Picks 🗑️
+                                🏀 Make Your Picks
                             </button>
                         </Link>
                     </div>
@@ -90,6 +70,6 @@ export default function Home() {
                     </a>
                 </div>
             </div>
-        </div >
+        </div>
     )
 }

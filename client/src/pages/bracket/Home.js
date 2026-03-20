@@ -2,59 +2,55 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import CountdownDisplay from '../../components/CountdownDisplay'
 import CountdownNextGameLock from '../../components/bracket/CountdownNextGameLock'
-import Button from 'react-bootstrap/esm/Button'
 
 const GOLD = "#c89d3c";
 const BLUE = "#0369a1";
-
-const GAME_LOCK_SWITCHOVER = new Date("2026-03-19T16:15:00Z"); // 11:15 AM CT in UTC
-const gameLocked = new Date() >= GAME_LOCK_SWITCHOVER;
+const GAME_LOCK_SWITCHOVER = new Date("2026-03-19T16:15:00Z"); // 11:15 AM CT
 
 export default function Home() {
+    const gameLocked = new Date() >= GAME_LOCK_SWITCHOVER;
+        console.log(gameLocked)
+
     return (
         <div>
-            <div className="page-content">   {/* ← ADD THIS */}
-                <CountdownDisplay />
-                {/* <CountdownNextGameLock /> */}
+            <div className="page-content">
+                {gameLocked ? '' : <CountdownDisplay />}
                 <div className='container'>
-                    <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
-                        <Link to="/bracket/signup" style={{ textDecoration: 'none' }}>
+                    <div style={{ display: "flex", justifyContent: "center", gap: 12, flexWrap: "wrap", marginBottom: 8 }}>
+                        <Link to="/bracket/mybracket" style={{ textDecoration: 'none' }}>
                             <button
-                                type="submit"
+                                type="button"
                                 style={{
-                                    width: "100%",
-                                    padding: "12px",
+                                    padding: "14px 32px",
                                     backgroundColor: "var(--primary-navy)",
                                     color: "white",
                                     border: "none",
                                     borderRadius: 8,
-                                    fontSize: 15,
-                                    fontWeight: 700,
-                                    cursor: "pointer",
-                                    textTransform: "uppercase",
-                                    letterSpacing: "0.5px",
-                                }}
-                            >
-                                📋 Sign Up Here 🚀
-                            </button>
-                        </Link>
-                        <Link to="/bracket/mybracket">
-                            <button
-                                type="submit"
-                                style={{
-                                    width: "100%",
-                                    padding: "12px",
-                                    backgroundColor: "var(--primary-navy)",
-                                    color: "white",
-                                    border: "none",
-                                    borderRadius: 8,
-                                    fontSize: 15,
+                                    fontSize: 16,
                                     fontWeight: 700,
                                     cursor: "pointer",
                                     textTransform: "uppercase",
                                     letterSpacing: "0.5px",
                                 }}>
-                                🏀 Make Your Bracket 🗑️
+                                🏀 View Your Bracket
+                            </button>
+                        </Link>
+                        <Link to="/bracket/bracket" style={{ textDecoration: 'none' }}>
+                            <button
+                                type="button"
+                                style={{
+                                    padding: "14px 32px",
+                                    backgroundColor: "var(--primary-navy)",
+                                    color: "white",
+                                    border: "none",
+                                    borderRadius: 8,
+                                    fontSize: 16,
+                                    fontWeight: 700,
+                                    cursor: "pointer",
+                                    textTransform: "uppercase",
+                                    letterSpacing: "0.5px",
+                                }}>
+                                📊 Live Bracket
                             </button>
                         </Link>
                     </div>
@@ -64,7 +60,7 @@ export default function Home() {
                         boxShadow: "0 2px 12px rgba(0,0,0,0.07)", marginBottom: 24,
                         borderTop: `4px solid ${GOLD}`
                     }}>
-                        < ul >
+                        <ul>
                             <h3 style={{ color: BLUE, marginTop: 0, marginBottom: 16 }}>📋 Game Rules</h3>
                             <li>Predict the outcome of the Men's NCAA Tournament</li>
                             <li>Points double each round (Round 1 = 1 point, Round 2 = 2 points, Sweet 16 = 4 points, etc.)</li>
@@ -98,7 +94,7 @@ export default function Home() {
                         📋 Tourney Bracket ↗
                     </a>
                 </div>
-            </div >
-        </div >
+            </div>
+        </div>
     )
 }

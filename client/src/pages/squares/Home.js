@@ -4,25 +4,20 @@ import CountdownDisplay from '../../components/CountdownDisplay'
 
 const GOLD = "#c89d3c";
 const BLUE = "#0369a1";
+const GAME_LOCK_SWITCHOVER = new Date("2026-03-19T16:15:00Z"); // 11:15 AM CT
+
+
+
+
 
 export default function SquaresHome() {
+    const gameLocked = new Date() >= GAME_LOCK_SWITCHOVER;
     return (
         <div style={{ paddingTop: 68, paddingBottom: 80, backgroundColor: "#f8fafc", minHeight: "100vh" }}>
-            <CountdownDisplay />
-
+            {gameLocked ? '' : <CountdownDisplay />}
             <div style={{ maxWidth: 700, margin: "0 auto", padding: "0 16px" }}>
-
                 {/* Action buttons */}
                 <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 32 }}>
-                    {/* <Link to="/squares/signup" style={{ textDecoration: "none", flex: 1, minWidth: 160 }}>
-                        <button style={{
-                            width: "100%", padding: "12px", backgroundColor: BLUE, color: "white",
-                            border: "none", borderRadius: 8, fontSize: 14, fontWeight: 700,
-                            cursor: "pointer", textTransform: "uppercase", letterSpacing: "0.5px",
-                        }}>
-                            📋 Sign Up
-                        </button>
-                    </Link> */}
                     <Link to="/squares/grid" style={{ textDecoration: "none", flex: 1, minWidth: 160 }}>
                         <button style={{
                             width: "100%", padding: "12px", backgroundColor: GOLD, color: BLUE,
@@ -42,7 +37,6 @@ export default function SquaresHome() {
                         </button>
                     </Link>
                 </div>
-
                 {/* Rules card */}
                 <div style={{
                     background: "white", borderRadius: 16, padding: "24px 28px",
@@ -69,7 +63,6 @@ export default function SquaresHome() {
                         </p>
                     </div>
                 </div>
-
                 {/* Payout card */}
                 <div style={{
                     background: "white", borderRadius: 16, padding: "24px 28px",
