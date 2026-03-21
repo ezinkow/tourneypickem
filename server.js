@@ -49,7 +49,7 @@ const syncPickem = require("./services/pickem/sync.js");
 const syncBracket = require("./services/bracket/sync.js");
 const lockLines = require("./jobs/lockLines");
 
-// Run sync + lock every 15 minutes
+// Run sync + lock every 10 minutes
 async function runSync() {
   try {
     await syncPickem();
@@ -63,8 +63,8 @@ async function runSync() {
 // Run once at startup
 runSync();
 
-// Every 2 min
-setInterval(runSync, 15 * 60 * 1000);
+// Every 10 min
+setInterval(runSync, 10 * 60 * 1000);
 
 // React Router fallback
 if (process.env.NODE_ENV === "production") {
