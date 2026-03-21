@@ -35,11 +35,50 @@ const SEED_TO_SLOT = {
     "6-11": 5, "3-14": 6, "7-10": 7, "2-15": 8,
 };
 
+// Which R1 bracket_slot does a given seed belong to?
+const SEED_TO_R1_SLOT = {
+    1: 1, 16: 1,
+    8: 2, 9: 2,
+    5: 3, 12: 3,
+    4: 4, 13: 4,
+    6: 5, 11: 5,
+    3: 6, 14: 6,
+    7: 7, 10: 7,
+    2: 8, 15: 8,
+};
+
+// R1 slot pairs that produce each R2 bracket_slot
+// R2 slot 1 = R1 slots 1&2, R2 slot 2 = R1 slots 3&4, etc.
+function getR2SlotFromSeeds(homeSeed, awaySeed) {
+    const homeR1Slot = SEED_TO_R1_SLOT[homeSeed];
+    const awayR1Slot = SEED_TO_R1_SLOT[awaySeed];
+    if (!homeR1Slot || !awayR1Slot) return null;
+    // Both seeds should come from adjacent R1 slot pairs (1&2, 3&4, 5&6, 7&8)
+    const slots = [homeR1Slot, awayR1Slot].sort((a, b) => a - b);
+    if (slots[0] === 1 && slots[1] === 2) return 1;
+    if (slots[0] === 3 && slots[1] === 4) return 2;
+    if (slots[0] === 5 && slots[1] === 6) return 3;
+    if (slots[0] === 7 && slots[1] === 8) return 4;
+    // Upset scenario: both from same slot pair side, fall back to lower slot number
+    // e.g. 1 seed vs 5 seed (upsets) — use the lower R1 slot's pair
+    const minSlot = Math.min(homeR1Slot, awayR1Slot);
+    return Math.ceil(minSlot / 2);
+}
+
+// For Sweet 16+, bracket_slot is always 1 per region (one game per region per round)
+// For Final Four, slot 1 = East/South side, slot 2 = West/Midwest side (set manually or preserved)
 function getBracketSlot(homeSeed, awaySeed, round) {
-    if (round !== 1) return null;
-    const seeds = [homeSeed, awaySeed].sort((a, b) => a - b);
-    const key = `${seeds[0]}-${seeds[1]}`;
-    return SEED_TO_SLOT[key] || null;
+    if (round === 1) {
+        const seeds = [homeSeed, awaySeed].sort((a, b) => a - b);
+        const key = `${seeds[0]}-${seeds[1]}`;
+        return SEED_TO_SLOT[key] || null;
+    }
+    if (round === 2 && homeSeed && awaySeed) {
+        return getR2SlotFromSeeds(homeSeed, awaySeed);
+    }
+    // Round 3+ (Sweet 16, Elite 8): 1 game per region, slot is always 1
+    // Final Four / Championship: preserve existing from DB — don't overwrite
+    return null;
 }
 
 async function syncBracketGames() {
@@ -83,18 +122,13 @@ async function syncBracketGames() {
                 winner = homeScore > awayScore ? homeTeam : awayTeam;
             }
 
-            // Derive bracket slot
-            let bracketSlot = getBracketSlot(homeSeed, awaySeed, round);
-            if (!bracketSlot && round > 1 && homeSeed && awaySeed) {
-                const topSeed = Math.min(homeSeed, awaySeed);
-                if (topSeed <= 1) bracketSlot = 1;
-                else if (topSeed <= 4) bracketSlot = 2;
-                else if (topSeed <= 5) bracketSlot = 3;
-                else if (topSeed <= 6) bracketSlot = 4;
-            }
-
             const existingGame = existingMap[event.id];
             const isLocked = existingGame?.locked || false;
+
+            // Derive bracket slot — always prefer computed value for R1/R2,
+            // fall back to existing DB value for R3+ (Sweet 16 onward)
+            const computedSlot = getBracketSlot(homeSeed, awaySeed, round);
+            const bracketSlot = computedSlot || existingGame?.bracket_slot || null;
 
             await GamesBracket.upsert({
                 id: event.id,
@@ -103,7 +137,7 @@ async function syncBracketGames() {
                 round,
                 round_label: roundLabel,
                 round_points: roundPoints,
-                bracket_slot: bracketSlot || existingGame?.bracket_slot || null,
+                bracket_slot: bracketSlot,
                 home_team: isLocked
                     ? (existingGame?.home_team || homeTeam)
                     : (homeTeam !== "TBD" ? homeTeam : (existingGame?.home_team || homeTeam)),

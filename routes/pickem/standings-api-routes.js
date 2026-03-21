@@ -27,8 +27,11 @@ module.exports = function (app) {
                     const roundPoints = game.round_points || 1;
 
                     if (pick.missed_pick_flag) {
-                        points += roundPoints * 0.5;
-                        missed += 1;
+                        if (pick.pick === game.winner) {
+                            points += roundPoints * 0.5;
+                            missed += 1;  // only count as "correct missed" if the underdog actually won
+                        }
+                        // if wrong, no points, don't increment missed
                     } else if (pick.pick === game.winner) {
                         points += roundPoints;
                         correct += 1;

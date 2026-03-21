@@ -49,7 +49,6 @@ export default function Bracket() {
     const gamesByRegion = (region) => games.filter(g => g.region === region);
     const finalFourGames = games.filter(g => g.round === 5);
     const championshipGame = games.find(g => g.round === 6);
-
     const getFeederGame = (game, side) => {
         const prevRound = game.round - 1;
         if (prevRound < 1) return null;
