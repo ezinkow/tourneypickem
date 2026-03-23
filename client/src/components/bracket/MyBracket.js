@@ -1,18 +1,246 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
-import BracketGame from "../../components/bracket/BracketGame";
-import BracketRegion from "../../components/bracket/BracketRegion";
 
 const GOLD = "#c89d3c";
 const BLUE = "#13447a";
-const LOCK_TIME = new Date("2026-03-19T12:15:00-05:00");
-const CHAMP_TIPOFF = new Date("2026-04-06T21:20:00-05:00"); 
+const DARK = "#030831";
+const LOCK_TIME = new Date("2026-03-19T16:10:00Z");
+const CHAMP_TIPOFF = new Date("2026-04-07T02:20:00Z");
+
 const ROUND_LABELS = {
     1: "1st Round", 2: "2nd Round", 3: "Sweet 16",
     4: "Elite 8", 5: "Final Four", 6: "Championship"
 };
-const TABS = ["South", "East", "Midwest", "West", "Final Four"];
+
+const REGION_ORDER = ["East", "South", "Midwest", "West", "Final Four"];
+
+function formatET(iso) {
+    if (!iso) return "TBD";
+    return new Date(iso).toLocaleString("en-US", {
+        timeZone: "America/New_York",
+        month: "numeric", day: "numeric",
+        hour: "numeric", minute: "2-digit",
+    });
+}
+
+function resolveTeamMeta(teamName, games) {
+    for (const g of games) {
+        if (g.home_team === teamName) return { seed: g.home_seed, logo: g.home_logo };
+        if (g.away_team === teamName) return { seed: g.away_seed, logo: g.away_logo };
+    }
+    return {};
+}
+
+function resolveTeams(game, games, picks) {
+    if (game.round === 1) {
+        return {
+            home: { name: game.home_team, seed: game.home_seed, logo: game.home_logo },
+            away: { name: game.away_team, seed: game.away_seed, logo: game.away_logo },
+        };
+    }
+    const homeReal = game.home_team && game.home_team !== "TBD";
+    const awayReal = game.away_team && game.away_team !== "TBD";
+    if (homeReal && awayReal) {
+        return {
+            home: { name: game.home_team, seed: game.home_seed, logo: game.home_logo },
+            away: { name: game.away_team, seed: game.away_seed, logo: game.away_logo },
+        };
+    }
+    const feeders = getFeeders(game, games);
+    const resolveSlot = (feeder, existing, existingSeed, existingLogo) => {
+        if (existing && existing !== "TBD") return { name: existing, seed: existingSeed, logo: existingLogo };
+        if (!feeder) return { name: "TBD", seed: null, logo: null };
+        const picked = picks[feeder.id];
+        if (!picked) return { name: "TBD", seed: null, logo: null };
+        const meta = resolveTeamMeta(picked, games);
+        return { name: picked, seed: meta.seed ?? null, logo: meta.logo ?? null };
+    };
+    return {
+        home: resolveSlot(feeders.home, game.home_team, game.home_seed, game.home_logo),
+        away: resolveSlot(feeders.away, game.away_team, game.away_seed, game.away_logo),
+    };
+}
+
+function getFeeders(game, games) {
+    if (!game.bracket_slot) return { home: null, away: null };
+    const slot1 = (game.bracket_slot - 1) * 2 + 1;
+    const slot2 = (game.bracket_slot - 1) * 2 + 2;
+    const prevRound = game.round - 1;
+    if (game.round === 5) {
+        const regionPair = game.bracket_slot === 1 ? ["East", "South"] : ["West", "Midwest"];
+        const e8s = games.filter(g => g.round === 4 && regionPair.includes(g.region));
+        return {
+            home: e8s.find(g => g.region === regionPair[0]) ?? null,
+            away: e8s.find(g => g.region === regionPair[1]) ?? null,
+        };
+    }
+    if (game.round === 6) {
+        const ff = games.filter(g => g.round === 5);
+        return {
+            home: ff.find(g => g.bracket_slot === 1) ?? null,
+            away: ff.find(g => g.bracket_slot === 2) ?? null,
+        };
+    }
+    const regionGames = games.filter(g => g.region === game.region && g.round === prevRound);
+    return {
+        home: regionGames.find(g => g.bracket_slot === slot1) ?? null,
+        away: regionGames.find(g => g.bracket_slot === slot2) ?? null,
+    };
+}
+
+function clearDownstream(picksMap, removedTeam, fromRound, games) {
+    for (const g of games) {
+        if (picksMap[g.id] === removedTeam && g.round > fromRound) {
+            const old = picksMap[g.id];
+            delete picksMap[g.id];
+            if (old) clearDownstream(picksMap, old, g.round, games);
+        }
+    }
+}
+
+function PickCard({ game, games, picks, onPick, isLocked }) {
+    const { home, away } = resolveTeams(game, games, picks);
+    const userPick = picks[game.id];
+    const hasPick = !!userPick;
+    const isInProgress = game.status === "STATUS_IN_PROGRESS" || game.status === "STATUS_HALFTIME";
+    const isFinal = game.status === "STATUS_FINAL";
+    const showScore = isInProgress || isFinal;
+
+    const pointsEarned = (() => {
+        if (!isFinal || !game.winner || userPick !== game.winner) return null;
+        const roundPts = game.round_points || game.round || 1;
+        const winningSeed = game.winner === game.home_team ? game.home_seed : game.away_seed;
+        return roundPts + (winningSeed || 0);
+    })();
+
+    const roundPts = game.round_points || game.round || 1;
+
+    // Border color: green if correct, red if wrong and final, navy if pick pending, gray if no pick
+    const borderColor = (() => {
+        if (pointsEarned !== null) return "#16a34a";
+        if (isFinal && userPick && userPick !== game.winner) return "#dc2626";
+        if (hasPick) return BLUE;
+        return "#e5e7eb";
+    })();
+
+    const TeamButton = ({ team, side }) => {
+        const isTBD = !team.name || team.name === "TBD";
+        const selected = userPick === team.name;
+        const isWinner = isFinal && game.winner === team.name;
+        const isLoser = isFinal && game.winner && game.winner !== team.name;
+        const disabled = isLocked || isTBD;
+        const userPickedThis = selected;
+        const userPickedWrong = userPickedThis && isLoser;
+        const userPickedRight = userPickedThis && isWinner;
+
+        return (
+            <button
+                onClick={() => !disabled && onPick && onPick(game.id, team.name, game.round)}
+                style={{
+                    display: "flex", alignItems: "center", gap: 6,
+                    padding: "7px 10px", borderRadius: 7, flex: 1,
+                    border: selected
+                        ? `2px solid ${userPickedRight ? "#16a34a" : userPickedWrong ? "#dc2626" : BLUE}`
+                        : "1px solid #e5e7eb",
+                    backgroundColor: userPickedRight ? "#f0fdf4" : userPickedWrong ? "#fef2f2" : selected ? "#eff6ff" : "white",
+                    cursor: disabled ? "default" : "pointer",
+                    fontWeight: selected ? 700 : 400,
+                    color: isTBD ? "#9ca3af" : userPickedRight ? "#16a34a" : userPickedWrong ? "#dc2626" : selected ? BLUE : "#374151",
+                    opacity: (!selected && isLoser) ? 0.35 : 1,
+                    minWidth: 0, overflow: "hidden",
+                    transition: "all 0.15s",
+                }}
+            >
+                {team.logo
+                    ? <img src={team.logo} width={20} height={20} alt="" style={{ objectFit: "contain", flexShrink: 0 }} />
+                    : <span style={{ width: 20, height: 20, flexShrink: 0 }} />
+                }
+                <span style={{ fontSize: 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", minWidth: 0 }}>
+                    {team.seed && <sup style={{ fontSize: 8, color: "#9ca3af", marginRight: 2 }}>{team.seed}</sup>}
+                    {isTBD ? "TBD" : team.name}
+                </span>
+                {showScore && (
+                    <span style={{
+                        marginLeft: "auto", fontSize: 12, fontWeight: 700,
+                        color: isWinner ? "#16a34a" : "#6b7280", flexShrink: 0,
+                    }}>
+                        {side === "home" ? game.home_score : game.away_score}
+                    </span>
+                )}
+                {isWinner && (
+                    <span style={{ fontSize: 11, color: "#16a34a", flexShrink: 0, marginLeft: showScore ? 4 : "auto" }}>✓</span>
+                )}
+            </button>
+        );
+    };
+
+    return (
+        <div style={{
+            background: "white", borderRadius: 10, padding: "10px 12px",
+            boxShadow: "0 1px 4px rgba(0,0,0,0.08)", marginBottom: 8,
+            borderLeft: `4px solid ${borderColor}`,
+        }}>
+            <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 7, flexWrap: "wrap" }}>
+                <span style={{
+                    fontSize: 10, fontWeight: 700, color: "white", backgroundColor: BLUE,
+                    borderRadius: 4, padding: "2px 6px", textTransform: "uppercase", letterSpacing: "0.4px",
+                }}>
+                    {ROUND_LABELS[game.round]}
+                </span>
+                {game.region !== "Final Four" && (
+                    <span style={{ fontSize: 10, color: "#9ca3af", fontWeight: 600 }}>{game.region}</span>
+                )}
+
+                {/* Points display */}
+                {pointsEarned !== null ? (
+                    <span style={{
+                        fontSize: 11, fontWeight: 800, color: "#16a34a",
+                        backgroundColor: "#f0fdf4", borderRadius: 5,
+                        padding: "2px 7px", border: "1px solid #bbf7d0",
+                    }}>
+                        +{pointsEarned} pts ✓
+                    </span>
+                ) : isFinal && userPick && userPick !== game.winner ? (
+                    <span style={{
+                        fontSize: 11, fontWeight: 700, color: "#dc2626",
+                        backgroundColor: "#fef2f2", borderRadius: 5,
+                        padding: "2px 7px", border: "1px solid #fecaca",
+                    }}>
+                        0 pts ✗
+                    </span>
+                ) : (
+                    <span style={{ fontSize: 10, fontWeight: 700, color: GOLD }}>
+                        {roundPts} pt{roundPts !== 1 ? "s" : ""}
+                    </span>
+                )}
+
+                {/* Status */}
+                {isInProgress && (
+                    <span style={{ fontSize: 10, color: "#f97316", fontWeight: 700, marginLeft: "auto" }}>
+                        🔴 LIVE — {game.game_clock}
+                    </span>
+                )}
+                {game.status === "STATUS_HALFTIME" && (
+                    <span style={{ fontSize: 10, color: "#f97316", fontWeight: 700, marginLeft: "auto" }}>
+                        🔴 Halftime
+                    </span>
+                )}
+                {isFinal && (
+                    <span style={{ fontSize: 10, color: "#6b7280", marginLeft: "auto" }}>Final</span>
+                )}
+                {!showScore && game.game_date && (
+                    <span style={{ fontSize: 10, color: "#9ca3af", marginLeft: "auto" }}>{formatET(game.game_date)}</span>
+                )}
+            </div>
+
+            <div style={{ display: "flex", gap: 6 }}>
+                <TeamButton team={away} side="away" />
+                <TeamButton team={home} side="home" />
+            </div>
+        </div>
+    );
+}
 
 export default function MyBracket() {
     const [games, setGames] = useState([]);
@@ -22,7 +250,6 @@ export default function MyBracket() {
     const [authenticated, setAuthenticated] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
     const [picks, setPicks] = useState({});
-    const [activeTab, setActiveTab] = useState("South");
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
     const [collapsedRounds, setCollapsedRounds] = useState(new Set());
@@ -32,9 +259,7 @@ export default function MyBracket() {
 
     const isLocked = new Date() >= LOCK_TIME;
     const isTiebreakerLocked = new Date() >= CHAMP_TIPOFF;
-    const showTiebreaker = !isLocked; // show once bracket is locked
-
-    const champGame = games.find(g => g.round === 6);
+    const showTiebreaker = isLocked && !isTiebreakerLocked;
 
     const loadTiebreaker = async (name) => {
         try {
@@ -105,51 +330,25 @@ export default function MyBracket() {
         setTiebreakerLoss("");
     };
 
-    const handlePick = (gameId, teamName) => {
+    const handlePick = (gameId, teamName, fromRound) => {
         if (isLocked || !authenticated) return;
-        const game = games.find(g => g.id === gameId);
-        if (!game) return;
         setPicks(prev => {
             const next = { ...prev };
             const oldPick = prev[gameId];
-            if (oldPick && oldPick !== teamName) clearDownstream(next, oldPick, game.round, game.region);
+            if (oldPick && oldPick !== teamName) clearDownstream(next, oldPick, fromRound, games);
             next[gameId] = teamName;
             return next;
         });
     };
 
-    const clearDownstream = (picksMap, removedTeam, fromRound, region) => {
-        for (const g of games) {
-            if (picksMap[g.id] === removedTeam && g.round > fromRound) {
-                const old = picksMap[g.id];
-                delete picksMap[g.id];
-                if (old) clearDownstream(picksMap, old, g.round, g.region);
-            }
-        }
-    };
-
-    const toggleCollapse = (roundIdx) => {
-        setCollapsedRounds(prev => {
-            const next = new Set(prev);
-            if (next.has(roundIdx)) next.delete(roundIdx);
-            else next.add(roundIdx);
-            return next;
-        });
-    };
-
-    const gamesByRegion = (region) => games.filter(g => g.region === region);
-    const finalFourGames = games.filter(g => g.round === 5);
-    const championshipGame = games.find(g => g.round === 6);
-
     const handleSave = async () => {
         if (isLocked) return toast.error("Bracket is locked");
         setSaving(true);
         try {
-            const payload = {
+            await axios.post("/api/bracket/picks/bulk", {
                 name: user,
                 picks: Object.entries(picks).map(([game_id, pick]) => ({ game_id, pick }))
-            };
-            await axios.post("/api/bracket/picks/bulk", payload);
+            });
             toast.success("Bracket saved!");
         } catch { toast.error("Save failed"); }
         finally { setSaving(false); }
@@ -169,162 +368,64 @@ export default function MyBracket() {
         } catch { toast.error("Save failed"); }
     };
 
-    const getDisplayGame = (game) => {
-        if (game.round === 1) return game;
-        let homeTeam = game.home_team;
-        let awayTeam = game.away_team;
-        let homeSeed = game.home_seed;
-        let awaySeed = game.away_seed;
-        let homeLogo = game.home_logo;
-        let awayLogo = game.away_logo;
-
-        const resolveTeam = (feederGame, pickedTeam) => {
-            if (!feederGame || !pickedTeam) return {};
-            if (feederGame.home_team === pickedTeam) return { seed: feederGame.home_seed, logo: feederGame.home_logo };
-            if (feederGame.away_team === pickedTeam) return { seed: feederGame.away_seed, logo: feederGame.away_logo };
-            const fromHome = resolveTeam(getFeederGame(feederGame, "home"), pickedTeam);
-            if (fromHome.logo) return fromHome;
-            return resolveTeam(getFeederGame(feederGame, "away"), pickedTeam);
-        };
-
-        if (homeTeam === "TBD" || !homeTeam) {
-            const feeder = getFeederGame(game, "home");
-            if (feeder) {
-                const picked = picks[feeder.id];
-                if (picked) {
-                    homeTeam = picked;
-                    const { seed, logo } = resolveTeam(feeder, picked);
-                    homeSeed = seed || null;
-                    homeLogo = logo || null;
-                }
+    const groupedGames = React.useMemo(() => {
+        const groups = {};
+        for (const region of REGION_ORDER) groups[region] = {};
+        for (const g of games) {
+            const region = g.round >= 5 ? "Final Four" : g.region;
+            if (!groups[region]) groups[region] = {};
+            if (!groups[region][g.round]) groups[region][g.round] = [];
+            groups[region][g.round].push(g);
+        }
+        for (const region of Object.keys(groups)) {
+            for (const round of Object.keys(groups[region])) {
+                groups[region][round].sort((a, b) => (a.bracket_slot ?? 0) - (b.bracket_slot ?? 0));
             }
         }
-        if (awayTeam === "TBD" || !awayTeam) {
-            const feeder = getFeederGame(game, "away");
-            if (feeder) {
-                const picked = picks[feeder.id];
-                if (picked) {
-                    awayTeam = picked;
-                    const { seed, logo } = resolveTeam(feeder, picked);
-                    awaySeed = seed || null;
-                    awayLogo = logo || null;
-                }
-            }
-        }
-        return { ...game, home_team: homeTeam, away_team: awayTeam, home_seed: homeSeed, away_seed: awaySeed, home_logo: homeLogo, away_logo: awayLogo };
-    };
-
-    const getFeederGame = (game, side) => {
-        const prevRound = game.round - 1;
-        if (prevRound < 1) return null;
-        if (!game.bracket_slot) return null;
-        const slot1 = (game.bracket_slot - 1) * 2 + 1;
-        const slot2 = (game.bracket_slot - 1) * 2 + 2;
-
-        if (game.round === 5) {
-            const regionPair = game.bracket_slot === 1 ? ["South", "East"] : ["Midwest", "West"];
-            const feeders = games.filter(g => g.round === 4 && regionPair.includes(g.region))
-                .sort((a, b) => {
-                    const order = { South: 1, Midwest: 1, East: 0, West: 0 };
-                    return order[a.region] - order[b.region];
-                });
-            return feeders[side === "home" ? 0 : 1] || null;
-        }
-
-        if (game.round === 6) {
-            const feeders = games.filter(g => g.round === 5 && (g.bracket_slot === slot1 || g.bracket_slot === slot2));
-            return feeders[side === "home" ? 1 : 0] || null;
-        }
-
-        let region = game.region;
-        if (!region && prevRound >= 1) {
-            const candidates = games.filter(g => g.round === prevRound && (g.bracket_slot === slot1 || g.bracket_slot === slot2));
-            const withPick = candidates.find(g => picks[g.id]);
-            region = withPick ? withPick.region : candidates[0]?.region;
-        }
-        if (!region) return null;
-
-        const feeders = games.filter(g => g.region === region && g.round === prevRound && (g.bracket_slot === slot1 || g.bracket_slot === slot2));
-        return feeders[side === "home" ? 1 : 0] || null;
-    };
-
-    const tabGames = activeTab === "Final Four"
-        ? games.filter(g => g.round >= 5)
-        : games.filter(g => g.region === activeTab);
-
-    const byRound = {};
-    for (const g of tabGames) {
-        if (!byRound[g.round]) byRound[g.round] = [];
-        byRound[g.round].push(g);
-    }
+        return groups;
+    }, [games]);
 
     const totalGames = games.length;
     const pickedCount = Object.keys(picks).length;
     const champion = (() => {
-        const champGame = games.find(g => g.round === 6);
-        return champGame ? picks[champGame.id] : null;
+        const cg = games.find(g => g.round === 6);
+        return cg ? picks[cg.id] : null;
     })();
 
-    const TiebreakerBlock = () => (
-        <div style={{
-            background: "white", borderRadius: 8, padding: "10px 12px",
-            boxShadow: "0 2px 6px rgba(0,0,0,0.07)",
-            border: `1px solid ${GOLD}`,
-            marginTop: 12, width: "100%",
-        }}>
-            <div style={{ fontSize: 10, fontWeight: 800, color: BLUE, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>
-                🏆 Champ Score Tiebreaker
-                {isTiebreakerLocked && <span style={{ color: "#dc2626", marginLeft: 6 }}>— Locked</span>}
-            </div>
-            <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                <input
-                    type="number"
-                    value={tiebreakerWin}
-                    onChange={e => setTiebreakerWin(e.target.value)}
-                    disabled={isTiebreakerLocked}
-                    placeholder="Win"
-                    style={{
-                        width: 56, padding: "5px 4px", borderRadius: 5,
-                        border: "1px solid #d1d5db", fontSize: 13, fontWeight: 700,
-                        textAlign: "center", opacity: isTiebreakerLocked ? 0.6 : 1,
-                    }}
-                />
-                <span style={{ fontSize: 12, color: "#9ca3af", fontWeight: 300 }}>—</span>
-                <input
-                    type="number"
-                    value={tiebreakerLoss}
-                    onChange={e => setTiebreakerLoss(e.target.value)}
-                    disabled={isTiebreakerLocked}
-                    placeholder="Loss"
-                    style={{
-                        width: 56, padding: "5px 4px", borderRadius: 5,
-                        border: "1px solid #d1d5db", fontSize: 13, fontWeight: 700,
-                        textAlign: "center", opacity: isTiebreakerLocked ? 0.6 : 1,
-                    }}
-                />
-                {!isTiebreakerLocked && (
-                    <button onClick={handleSaveTiebreaker}
-                        style={{ padding: "5px 10px", borderRadius: 5, backgroundColor: BLUE, color: "white", border: "none", fontWeight: 600, cursor: "pointer", fontSize: 11 }}>
-                        Save
-                    </button>
-                )}
-                {tiebreakerSaved && <span style={{ fontSize: 11, color: "#16a34a", fontWeight: 600 }}>✅</span>}
-            </div>
-        </div>
-    );
+    // Total points earned so far (mirrors standings route logic)
+    const totalPoints = React.useMemo(() => {
+        let pts = 0;
+        for (const g of games) {
+            if (g.status !== "STATUS_FINAL" || !g.winner) continue;
+            const pick = picks[g.id];
+            if (pick !== g.winner) continue;
+            const roundPts = g.round_points || g.round || 1;
+            const winningSeed = g.winner === g.home_team ? g.home_seed : g.away_seed;
+            pts += roundPts + (winningSeed || 0);
+        }
+        return pts;
+    }, [games, picks]);
+
+    const toggleRound = (key) => {
+        setCollapsedRounds(prev => {
+            const next = new Set(prev);
+            next.has(key) ? next.delete(key) : next.add(key);
+            return next;
+        });
+    };
 
     return (
         <div style={{ paddingTop: 68, paddingBottom: 80, backgroundColor: "#f8fafc", minHeight: "100vh" }}>
             <Toaster />
 
             {/* Header */}
-            <div style={{ background: `linear-gradient(135deg, ${BLUE} 0%, #030831 100%)`, color: "white", padding: "20px 24px", marginBottom: 20 }}>
-                <div style={{ maxWidth: 1600, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
+            <div style={{ background: `linear-gradient(135deg, ${BLUE} 0%, ${DARK} 100%)`, color: "white", padding: "20px 24px", marginBottom: 20 }}>
+                <div style={{ maxWidth: 900, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
                     <div>
                         <h2 style={{ margin: 0, color: GOLD, fontWeight: 900 }}>📝 My Bracket</h2>
                         {isLocked
                             ? <div style={{ marginTop: 6, fontSize: 13, color: "#fca5a5" }}>🔒 Bracket locked — tournament has started</div>
-                            : <div style={{ marginTop: 6, fontSize: 13, color: "rgba(255,255,255,0.7)" }}>Locks March 19 at 11:15 AM CT</div>
+                            : <div style={{ marginTop: 6, fontSize: 13, color: "rgba(255,255,255,0.7)" }}>Locks March 19 at 11:10 AM CT</div>
                         }
                     </div>
                     {!authenticated ? (
@@ -345,7 +446,7 @@ export default function MyBracket() {
                                 style={{ padding: "6px 14px", borderRadius: 6, backgroundColor: GOLD, color: BLUE, border: "none", fontWeight: 700, cursor: "pointer" }}>
                                 Verify
                             </button>
-                            <button type="button" onClick={() => { window.location.hash = "#/bracket/change-password"; }}
+                            <button onClick={() => { window.location.hash = "#/bracket/change-password"; }}
                                 style={{ padding: "6px 10px", borderRadius: 6, backgroundColor: "white", color: "#6b7280", border: "1px solid #d1d5db", fontWeight: 600, cursor: "pointer", fontSize: 12 }}>
                                 Forgot Password?
                             </button>
@@ -354,7 +455,16 @@ export default function MyBracket() {
                         <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
                             <span style={{ fontWeight: 700, color: GOLD }}>{user}</span>
                             {champion && <span style={{ fontSize: 13, color: GOLD, fontWeight: 700 }}>🏆 {champion}</span>}
-                            <span style={{ fontSize: 13, color: "rgba(255,255,255,0.7)" }}>{pickedCount}/{totalGames} picked</span>
+                            {authenticated && games.some(g => g.status === "STATUS_FINAL") && (
+                                <span style={{
+                                    fontSize: 13, fontWeight: 800, color: GOLD,
+                                    backgroundColor: "rgba(200,157,60,0.15)",
+                                    borderRadius: 6, padding: "3px 10px",
+                                    border: "1px solid rgba(200,157,60,0.4)",
+                                }}>
+                                    {totalPoints} pts
+                                </span>
+                            )}
                             {!isLocked && (
                                 <button onClick={handleSave} disabled={saving}
                                     style={{ padding: "6px 16px", borderRadius: 6, backgroundColor: "#16a34a", color: "white", border: "none", fontWeight: 600, cursor: "pointer", opacity: saving ? 0.7 : 1 }}>
@@ -370,157 +480,108 @@ export default function MyBracket() {
                 </div>
             </div>
 
-            {/* DESKTOP BRACKET */}
-            <div className="bracket-desktop" style={{ overflowX: "hidden", padding: "0 8px" }}>
+            {/* Body */}
+            <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 12px" }}>
                 {!authenticated ? (
-                    <div style={{ textAlign: "center", padding: 60, color: "#6b7280" }}>Verify your identity above to make picks.</div>
+                    <div style={{ textAlign: "center", padding: 60, color: "#6b7280" }}>Verify your identity above to make or view picks.</div>
                 ) : loading ? (
                     <div style={{ textAlign: "center", padding: 60, color: BLUE }}>Loading your bracket...</div>
                 ) : (
                     <>
-                        <BracketScaler>
-                            <div style={{ display: "flex", gap: 12, alignItems: "flex-start", width: 1600 }}>
-                                <div style={{ display: "flex", flexDirection: "column", gap: 40, flex: 1 }}>
-                                    <BracketRegion region="East" games={gamesByRegion("East")} userPicks={picks} onPick={isLocked ? null : handlePick} readonly={isLocked} getDisplayGame={getDisplayGame} />
-                                    <BracketRegion region="South" games={gamesByRegion("South")} userPicks={picks} onPick={isLocked ? null : handlePick} readonly={isLocked} getDisplayGame={getDisplayGame} />
+                        {REGION_ORDER.map(region => {
+                            const rounds = groupedGames[region];
+                            if (!rounds || Object.keys(rounds).length === 0) return null;
+                            return (
+                                <div key={region} style={{ marginBottom: 28 }}>
+                                    <div style={{
+                                        display: "flex", alignItems: "center", gap: 10, marginBottom: 12,
+                                        borderBottom: `2px solid ${GOLD}`, paddingBottom: 6,
+                                    }}>
+                                        <h3 style={{ margin: 0, color: BLUE, fontWeight: 900, fontSize: 16 }}>{region}</h3>
+                                    </div>
+                                    {Object.keys(rounds).sort((a, b) => a - b).map(round => {
+                                        const key = `${region}-${round}`;
+                                        const isCollapsed = collapsedRounds.has(key);
+                                        const roundGames = rounds[round];
+                                        const roundPicked = roundGames.filter(g => picks[g.id]).length;
+                                        const roundCorrect = roundGames.filter(g =>
+                                            g.status === "STATUS_FINAL" && picks[g.id] === g.winner
+                                        ).length;
+                                        const roundFinished = roundGames.filter(g => g.status === "STATUS_FINAL").length;
+                                        return (
+                                            <div key={key} style={{ marginBottom: 12 }}>
+                                                <div
+                                                    onClick={() => toggleRound(key)}
+                                                    style={{
+                                                        display: "flex", alignItems: "center", gap: 8,
+                                                        cursor: "pointer", marginBottom: isCollapsed ? 0 : 8,
+                                                        userSelect: "none",
+                                                    }}
+                                                >
+                                                    <span style={{ fontSize: 10, color: isCollapsed ? BLUE : "#9ca3af" }}>
+                                                        {isCollapsed ? "▶" : "▼"}
+                                                    </span>
+                                                    <span style={{
+                                                        fontSize: 11, fontWeight: 700, color: "#6b7280",
+                                                        textTransform: "uppercase", letterSpacing: "0.5px",
+                                                    }}>
+                                                        {ROUND_LABELS[round]}
+                                                    </span>
+                                                    <span style={{ fontSize: 11, color: "#9ca3af" }}>
+                                                        {roundFinished > 0 && `(${roundCorrect}/${roundFinished} correct)`}
+                                                    </span>
+                                                </div>
+                                                {!isCollapsed && roundGames.map(game => (
+                                                    <PickCard
+                                                        key={game.id}
+                                                        game={game}
+                                                        games={games}
+                                                        picks={picks}
+                                                        onPick={handlePick}
+                                                        isLocked={isLocked}
+                                                    />
+                                                ))}
+                                            </div>
+                                        );
+                                    })}
                                 </div>
-                                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16, width: 200, flexShrink: 0, paddingTop: 40 }}>
-                                    <div style={{ fontSize: 12, fontWeight: 800, color: BLUE, textTransform: "uppercase", letterSpacing: "1px", borderBottom: `2px solid ${GOLD}`, paddingBottom: 4, width: "100%", textAlign: "center", marginBottom: 8 }}>Final Four</div>
-                                    {finalFourGames.map(g => (
-                                        <BracketGame key={g.id} game={getDisplayGame(g)} userPick={picks[g.id]} onPick={isLocked ? null : handlePick} readonly={isLocked} />
-                                    ))}
-                                    <div style={{ fontSize: 12, fontWeight: 800, color: GOLD, textTransform: "uppercase", letterSpacing: "1px", borderBottom: `2px solid ${GOLD}`, paddingBottom: 4, width: "100%", textAlign: "center", marginTop: 8 }}>🏆 Championship</div>
-                                    {championshipGame && (
-                                        <BracketGame game={getDisplayGame(championshipGame)} userPick={picks[championshipGame.id]} onPick={isLocked ? null : handlePick} readonly={isLocked} />
-                                    )}
-                                    {showTiebreaker && (
-                                        <div style={{ maxWidth: 500, margin: "0 auto", padding: "3px 3px" }}>
-                                            <TiebreakerBlock />
-                                        </div>
-                                    )}
+                            );
+                        })}
+
+                        {/* Tiebreaker */}
+                        {showTiebreaker && (
+                            <div style={{
+                                background: "white", borderRadius: 10, padding: "14px 16px",
+                                boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
+                                border: `1px solid ${GOLD}`, marginTop: 8, marginBottom: 24,
+                            }}>
+                                <div style={{ fontSize: 12, fontWeight: 800, color: BLUE, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 10 }}>
+                                    🏆 Championship Score Tiebreaker
+                                    {isTiebreakerLocked && <span style={{ color: "#dc2626", marginLeft: 6 }}>— Locked</span>}
                                 </div>
-                                <div style={{ display: "flex", flexDirection: "column", gap: 40, flex: 1 }}>
-                                    <BracketRegion region="West" games={gamesByRegion("West")} userPicks={picks} onPick={isLocked ? null : handlePick} readonly={isLocked} flipped={true} getDisplayGame={getDisplayGame} />
-                                    <BracketRegion region="Midwest" games={gamesByRegion("Midwest")} userPicks={picks} onPick={isLocked ? null : handlePick} readonly={isLocked} flipped={true} getDisplayGame={getDisplayGame} />
+                                <p style={{ fontSize: 12, color: "#6b7280", margin: "0 0 10px 0" }}>
+                                    Predict the final score of the Championship game. Used to break ties in standings.
+                                </p>
+                                <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                                    <input type="number" value={tiebreakerWin} onChange={e => setTiebreakerWin(e.target.value)}
+                                        disabled={isTiebreakerLocked} placeholder="Win"
+                                        style={{ width: 70, padding: "6px 4px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: 14, fontWeight: 700, textAlign: "center" }} />
+                                    <span style={{ color: "#9ca3af" }}>—</span>
+                                    <input type="number" value={tiebreakerLoss} onChange={e => setTiebreakerLoss(e.target.value)}
+                                        disabled={isTiebreakerLocked} placeholder="Loss"
+                                        style={{ width: 70, padding: "6px 4px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: 14, fontWeight: 700, textAlign: "center" }} />
+                                    {!isTiebreakerLocked && (
+                                        <button onClick={handleSaveTiebreaker}
+                                            style={{ padding: "6px 14px", borderRadius: 6, backgroundColor: BLUE, color: "white", border: "none", fontWeight: 600, cursor: "pointer", fontSize: 12 }}>
+                                            Save
+                                        </button>
+                                    )}
+                                    {tiebreakerSaved && <span style={{ fontSize: 12, color: "#16a34a", fontWeight: 600 }}>✅ Saved</span>}
                                 </div>
                             </div>
-                        </BracketScaler>
+                        )}
                     </>
                 )}
-            </div>
-
-            {/* MOBILE */}
-            <div className="bracket-mobile" style={{ padding: "0 12px" }}>
-                {!authenticated ? (
-                    <div style={{ textAlign: "center", padding: 40, color: "#6b7280" }}>Verify your identity above to make picks.</div>
-                ) : loading ? (
-                    <p>Loading your bracket...</p>
-                ) : (
-                    <>
-                        {/* Tab bar */}
-                        <div style={{ display: "flex", overflowX: "auto", gap: 4, marginBottom: 16 }}>
-                            {TABS.map(tab => (
-                                <button key={tab}
-                                    onClick={() => { setActiveTab(tab); setCollapsedRounds(new Set()); }}
-                                    style={{
-                                        padding: "6px 14px", borderRadius: 20, border: "none",
-                                        fontWeight: 700, fontSize: 12, whiteSpace: "nowrap", cursor: "pointer",
-                                        backgroundColor: activeTab === tab ? BLUE : "#e5e7eb",
-                                        color: activeTab === tab ? "white" : "#374151",
-                                    }}>{tab}</button>
-                            ))}
-                        </div>
-
-                        {/* Horizontal collapsing bracket */}
-                        <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
-                            <div style={{ display: "flex", gap: 8, alignItems: "flex-start", paddingBottom: 16 }}>
-                                {Object.keys(byRound).sort((a, b) => a - b).map((round, roundIdx) => {
-                                    const isCollapsed = collapsedRounds.has(roundIdx);
-                                    return (
-                                        <div key={round} style={{ flexShrink: 0 }}>
-                                            <div onClick={() => toggleCollapse(roundIdx)} style={{
-                                                fontSize: 10, fontWeight: 700,
-                                                color: isCollapsed ? BLUE : "#9ca3af",
-                                                textAlign: "center", marginBottom: 6,
-                                                textTransform: "uppercase", letterSpacing: "0.5px",
-                                                whiteSpace: "nowrap", cursor: "pointer",
-                                                padding: "2px 4px", borderRadius: 4,
-                                                backgroundColor: isCollapsed ? "#eff6ff" : "transparent",
-                                                userSelect: "none",
-                                            }}>
-                                                {isCollapsed ? "▶" : "▼"} {ROUND_LABELS[round].split(" ")[0]}
-                                            </div>
-                                            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                                                {byRound[round]
-                                                    .sort((a, b) => a.bracket_slot - b.bracket_slot)
-                                                    .map(game => {
-                                                        const pick = picks[game.id];
-                                                        const displayGame = getDisplayGame(game);
-                                                        if (isCollapsed) {
-                                                            const logo = pick === displayGame.home_team ? displayGame.home_logo
-                                                                : pick === displayGame.away_team ? displayGame.away_logo
-                                                                    : null;
-                                                            return (
-                                                                <div key={game.id} onClick={() => toggleCollapse(roundIdx)} style={{
-                                                                    width: 36, height: 48, borderRadius: 6,
-                                                                    border: `1px solid ${pick ? BLUE : "#e5e7eb"}`,
-                                                                    backgroundColor: pick ? "#eff6ff" : "#f9fafb",
-                                                                    display: "flex", alignItems: "center",
-                                                                    justifyContent: "center", cursor: "pointer",
-                                                                }}>
-                                                                    {pick
-                                                                        ? logo
-                                                                            ? <img src={logo} width={20} height={20} alt="" style={{ objectFit: "contain" }} />
-                                                                            : <span style={{ fontSize: 8, fontWeight: 700, color: BLUE, textAlign: "center", padding: "0 2px", lineHeight: 1.2 }}>
-                                                                                {pick.substring(0, 4)}
-                                                                            </span>
-                                                                        : <span style={{ fontSize: 10, color: "#d1d5db" }}>·</span>
-                                                                    }
-                                                                </div>
-                                                            );
-                                                        }
-                                                        return (
-                                                            <BracketGame
-                                                                key={game.id}
-                                                                game={displayGame}
-                                                                userPick={pick}
-                                                                onPick={isLocked ? null : handlePick}
-                                                                readonly={isLocked}
-                                                            />
-                                                        );
-                                                    })}
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-
-                        {/* Tiebreaker on mobile */}
-                        {showTiebreaker && <TiebreakerBlock />}
-                    </>
-                )}
-            </div>
-        </div>
-    );
-}
-
-function BracketScaler({ children }) {
-    const [scale, setScale] = useState(1);
-    const containerRef = useRef(null);
-    useEffect(() => {
-        const update = () => {
-            const available = window.innerWidth - 32;
-            setScale(Math.min(1, available / 1600));
-        };
-        update();
-        window.addEventListener("resize", update);
-        return () => window.removeEventListener("resize", update);
-    }, []);
-    return (
-        <div ref={containerRef} style={{ width: "100%", overflow: "hidden" }}>
-            <div style={{ width: 1600, transformOrigin: "top left", transform: `scale(${scale})`, height: `calc(100% * ${scale})` }}>
-                {children}
             </div>
         </div>
     );
