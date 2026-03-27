@@ -70,7 +70,7 @@ export default function Home() {
                                 <li>Example 2: You pick a 4 seed to win in round 2. The 4 seed wins, you get 6 points (2 + 4)</li>
                             </ul>
                             <li>Most points at the end wins!</li>
-                            <li>25/bracket. Max 2 brackets</li>
+                            <li>For Fun! Max 2 brackets</li>
                         </ul>
                     </div>
                     <br /><br />

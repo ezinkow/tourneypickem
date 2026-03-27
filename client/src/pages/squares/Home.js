@@ -46,7 +46,7 @@ export default function SquaresHome() {
                     <h3 style={{ color: BLUE, marginTop: 0, marginBottom: 16 }}>📋 Game Rules</h3>
                     <div style={{ fontSize: 14, color: "#374151", lineHeight: 1.8 }}>
                         <p style={{ margin: "0 0 10px 0" }}>
-                            <strong>25 per square</strong> — 100 squares total, 2,500 pot.
+                            <strong>For Fun!</strong> — 100 squares total.
                         </p>
                         <p style={{ margin: "0 0 10px 0" }}>
                             After all squares are claimed, numbers (0–9) are randomly assigned to each row and column.

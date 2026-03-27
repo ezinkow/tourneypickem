@@ -47,7 +47,7 @@ export default function Home() {
                         <li>Games lock at scheduled tip-off time.</li>
                         <li>Lines lock one hour before scheduled tip-off time.</li>
                         <li>No matter what the line is when pick is submitted, the final, closed locked line will be the line everyone is using.</li>
-                        <li>100/entry</li>
+                        <li>For Fun!</li>
                     </div>
                     <a href="https://www.ncaa.com/march-madness-live/scores"
                         target="_blank"
