@@ -7,15 +7,21 @@ export default function PlayerPicksMatrix() {
   const [standings, setStandings] = useState([]);
 
   useEffect(() => {
-    axios.get("/api/pickem/games/finishedAndInProgress").then(r =>
-      setGames(
-        r.data
-          .filter(g => g.status === "STATUS_FINAL" || g.status === "STATUS_HALFTIME" || g.status === "STATUS_IN_PROGRESS")
-          .sort((b, a) => new Date(a.game_date) - new Date(b.game_date))
-      )
-    );
-    axios.get("/api/pickem/picks/all").then(r => setPicks(r.data));
-    axios.get("/api/pickem/standings").then(r => setStandings(r.data));
+    const fetchAll = () => {
+      axios.get("/api/pickem/games/finishedAndInProgress").then(r =>
+        setGames(
+          r.data
+            .filter(g => g.status === "STATUS_FINAL" || g.status === "STATUS_HALFTIME" || g.status === "STATUS_IN_PROGRESS")
+            .sort((b, a) => new Date(a.game_date) - new Date(b.game_date))
+        )
+      );
+      axios.get("/api/pickem/picks/all").then(r => setPicks(r.data));
+      axios.get("/api/pickem/standings").then(r => setStandings(r.data));
+    };
+
+    fetchAll();
+    const interval = setInterval(fetchAll, 60 * 1000); // every 60 seconds
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {

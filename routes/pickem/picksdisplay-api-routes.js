@@ -47,13 +47,40 @@ module.exports = function (app) {
                     }
                 ]
             });
-            // Flatten so each pick has name at top level
+
             const flat = picks.map(p => ({
                 game_id: p.game_id,
                 pick: p.pick,
                 missed_pick_flag: p.missed_pick_flag,
                 name: p.UsersPickem.name,
             }));
+
+            // Synthesize missing picks for games that have already started
+            const now = new Date();
+            const startedGames = await GamesPickem.findAll({
+                where: {
+                    status: ["STATUS_IN_PROGRESS", "STATUS_HALFTIME", "STATUS_FINAL"]
+                }
+            });
+            const allUsers = await UsersPickem.findAll({ attributes: ["name"] });
+
+            // Build a set of existing picks for O(1) lookup
+            const existingSet = new Set(flat.map(p => `${p.name}||${p.game_id}`));
+
+            for (const game of startedGames) {
+                for (const user of allUsers) {
+                    const key = `${user.name}||${game.id}`;
+                    if (!existingSet.has(key)) {
+                        flat.push({
+                            game_id: game.id,
+                            pick: game.underdog,
+                            missed_pick_flag: true,
+                            name: user.name,
+                        });
+                    }
+                }
+            }
+
             res.json(flat);
         } catch (err) {
             console.error(err);
