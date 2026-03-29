@@ -20,7 +20,7 @@ export default function PlayerPicksMatrix() {
     };
 
     fetchAll();
-    const interval = setInterval(fetchAll, 60 * 1000); // every 60 seconds
+    const interval = setInterval(fetchAll, 5 * 60 * 1000); // every 60 seconds
     return () => clearInterval(interval);
   }, []);
 
