@@ -223,11 +223,11 @@ export default function PlayerPicksMatrix() {
                     borderBottom: "1px solid #f3f4f6",
                     padding: "6px 8px", textAlign: "center",
                     backgroundColor: "#fffbeb",
-                    fontSize: 12, fontWeight: 700, color: "#92400e",
+                    fontSize: 10, fontWeight: 700, color: "#92400e",
                     whiteSpace: "nowrap",
                   }}>
                     {tb?.win_score != null
-                      ? `${tb.win_score}–${tb.loss_score}`
+                      ? `${tb.win_score}–${tb.loss_score} (${tb.win_score + tb.loss_score})`
                       : <span style={{ color: "#d1d5db" }}>–</span>
                     }
                   </td>
