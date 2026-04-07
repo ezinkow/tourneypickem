@@ -1,26 +1,34 @@
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 
+const CHAMP_GAME_ID = "401856600";
+
 export default function PlayerPicksMatrix() {
   const [games, setGames] = useState([]);
   const [picks, setPicks] = useState([]);
   const [standings, setStandings] = useState([]);
+  const [tiebreakers, setTiebreakers] = useState([]);
+  const [champStarted, setChampStarted] = useState(false);
 
   useEffect(() => {
     const fetchAll = () => {
-      axios.get("/api/pickem/games/finishedAndInProgress").then(r =>
-        setGames(
-          r.data
-            .filter(g => g.status === "STATUS_FINAL" || g.status === "STATUS_HALFTIME" || g.status === "STATUS_IN_PROGRESS")
-            .sort((b, a) => new Date(a.game_date) - new Date(b.game_date))
-        )
-      );
+      axios.get("/api/pickem/games/finishedAndInProgress").then(r => {
+        const filtered = r.data
+          .filter(g => g.status === "STATUS_FINAL" || g.status === "STATUS_HALFTIME" || g.status === "STATUS_IN_PROGRESS")
+          .sort((b, a) => new Date(a.game_date) - new Date(b.game_date));
+        setGames(filtered);
+        // Check if champ game has started
+        const champ = r.data.find(g => g.id === CHAMP_GAME_ID);
+        setChampStarted(!!champ);
+      });
       axios.get("/api/pickem/picks/all").then(r => setPicks(r.data));
       axios.get("/api/pickem/standings").then(r => setStandings(r.data));
+      axios.get("/api/pickem/tiebreaker/all").then(r => {
+        setTiebreakers(r.data);
+      });
     };
-
     fetchAll();
-    const interval = setInterval(fetchAll, 5 * 60 * 1000); // every 60 seconds
+    const interval = setInterval(fetchAll, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -41,6 +49,12 @@ export default function PlayerPicksMatrix() {
     }
     return map;
   }, [picks]);
+
+  const tiebreakerMap = useMemo(() => {
+    const map = {};
+    for (const t of tiebreakers) map[t.name] = t;
+    return map;
+  }, [tiebreakers]);
 
   const getCellStyle = (game, pickObj) => {
     if (!pickObj) return {};
@@ -70,37 +84,23 @@ export default function PlayerPicksMatrix() {
   const GameHeader = ({ game }) => {
     const winnerLogo = game.winner === game.favorite ? game.fav_logo
       : game.winner === game.underdog ? game.dog_logo
-        : (game.line) + game.favorite;
-
+        : null;
     return (
       <div style={{ textAlign: "center", width: "100%", overflow: "hidden", backgroundColor: "rgba(255,255,255,0.15)" }}>
-        {/* Row 1: away logo @ home logo */}
-        <div style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: 3,
-          padding: "1px 2px",  // was "3px 4px"
-        }}>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 3, padding: "1px 2px" }}>
           <img src={game.away_logo} alt="" height={18} style={{ flexShrink: 0 }} />
           <span style={{ fontSize: 9, color: "#cbd5e1" }}>@</span>
           <img src={game.home_logo} alt="" height={18} style={{ flexShrink: 0 }} />
         </div>
-
-        {/* Row 2: score */}
         <div style={{ fontSize: 10, fontWeight: 700, color: "#ffffff", whiteSpace: "nowrap" }}>
           {game.status === "STATUS_FINAL" || game.status === "STATUS_HALFTIME" || game.status === "STATUS_IN_PROGRESS"
             ? `${game.away_score}-${game.home_score}` : ""}
         </div>
-
-        {/* Row 3: covered team logo + spread */}
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 2 }}>
           {game.status === "STATUS_IN_PROGRESS" || game.status === "STATUS_HALFTIME" ? (
             <>
               <img src={game.fav_logo} alt="" height={13} style={{ flexShrink: 0 }} />
-              <span style={{ fontSize: 8, color: "#ffffff", fontWeight: 700 }}>
-                -{game.line}
-              </span>
+              <span style={{ fontSize: 8, color: "#ffffff", fontWeight: 700 }}>-{game.line}</span>
             </>
           ) : winnerLogo ? (() => {
             const coveredIsFav = game.winner === game.favorite;
@@ -120,17 +120,11 @@ export default function PlayerPicksMatrix() {
       </div>
     );
   };
-
   return (
     <div style={{ paddingTop: 97, paddingBottom: 80 }}>
       <div style={{
-        position: "fixed",
-        top: 65,
-        left: 0,
-        right: 0,
-        zIndex: 3,
-        backgroundColor: "#f8f7f4",
-        padding: "4px 12px 6px",
+        position: "fixed", top: 65, left: 0, right: 0, zIndex: 3,
+        backgroundColor: "#f8f7f4", padding: "4px 12px 6px",
         borderBottom: "1px solid #e5e7eb",
       }}>
         <div style={{ display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
@@ -144,104 +138,112 @@ export default function PlayerPicksMatrix() {
           <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11, color: "#6b7280" }}>
             <span style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: "#d646464b", display: "inline-block" }} />Wrong
           </span>
+          {champStarted && (
+            <span style={{ fontSize: 11, color: "#c89d3c", fontWeight: 700, marginLeft: "auto" }}>
+              🏆 Tiebreaker locked
+            </span>
+          )}
         </div>
       </div>
+
       <table style={{ borderCollapse: "collapse", background: "white", width: "100%", fontSize: 14 }}>
         <thead>
           <tr>
             <th style={{
-              position: "sticky",
-              top: 95,
-              left: 0,
-              zIndex: 5,
-              backgroundColor: "#13447a",
-              color: "white",
-              borderBottom: "2px solid #c89d3c",
-              borderRight: "2px solid #c89d3c",
-              whiteSpace: "nowrap",
-              textTransform: "uppercase",
-              fontSize: 12,
-              letterSpacing: "0.5px",
-              padding: "8px 12px",
-              minWidth: 90,
-              textAlign: "center",
+              position: "sticky", top: 95, left: 0, zIndex: 5,
+              backgroundColor: "#13447a", color: "white",
+              borderBottom: "2px solid #c89d3c", borderRight: "2px solid #c89d3c",
+              whiteSpace: "nowrap", textTransform: "uppercase",
+              fontSize: 12, letterSpacing: "0.5px", padding: "8px 12px",
+              minWidth: 90, textAlign: "center",
             }}>Player</th>
             {games.map(g => (
               <th key={g.id} style={{
-                position: "sticky",
-                top: 95,
-                zIndex: 4,
-                backgroundColor: "#13447a",
-                color: "white",
+                position: "sticky", top: 95, zIndex: 4,
+                backgroundColor: "#13447a", color: "white",
                 borderBottom: "2px solid #c89d3c",
-                padding: "4px 2px",
-                textAlign: "left",
-                whiteSpace: "nowrap",
-                textTransform: "uppercase",
-                fontSize: 12,
-                letterSpacing: "0.5px",
-                overflow: "hidden"
+                padding: "4px 2px", textAlign: "left",
+                whiteSpace: "nowrap", textTransform: "uppercase",
+                fontSize: 12, letterSpacing: "0.5px", overflow: "hidden",
               }}>
                 <GameHeader game={g} />
               </th>
             ))}
+            {/* Tiebreaker column — only shown once champ has started */}
+            {champStarted && (
+              <th style={{
+                position: "sticky", top: 95, zIndex: 4,
+                backgroundColor: "#030831", color: "#c89d3c",
+                borderBottom: "2px solid #c89d3c", borderLeft: "2px solid #c89d3c",
+                padding: "4px 8px", textAlign: "center",
+                whiteSpace: "nowrap", fontSize: 10, fontWeight: 700,
+                textTransform: "uppercase", letterSpacing: "0.5px",
+              }}>
+                🏆<br />Tiebreak
+              </th>
+            )}
           </tr>
         </thead>
         <tbody>
-          {users.map((user, idx) => (
-            <tr key={user.name}>
-              <td style={{
-                position: "sticky",
-                left: 0,
-                zIndex: 2,
-                backgroundColor: "white",
-                borderRight: "2px solid var(--accent-gold)",
-                borderBottom: "1px solid #f3f4f6",
-                padding: "6px 8px",
-                minWidth: 110,
-                maxWidth: 110,
-                width: 110,
-                whiteSpace: "nowrap",
-              }}>
-                <span style={{ fontSize: 13 }}>
-                  {idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : `${idx + 1}.`}
-                </span>
-                {" "}
-                <span style={{
-                  fontWeight: 700,
-                  fontSize: 12,
-                  color: "var(--primary-navy)",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
+          {users.map((user, idx) => {
+            const tb = tiebreakerMap[user.name];
+            return (
+              <tr key={user.name}>
+                <td style={{
+                  position: "sticky", left: 0, zIndex: 2,
+                  backgroundColor: "white",
+                  borderRight: "2px solid var(--accent-gold)",
+                  borderBottom: "1px solid #f3f4f6",
+                  padding: "6px 8px",
+                  minWidth: 110, maxWidth: 110, width: 110,
                   whiteSpace: "nowrap",
-                  maxWidth: 55,
-                  display: "inline-block",
-                  verticalAlign: "middle",
                 }}>
-                  {user.name}
-                </span>
-                {" "}
-                <span style={{ fontSize: 11, color: "#6b7280" }}>({user.points})</span>
-              </td>
-              {games.map(game => {
-                const pickObj = pickMap?.[game.id]?.[user.name];
-                return (
-                  <td key={user.name + game.id} style={{
-                    padding: "6px 4px",
-                    textAlign: "center",
-                    verticalAlign: "middle",
-                    borderBottom: "1px solid #f3f4f6",
-                    borderRight: "1px solid #f3f4f6",
-                    ...getCellStyle(game, pickObj),
+                  <span style={{ fontSize: 13 }}>
+                    {idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : `${idx + 1}.`}
+                  </span>
+                  {" "}
+                  <span style={{
+                    fontWeight: 700, fontSize: 12, color: "var(--primary-navy)",
+                    overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                    maxWidth: 55, display: "inline-block", verticalAlign: "middle",
                   }}>
-                    <PickLogo game={game} pickObj={pickObj} />
+                    {user.name}
+                  </span>
+                  {" "}
+                  <span style={{ fontSize: 11, color: "#6b7280" }}>({user.points})</span>
+                </td>
+                {games.map(game => {
+                  const pickObj = pickMap?.[game.id]?.[user.name];
+                  return (
+                    <td key={user.name + game.id} style={{
+                      padding: "6px 4px", textAlign: "center", verticalAlign: "middle",
+                      borderBottom: "1px solid #f3f4f6", borderRight: "1px solid #f3f4f6",
+                      ...getCellStyle(game, pickObj),
+                    }}>
+                      <PickLogo game={game} pickObj={pickObj} />
+                    </td>
+                  );
+                })}
+                {champStarted && (
+                  <td style={{
+                    borderLeft: "2px solid #c89d3c",
+                    borderBottom: "1px solid #f3f4f6",
+                    padding: "6px 8px", textAlign: "center",
+                    backgroundColor: "#fffbeb",
+                    fontSize: 12, fontWeight: 700, color: "#92400e",
+                    whiteSpace: "nowrap",
+                  }}>
+                    {tb?.win_score != null
+                      ? `${tb.win_score}–${tb.loss_score}`
+                      : <span style={{ color: "#d1d5db" }}>–</span>
+                    }
                   </td>
-                );
-              })}
-            </tr>
-          ))}
+                )}
+              </tr>
+            );
+          })}
         </tbody>
       </table>
-    </div >
+    </div>
   );
 }

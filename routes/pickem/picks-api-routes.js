@@ -102,11 +102,33 @@ module.exports = function (app) {
 
     app.post("/api/pickem/tiebreaker", async (req, res) => {
         try {
+            const champGame = await GamesPickem.findOne({ where: { id: "401856600" } });
+            if (champGame && champGame.status !== "STATUS_SCHEDULED") {
+                return res.status(403).json({ error: "Tiebreaker is locked" });
+            }
             const { name, win_score, loss_score } = req.body;
             const user = await UsersPickem.findOne({ where: { name } });
             if (!user) return res.status(404).json({ error: "User not found" });
             await TiebreakerPickem.upsert({ user_id: user.id, win_score, loss_score });
             res.json({ success: true });
+        } catch (err) {
+            res.status(500).json({ error: "Failed" });
+        }
+    });
+
+    // Get all users' tiebreakers (for group display)
+    app.get("/api/pickem/tiebreaker/all", async (req, res) => {
+        try {
+            const users = await UsersPickem.findAll({ attributes: ["id", "name"] });
+            const tiebreakers = await TiebreakerPickem.findAll();
+            const tbMap = {};
+            for (const t of tiebreakers) tbMap[t.user_id] = t;
+            const result = users.map(u => ({
+                name: u.name,
+                win_score: tbMap[u.id]?.win_score ?? null,
+                loss_score: tbMap[u.id]?.loss_score ?? null,
+            }));
+            res.json(result);
         } catch (err) {
             res.status(500).json({ error: "Failed" });
         }
