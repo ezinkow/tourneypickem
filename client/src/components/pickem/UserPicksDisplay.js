@@ -17,15 +17,12 @@ export default function PlayerPicksMatrix() {
           .filter(g => g.status === "STATUS_FINAL" || g.status === "STATUS_HALFTIME" || g.status === "STATUS_IN_PROGRESS")
           .sort((b, a) => new Date(a.game_date) - new Date(b.game_date));
         setGames(filtered);
-        // Check if champ game has started
-        const champ = r.data.find(g => g.id === CHAMP_GAME_ID);
+        const champ = r.data.find(g => String(g.id) === String(CHAMP_GAME_ID));
         setChampStarted(!!champ);
       });
       axios.get("/api/pickem/picks/all").then(r => setPicks(r.data));
       axios.get("/api/pickem/standings").then(r => setStandings(r.data));
-      axios.get("/api/pickem/tiebreaker/all").then(r => {
-        setTiebreakers(r.data);
-      });
+      axios.get("/api/pickem/tiebreaker/all").then(r => setTiebreakers(r.data));
     };
     fetchAll();
     const interval = setInterval(fetchAll, 5 * 60 * 1000);
@@ -120,6 +117,7 @@ export default function PlayerPicksMatrix() {
       </div>
     );
   };
+
   return (
     <div style={{ paddingTop: 97, paddingBottom: 80 }}>
       <div style={{
@@ -149,6 +147,7 @@ export default function PlayerPicksMatrix() {
       <table style={{ borderCollapse: "collapse", background: "white", width: "100%", fontSize: 14 }}>
         <thead>
           <tr>
+            {/* Player column */}
             <th style={{
               position: "sticky", top: 95, left: 0, zIndex: 5,
               backgroundColor: "#13447a", color: "white",
@@ -157,6 +156,22 @@ export default function PlayerPicksMatrix() {
               fontSize: 12, letterSpacing: "0.5px", padding: "8px 12px",
               minWidth: 90, textAlign: "center",
             }}>Player</th>
+
+            {/* Tiebreaker column — second, right after player */}
+            {champStarted && (
+              <th style={{
+                position: "sticky", top: 95, zIndex: 4,
+                backgroundColor: "#030831", color: "#c89d3c",
+                borderBottom: "2px solid #c89d3c", borderRight: "2px solid #c89d3c",
+                padding: "4px 8px", textAlign: "center",
+                whiteSpace: "nowrap", fontSize: 10, fontWeight: 700,
+                textTransform: "uppercase", letterSpacing: "0.5px",
+              }}>
+                🏆<br />Tiebreak
+              </th>
+            )}
+
+            {/* Game columns */}
             {games.map(g => (
               <th key={g.id} style={{
                 position: "sticky", top: 95, zIndex: 4,
@@ -169,19 +184,6 @@ export default function PlayerPicksMatrix() {
                 <GameHeader game={g} />
               </th>
             ))}
-            {/* Tiebreaker column — only shown once champ has started */}
-            {champStarted && (
-              <th style={{
-                position: "sticky", top: 95, zIndex: 4,
-                backgroundColor: "#030831", color: "#c89d3c",
-                borderBottom: "2px solid #c89d3c", borderLeft: "2px solid #c89d3c",
-                padding: "4px 8px", textAlign: "center",
-                whiteSpace: "nowrap", fontSize: 10, fontWeight: 700,
-                textTransform: "uppercase", letterSpacing: "0.5px",
-              }}>
-                🏆<br />Tiebreak
-              </th>
-            )}
           </tr>
         </thead>
         <tbody>
@@ -189,6 +191,7 @@ export default function PlayerPicksMatrix() {
             const tb = tiebreakerMap[user.name];
             return (
               <tr key={user.name}>
+                {/* Player cell */}
                 <td style={{
                   position: "sticky", left: 0, zIndex: 2,
                   backgroundColor: "white",
@@ -212,21 +215,11 @@ export default function PlayerPicksMatrix() {
                   {" "}
                   <span style={{ fontSize: 11, color: "#6b7280" }}>({user.points})</span>
                 </td>
-                {games.map(game => {
-                  const pickObj = pickMap?.[game.id]?.[user.name];
-                  return (
-                    <td key={user.name + game.id} style={{
-                      padding: "6px 4px", textAlign: "center", verticalAlign: "middle",
-                      borderBottom: "1px solid #f3f4f6", borderRight: "1px solid #f3f4f6",
-                      ...getCellStyle(game, pickObj),
-                    }}>
-                      <PickLogo game={game} pickObj={pickObj} />
-                    </td>
-                  );
-                })}
+
+                {/* Tiebreaker cell — second, right after player */}
                 {champStarted && (
                   <td style={{
-                    borderLeft: "2px solid #c89d3c",
+                    borderRight: "2px solid #c89d3c",
                     borderBottom: "1px solid #f3f4f6",
                     padding: "6px 8px", textAlign: "center",
                     backgroundColor: "#fffbeb",
@@ -239,6 +232,20 @@ export default function PlayerPicksMatrix() {
                     }
                   </td>
                 )}
+
+                {/* Pick cells */}
+                {games.map(game => {
+                  const pickObj = pickMap?.[game.id]?.[user.name];
+                  return (
+                    <td key={user.name + game.id} style={{
+                      padding: "6px 4px", textAlign: "center", verticalAlign: "middle",
+                      borderBottom: "1px solid #f3f4f6", borderRight: "1px solid #f3f4f6",
+                      ...getCellStyle(game, pickObj),
+                    }}>
+                      <PickLogo game={game} pickObj={pickObj} />
+                    </td>
+                  );
+                })}
               </tr>
             );
           })}
