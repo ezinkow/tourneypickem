@@ -1,10 +1,10 @@
 import React from 'react'
-import UserPicksDisplay from '../../components/nba/UserPicksDisplay'
+import GroupPicks from '../../components/nba/GroupPicks'
 
 export default function PicksDisplay() {
     return (
         <>
-            <UserPicksDisplay />
+            <GroupPicks />
         </>
     )
 }

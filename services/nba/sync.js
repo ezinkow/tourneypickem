@@ -13,10 +13,10 @@ const ROUND_CONFIG = {
 const TEAM_TO_SEED = {
     // East
     "Detroit Pistons": 1, "Boston Celtics": 2, "New York Knicks": 3, "Cleveland Cavaliers": 4,
-    "Toronto Raptors": 5, "Atlanta Hawks": 6, "Philadelphia 76ers": 7, "Orlando Magic": 7,
+    "Toronto Raptors": 5, "Atlanta Hawks": 6, "Philadelphia 76ers": 7, "Orlando Magic": 7, "76ers/Magic": 7,
     // West
     "Oklahoma City Thunder": 1, "San Antonio Spurs": 2, "Denver Nuggets": 3, "Los Angeles Lakers": 4,
-    "Houston Rockets": 5, "Minnesota Timberwolves": 6, "Phoenix Suns": 7, "Portland Trail Blazers": 7,
+    "Houston Rockets": 5, "Minnesota Timberwolves": 6, "Phoenix Suns": 7, "Portland Trail Blazers": 7, "Suns/Trail Blazers": 7,
     // Play-in Placeholder
     "Play-in 8 seed": 8
 };
@@ -97,6 +97,9 @@ async function processSeries(s) {
             }
             if (awayTeamName === "TBD") {
                 awayTeamName = "Play-in 8 seed";
+                awayLogo = "https://a.espncdn.com/i/teamlogos/leagues/500/nba.png";
+            }
+            if (awayTeamName.indexOf("/") > -1){
                 awayLogo = "https://a.espncdn.com/i/teamlogos/leagues/500/nba.png";
             }
         }

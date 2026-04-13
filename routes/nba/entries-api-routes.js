@@ -1,5 +1,4 @@
-const { NbaEntries } = require("../../models/nba");
-const { Users } = require("../../models/shared");
+const { NbaEntries, Users } = require("../../models/shared");
 const requireAuth = require("../../middleware/Requireauth");
 
 module.exports = function (app) {

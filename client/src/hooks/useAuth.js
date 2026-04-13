@@ -4,17 +4,8 @@ import axios from "axios";
 const STORAGE_KEY_TOKEN = "token";
 const STORAGE_KEY_NAME  = "name";
 
-/**
- * useAuth — shared authentication hook.
- *
- * Returns:
- *   user        { name } | null
- *   login(name, password) → { success, error }
- *   logout()
- *   loading     boolean (true while verifying token on mount)
- */
 export default function useAuth() {
-    const [user,    setUser]    = useState(null);
+    const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
     // On mount, verify any stored token
@@ -27,13 +18,19 @@ export default function useAuth() {
             try {
                 const { data } = await axios.post("/api/auth/verify-token", { name, token });
                 if (data.success) {
-                    setUser({ name: data.name });
+                    // Update: Include id and hasNbaEntry from the API
+                    setUser({ 
+                        id: data.id, 
+                        name: data.name, 
+                        real_name: data.real_name,
+                        hasNbaEntry: data.hasNbaEntry 
+                    });
                 } else {
                     localStorage.removeItem(STORAGE_KEY_TOKEN);
                     localStorage.removeItem(STORAGE_KEY_NAME);
                 }
-            } catch {
-                // Network error — leave stored credentials alone, just show logged-out
+            } catch (err) {
+                console.error("Auth verification failed", err);
             } finally {
                 setLoading(false);
             }
@@ -47,11 +44,19 @@ export default function useAuth() {
             if (data.success) {
                 localStorage.setItem(STORAGE_KEY_TOKEN, data.token);
                 localStorage.setItem(STORAGE_KEY_NAME,  data.name);
-                setUser({ name: data.name });
+                
+                // Update: Include id and hasNbaEntry from the API
+                setUser({ 
+                    id: data.id, 
+                    name: data.name, 
+                    real_name: data.real_name,
+                    hasNbaEntry: data.hasNbaEntry 
+                });
+                
                 return { success: true };
             }
             return { success: false, error: "Invalid username or password" };
-        } catch {
+        } catch (err) {
             return { success: false, error: "Login failed — please try again" };
         }
     }, []);

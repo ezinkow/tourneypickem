@@ -1,4 +1,4 @@
-const { Users, Tokens } = require("../../models/shared");
+const { Users, Tokens, NbaEntries } = require("../../models/shared");
 const crypto = require("crypto");
 
 module.exports = function (app) {
@@ -25,10 +25,24 @@ module.exports = function (app) {
             if (!user || user.password !== password) {
                 return res.json({ success: false });
             }
-            const token   = crypto.randomBytes(32).toString("hex");
+
+            // --- NEW LOGIC START ---
+            const entry = await NbaEntries.findOne({ where: { user_id: user.id } });
+            // --- NEW LOGIC END ---
+
+            const token = crypto.randomBytes(32).toString("hex");
             const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
             await Tokens.upsert({ token, user_id: user.id, expires });
-            res.json({ success: true, token, name: user.name, real_name: user.real_name });
+
+            // Add hasNbaEntry to the response below
+            res.json({
+                success: true,
+                token,
+                id: user.id, // Good to include ID for frontend lookups
+                name: user.name,
+                real_name: user.real_name,
+                hasNbaEntry: !!entry // true if they joined, false if not
+            });
         } catch (err) {
             console.error(err);
             res.status(500).json({ error: "Verify failed" });
@@ -48,10 +62,23 @@ module.exports = function (app) {
             if (!record || new Date() > new Date(record.expires)) {
                 return res.json({ success: false });
             }
+
+            // --- NEW LOGIC START ---
+            const entry = await NbaEntries.findOne({ where: { user_id: user.id } });
+            // --- NEW LOGIC END ---
+
             await record.update({
                 expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
             });
-            res.json({ success: true, name: user.name, real_name: user.real_name });
+
+            // Add id and hasNbaEntry to the response below
+            res.json({
+                success: true,
+                id: user.id,
+                name: user.name,
+                real_name: user.real_name,
+                hasNbaEntry: !!entry
+            });
         } catch (err) {
             console.error(err);
             res.status(500).json({ error: "Token verify failed" });
