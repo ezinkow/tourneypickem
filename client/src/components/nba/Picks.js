@@ -40,7 +40,7 @@ export default function Picks() {
         .then(res => {
           if (res.data && Array.isArray(res.data)) {
             const mappedPicks = res.data.map(p => ({
-              game: String(p.series_id),
+              series: String(p.series_id),
               pick: p.pick,
               confidence: parseInt(p.confidence) || 0,
               length: parseInt(p.series_length_guess) || 4
@@ -80,13 +80,13 @@ export default function Picks() {
   const updatePickData = (gameId, field, value) => {
     const sId = String(gameId);
     setPicks(prev => {
-      const existing = prev.find(p => p.game === sId);
+      const existing = prev.find(p => p.series === sId);
       if (existing) {
-        if (field === 'pick' && existing.pick === value) return prev.filter(p => p.game !== sId);
-        return prev.map(p => p.game === sId ? { ...p, [field]: value } : p);
+        if (field === 'pick' && existing.pick === value) return prev.filter(p => p.series !== sId);
+        return prev.map(p => p.series === sId ? { ...p, [field]: value } : p);
       }
       return [...prev, {
-        game: sId,
+        series: sId,
         pick: field === 'pick' ? value : null,
         confidence: field === 'confidence' ? value : 0,
         length: field === 'length' ? value : 4
@@ -103,7 +103,7 @@ export default function Picks() {
       await axios.post("/api/nba/picks/bulk", {
         name: authUser.name,
         picks: picks.map(p => ({
-          series_id: p.game,
+          series_id: p.series,
           pick: p.pick,
           confidence: p.confidence,
           series_length_guess: p.length
@@ -147,26 +147,26 @@ export default function Picks() {
             </tr>
           </thead>
           <tbody>
-            {visibleGames.map(game => {
-              const currentPick = picks.find(p => p.game === String(game.id));
+            {visibleGames.map(series => {
+              const currentPick = picks.find(p => p.series === String(series.id));
               return (
-                <tr key={game.id} style={{ borderBottom: "1px solid #eee" }}>
+                <tr key={series.id} style={{ borderBottom: "1px solid #eee" }}>
                   <td style={tdStyle}>
-                    <div style={{ fontSize: 11, color: "#666" }}>Series Start: {new Date(game.game_date).toLocaleDateString()}</div>
-                    <div style={{ fontWeight: 600 }}>{game.away_team} @ {game.home_team}</div>
+                    <div style={{ fontSize: 11, color: "#666" }}>Series Start: {new Date(series.game_date).toLocaleDateString()}</div>
+                    <div style={{ fontWeight: 500 }}>{series.away_seed && <sup style={{ fontSize: 8, color: "#9ca3af", marginRight: 1 }}>{series.away_seed}</sup>}{series.away_team} @ {series.home_seed && <sup style={{ fontSize: 8, color: "#9ca3af", marginRight: 1 }}>{series.home_seed}</sup>}{series.home_team}</div>
                   </td>
                   <td style={tdStyle}>
                     <div style={{ display: "flex", gap: 8 }}>
-                      {[game.away_team, game.home_team].map(team => (
+                      {[series.away_team, series.home_team].map(team => (
                         <button
                           key={team}
-                          onClick={() => updatePickData(game.id, 'pick', team)}
+                          onClick={() => updatePickData(series.id, 'pick', team)}
                           style={{
                             padding: "6px 12px", borderRadius: 6, border: currentPick?.pick === team ? `2px solid ${NAVY}` : "1px solid #ddd",
                             backgroundColor: currentPick?.pick === team ? "#eff6ff" : "white", cursor: "pointer", display: "flex", alignItems: "center", gap: 6
                           }}
                         >
-                          <img src={team === game.home_team ? game.home_logo : game.away_logo} width={20} alt="" />
+                          <img src={team === series.home_team ? series.home_logo : series.away_logo} width={20} alt="" />
                           <span style={{ fontSize: 12 }}>{team}</span>
                         </button>
                       ))}
@@ -177,7 +177,7 @@ export default function Picks() {
                       {LENGTHS.map(len => (
                         <button
                           key={len}
-                          onClick={() => updatePickData(game.id, 'length', len)}
+                          onClick={() => updatePickData(series.id, 'length', len)}
                           style={{
                             width: 32, height: 32, borderRadius: 6, border: "1px solid #ddd",
                             backgroundColor: currentPick?.length === len ? NAVY : "white",
@@ -192,7 +192,7 @@ export default function Picks() {
                   <td style={tdStyle}>
                     <select
                       value={currentPick?.confidence || ""}
-                      onChange={(e) => updatePickData(game.id, 'confidence', parseInt(e.target.value))}
+                      onChange={(e) => updatePickData(series.id, 'confidence', parseInt(e.target.value))}
                       style={{ padding: "8px", borderRadius: 6, border: "1px solid #ddd", width: "100%" }}
                     >
                       <option value="" disabled>Pts</option>
@@ -207,27 +207,27 @@ export default function Picks() {
       </div>
 
       <div className="mobile-only">
-        {visibleGames.map(game => {
-          const currentPick = picks.find(p => p.game === String(game.id));
+        {visibleGames.map(series => {
+          const currentPick = picks.find(p => p.series === String(series.id));
           return (
-            <div key={game.id} style={cardStyle}>
-              <div style={{ fontWeight: 700, marginBottom: 10 }}>{game.away_team} vs {game.home_team}</div>
+            <div key={series.id} style={cardStyle}>
+              <div style={{ fontWeight: 700, marginBottom: 10 }}>{series.away_team} vs {series.home_team}</div>
               <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-                <button onClick={() => updatePickData(game.id, 'pick', game.away_team)} style={mobileBtnStyle(currentPick?.pick === game.away_team)}>
-                  <img src={game.away_logo} width={24} height={24} alt="" /> {game.away_team}
+                <button onClick={() => updatePickData(series.id, 'pick', series.away_team)} style={mobileBtnStyle(currentPick?.pick === series.away_team)}>
+                  <img src={series.away_logo} width={24} height={24} alt="" /> {series.away_team}
                 </button>
-                <button onClick={() => updatePickData(game.id, 'pick', game.home_team)} style={mobileBtnStyle(currentPick?.pick === game.home_team)}>
-                  <img src={game.home_logo} width={24} height={24} alt="" /> {game.home_team}
+                <button onClick={() => updatePickData(series.id, 'pick', series.home_team)} style={mobileBtnStyle(currentPick?.pick === series.home_team)}>
+                  <img src={series.home_logo} width={24} height={24} alt="" /> {series.home_team}
                 </button>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <select value={currentPick?.confidence || ""} onChange={(e) => updatePickData(game.id, 'confidence', parseInt(e.target.value))} style={{ padding: 8, borderRadius: 6 }}>
+                <select value={currentPick?.confidence || ""} onChange={(e) => updatePickData(series.id, 'confidence', parseInt(e.target.value))} style={{ padding: 8, borderRadius: 6 }}>
                   <option value="" disabled>Confidence</option>
                   {[...Array(10)].map((_, i) => <option key={i + 1} value={i + 1}>{i + 1}</option>)}
                 </select>
                 <div style={{ display: "flex", gap: 4 }}>
                   {LENGTHS.map(len => (
-                    <button key={len} onClick={() => updatePickData(game.id, 'length', len)} style={lenBtnStyle(currentPick?.length === len)}>{len}</button>
+                    <button key={len} onClick={() => updatePickData(series.id, 'length', len)} style={lenBtnStyle(currentPick?.length === len)}>{len}</button>
                   ))}
                 </div>
               </div>

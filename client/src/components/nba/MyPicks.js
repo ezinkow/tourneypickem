@@ -142,7 +142,9 @@ export default function MyPicks() {
                                     <td style={{ padding: 14 }}>
                                         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                                             <img src={p.series?.away_logo} height={22} alt="" />
-                                            <span style={{ fontSize: 13, fontWeight: 500 }}>{p.series?.away_team} @ {p.series?.home_team}</span>
+                                            <span style={{ fontSize: 13, fontWeight: 500 }}>
+                                                {p.series?.away_seed && <sup style={{ fontSize: 8, color: "#9ca3af", marginRight: 1 }}>{p.series?.away_seed}</sup>}{p.series?.away_team} @ {p.series?.home_seed && <sup style={{ fontSize: 8, color: "#9ca3af", marginRight: 1 }}>{p.series?.home_seed}</sup>}{p.series?.home_team}
+                                            </span>
                                             <img src={p.series?.home_logo} height={22} alt="" />
                                         </div>
                                     </td>
