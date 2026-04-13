@@ -102,7 +102,7 @@ export default function Navbar() {
         isBracket ? "🗂️ BRACKET"  :
         isSquares ? "🟩 SQUARES"   :
         isNba     ? "🏀 NBA PLAYOFFS"  :
-                    "🏆 POOL CENTRAL";
+                    "🏆 POOL PLAY 🏊";
 
     const navBg =
         isBracket ? "#030831" :

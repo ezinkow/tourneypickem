@@ -11,14 +11,14 @@ export default function SignUp() {
     const { user, login } = useAuth();
 
     const [form, setForm] = useState({
-        real_name:        "",
-        name:             "",
-        password:         "",
+        real_name: "",
+        name: "",
+        password: "",
         confirm_password: "",
-        email:            "",
-        phone:            "",
+        email: "",
+        phone: "",
     });
-    const [error,      setError]      = useState("");
+    const [error, setError] = useState("");
     const [submitting, setSubmitting] = useState(false);
 
     // Already logged in — nothing to do here
@@ -35,19 +35,19 @@ export default function SignUp() {
         e.preventDefault();
         setError("");
 
-        if (!form.real_name.trim())   return setError("Please enter your real name.");
-        if (!form.name.trim())        return setError("Please choose a username.");
-        if (form.password.length < 4) return setError("Password must be at least 4 characters.");
+        if (!form.real_name.trim()) return setError("Please enter your real name.");
+        if (!form.name.trim()) return setError("Please choose a username.");
+        if (form.password.length < 1) return setError("Please enter a password.");
         if (form.password !== form.confirm_password) return setError("Passwords do not match.");
 
         setSubmitting(true);
         try {
             const { data } = await axios.post("/api/auth/signup", {
                 real_name: form.real_name.trim(),
-                name:      form.name.trim(),
-                password:  form.password,
-                email:     form.email.trim() || null,
-                phone:     form.phone.trim() || null,
+                name: form.name.trim(),
+                password: form.password,
+                email: form.email.trim() || null,
+                phone: form.phone.trim() || null,
             });
 
             if (!data.success) {
@@ -114,7 +114,7 @@ export default function SignUp() {
                                 type="password"
                                 value={form.password}
                                 onChange={set("password")}
-                                placeholder="At least 4 characters"
+                                placeholder="Do not use your real password. There is no encryption!"
                                 style={inputStyle}
                             />
                         </Field>
