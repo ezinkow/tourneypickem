@@ -3,17 +3,6 @@ const db = require("../../models");
 
 const BRACKET_URL = "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?&dates=20260418-20260620";
 
-const TEAM_TO_SEED = {
-    // East
-    "Detroit Pistons": 1, "Boston Celtics": 2, "New York Knicks": 3, "Cleveland Cavaliers": 4,
-    "Toronto Raptors": 5, "Atlanta Hawks": 6, "Philadelphia 76ers": 7, "Orlando Magic": 7, "76ers/Magic": 7,
-    // West
-    "Oklahoma City Thunder": 1, "San Antonio Spurs": 2, "Denver Nuggets": 3, "Los Angeles Lakers": 4,
-    "Houston Rockets": 5, "Minnesota Timberwolves": 6, "Phoenix Suns": 7, "Portland Trail Blazers": 7, "Suns/Trail Blazers": 7,
-    // Play-in Placeholder
-    "Play-in 8 seed": 8
-};
-
 const ROUND_CONFIG = {
     1: { label: "First Round", maxPoints: 32 },
     2: { label: "Second Round", maxPoints: 24 },
@@ -21,11 +10,20 @@ const ROUND_CONFIG = {
     4: { label: "Finals", maxPoints: 8 },
 };
 
+const TEAM_TO_SEED = {
+    // East
+    "Detroit Pistons": 1, "Boston Celtics": 2, "New York Knicks": 3, "Cleveland Cavaliers": 4,
+    "Toronto Raptors": 5, "Atlanta Hawks": 6, "Philadelphia 76ers": 7, "Orlando Magic": 7,
+    // West
+    "Oklahoma City Thunder": 1, "San Antonio Spurs": 2, "Denver Nuggets": 3, "Los Angeles Lakers": 4,
+    "Houston Rockets": 5, "Minnesota Timberwolves": 6, "Phoenix Suns": 7, "Portland Trail Blazers": 7,
+    // Play-in Placeholder
+    "Play-in 8 seed": 8
+};
+
 async function syncNba() {
     try {
         const { data } = await axios.get(BRACKET_URL, { timeout: 10000 });
-
-        // 1. DEDUPLICATE: Filter the API response so we only get one event per series
         const rawSeries = extractSeries(data);
 
         if (!rawSeries || rawSeries.length === 0) {
@@ -33,8 +31,10 @@ async function syncNba() {
             return;
         }
 
-        // 2. PROCESS: Upsert only the unique series entries
-        await Promise.all(rawSeries.map(s => processSeries(s)));
+        // CRITICAL FIX: Use for...of loop to avoid 'max_user_connections' errors on Heroku
+        for (const s of rawSeries) {
+            await processSeries(s);
+        }
 
         console.log(`[NBA sync] Done. Synced ${rawSeries.length} unique series.`);
     } catch (err) {
@@ -54,12 +54,9 @@ function extractSeries(data) {
         const awayComp = comp.competitors.find(c => c.homeAway === "away");
         const headline = comp.notes?.[0]?.headline || "";
 
-        // The "roundPart" (e.g., "Western Conference Finals") helps distinguish 
-        // the same matchup if it somehow happened in different rounds.
         const roundPart = headline.split(' - ')[0];
         const groupKey = `${awayComp.team.abbreviation}-${homeComp.team.abbreviation}-${roundPart}`;
 
-        // Map ensures we only keep the FIRST time we see this specific matchup/round combo
         if (!seriesMap.has(groupKey)) {
             seriesMap.set(groupKey, {
                 id: comp.id,
@@ -92,18 +89,14 @@ async function processSeries(s) {
 
         const roundCfg = ROUND_CONFIG[roundNum];
 
-        // --- TBD FIX FOR ROUND 1 ---
-        // If it's Round 1 and a team is "TBD", rename it for selection
+        // TBD / Play-in Logic
         if (roundNum === 1) {
             if (homeTeamName === "TBD") {
                 homeTeamName = "Play-in 8 seed";
-                homeLogo = "https://a.espncdn.com/i/teamlogos/leagues/500/nba.png"; // NBA logo placeholder
+                homeLogo = "https://a.espncdn.com/i/teamlogos/leagues/500/nba.png";
             }
             if (awayTeamName === "TBD") {
                 awayTeamName = "Play-in 8 seed";
-                awayLogo = "https://a.espncdn.com/i/teamlogos/leagues/500/nba.png";
-            }
-            if (awayTeamName.indexOf('/') > -1) {
                 awayLogo = "https://a.espncdn.com/i/teamlogos/leagues/500/nba.png";
             }
         }
@@ -115,10 +108,10 @@ async function processSeries(s) {
             round_points_max: roundCfg.maxPoints,
             home_team: homeTeamName,
             away_team: awayTeamName,
-            home_seed: TEAM_TO_SEED[homeTeamName] || null,
-            away_seed: TEAM_TO_SEED[awayTeamName] || null,
             home_logo: homeLogo,
             away_logo: awayLogo,
+            home_seed: TEAM_TO_SEED[homeTeamName] || null,
+            away_seed: TEAM_TO_SEED[awayTeamName] || null,
             status: s.status.type.name,
             game_date: s.startDate,
             locked: false

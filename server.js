@@ -61,10 +61,10 @@ const lockLines = require("./jobs/lockLines");
 
 async function runSync() {
   try {
-    await syncPickem();
-    await syncBracket();
+    // await syncPickem();
+    // await syncBracket();
     await syncNba();
-    await lockLines();
+    // await lockLines();
   } catch (err) {
     console.error("Background job failed:", err);
   }
