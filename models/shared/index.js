@@ -4,22 +4,29 @@ const path = require('path');
 const Sequelize = require('sequelize');
 const env = (process.env.NODE_ENV || 'development').trim();
 
-// FIX 1: Use path.join to safely go up two levels to find the config
 const configPath = path.join(__dirname, '..', '..', 'config', 'config.json');
 const config = require(configPath)[env];
 const db = {};
 
-const sequelize = new Sequelize(config.database, config.username, config.password, {
-    ...config,
-    logging: false
-});
+let sequelize;
 
-// FIX 2: Since this file IS in the shared folder, modelDir is just __dirname
+// FIX: If JAWSDB_URL exists (Heroku), use it. Otherwise, use local config.
+if (process.env.JAWSDB_URL) {
+    sequelize = new Sequelize(process.env.JAWSDB_URL, {
+        logging: false,
+        dialect: 'mysql'
+    });
+} else {
+    sequelize = new Sequelize(config.database, config.username, config.password, {
+        ...config,
+        logging: false
+    });
+}
+
 const modelDir = __dirname;
 
 fs.readdirSync(modelDir)
     .filter(file => {
-        // Only load .js files and DON'T load this index.js file itself
         return (file.indexOf('.') !== 0) && (file !== 'index.js') && (file.slice(-3) === '.js');
     })
     .forEach(file => {
