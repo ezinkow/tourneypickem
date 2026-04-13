@@ -56,7 +56,7 @@ require("./routes/nba/admin-api-routes.js")(app);
 
 const syncPickem = require("./services/pickem/sync.js");
 const syncBracket = require("./services/bracket/sync.js");
-const syncNba = require("./services/nba/sync.js");
+const syncNba = require("./services/nba/sync");
 const lockLines = require("./jobs/lockLines");
 
 async function runSync() {
@@ -79,6 +79,12 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-app.listen(PORT, () => {
-  console.log(`App listening on PORT ${PORT}`);
+const db = require("./models");
+
+// { alter: true } will update tables to match your models without dropping data
+// { force: false } ensures it doesn't delete your data on every restart
+db.sequelize.sync({ force: false, alter: true }).then(() => {
+  app.listen(PORT, () => {
+    console.log(`App listening on PORT ${PORT}`);
+  });
 });

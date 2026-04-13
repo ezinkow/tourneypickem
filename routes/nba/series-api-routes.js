@@ -1,9 +1,12 @@
-const { NbaSeries } = require("../../models/nba");
+// 1. Point to the root models folder where the 'Flat' index lives
+const db = require("../../models");
 
 module.exports = function (app) {
+    // 2. Destructure NbaSeries from db inside each route for safety
 
     // GET /api/nba/series — all series ordered by round then slot
     app.get("/api/nba/series", async (req, res) => {
+        const { NbaSeries } = db;
         try {
             const series = await NbaSeries.findAll({
                 order: [["round", "ASC"], ["series_slot", "ASC"]],
@@ -17,6 +20,7 @@ module.exports = function (app) {
 
     // GET /api/nba/series/active — unlocked series only (open for picks)
     app.get("/api/nba/series/active", async (req, res) => {
+        const { NbaSeries } = db;
         try {
             const series = await NbaSeries.findAll({
                 where: { locked: false },
@@ -31,6 +35,7 @@ module.exports = function (app) {
 
     // GET /api/nba/series/round/:round — all series for a specific round
     app.get("/api/nba/series/round/:round", async (req, res) => {
+        const { NbaSeries } = db;
         try {
             const series = await NbaSeries.findAll({
                 where: { round: req.params.round },
@@ -45,6 +50,7 @@ module.exports = function (app) {
 
     // GET /api/nba/series/live — in-progress and final series (for results display)
     app.get("/api/nba/series/live", async (req, res) => {
+        const { NbaSeries } = db;
         try {
             const series = await NbaSeries.findAll({
                 where: {

@@ -1,4 +1,4 @@
-const { NbaPicks, NbaSeries, NbaEntries, NbaTiebreaker } = require("../../models/nba");
+const { NbaPicks, NbaSeries, NbaEntries, NbaTiebreaker } = require("../../models");
 
 module.exports = function (app) {
 

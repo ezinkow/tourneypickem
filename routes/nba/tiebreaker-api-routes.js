@@ -1,4 +1,4 @@
-const { NbaTiebreaker, NbaSeries, NbaEntries } = require("../../models/nba");
+const { NbaTiebreaker, NbaSeries, NbaEntries } = require("../../models");
 const requireAuth = require("../../middleware/Requireauth");
 
 module.exports = function (app) {

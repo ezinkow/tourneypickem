@@ -16,15 +16,15 @@ module.exports = function (sequelize, DataTypes) {
             references: { model: "nba_series", key: "id" },
         },
         pick: {
-            type: DataTypes.STRING,   // team name picked to win series
+            type: DataTypes.STRING,
             allowNull: false,
         },
         confidence: {
-            type: DataTypes.INTEGER,  // points assigned (1–round_points_max, unique per round)
+            type: DataTypes.INTEGER,
             allowNull: false,
         },
         series_length_guess: {
-            type: DataTypes.INTEGER,  // 4 | 5 | 6 | 7
+            type: DataTypes.INTEGER,
             allowNull: true,
         },
     }, {
@@ -33,9 +33,17 @@ module.exports = function (sequelize, DataTypes) {
         indexes: [
             {
                 unique: true,
-                fields: ["user_id", "series_id"],  // one pick per user per series
+                fields: ["user_id", "series_id"],
             },
         ],
     });
+
+    NbaPicks.associate = function (models) {
+        NbaPicks.belongsTo(models.NbaSeries, {
+            foreignKey: "series_id",
+            as: "series"
+        });
+    };
+
     return NbaPicks;
 };

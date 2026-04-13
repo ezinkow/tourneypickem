@@ -2,22 +2,28 @@
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
-const basename = path.basename(__filename);
 const env = (process.env.NODE_ENV || 'development').trim();
-const config = require(__dirname + '/../../config/config.json')[env];
+
+// FIX 1: Use path.join to safely go up two levels to find the config
+const configPath = path.join(__dirname, '..', '..', 'config', 'config.json');
+const config = require(configPath)[env];
 const db = {};
 
-let sequelize;
-if (config.use_env_variable) {
-    sequelize = new Sequelize(process.env[config.use_env_variable], config);
-} else {
-    sequelize = new Sequelize(config.database, config.username, config.password, config);
-}
+const sequelize = new Sequelize(config.database, config.username, config.password, {
+    ...config,
+    logging: false
+});
 
-fs.readdirSync(__dirname)
-    .filter(file => file !== basename && file.endsWith('.js'))
+// FIX 2: Since this file IS in the shared folder, modelDir is just __dirname
+const modelDir = __dirname;
+
+fs.readdirSync(modelDir)
+    .filter(file => {
+        // Only load .js files and DON'T load this index.js file itself
+        return (file.indexOf('.') !== 0) && (file !== 'index.js') && (file.slice(-3) === '.js');
+    })
     .forEach(file => {
-        const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
+        const model = require(path.join(modelDir, file))(sequelize, Sequelize.DataTypes);
         db[model.name] = model;
     });
 
@@ -27,4 +33,5 @@ Object.keys(db).forEach(modelName => {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+
 module.exports = db;

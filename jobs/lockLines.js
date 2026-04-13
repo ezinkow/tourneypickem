@@ -1,14 +1,18 @@
-const { UsersPickem, PicksPickem, GamesPickem } = require("../models/pickem");
+// 1. Point to the root models folder
+const db = require("../models");
 const { Op } = require("sequelize");
 
 const lockLines = async () => {
+    // 2. Destructure inside the function from the Pickem sub-object
+    const { UsersPickem, PicksPickem, GamesPickem } = db;
+
     const now = new Date();
 
     // 1. Lock lines for games within 1hr of start
     const gamesToLock = await GamesPickem.findAll({
         where: {
             line: { [Op.not]: null },
-            locked_favorite: null, // only lock ones not yet locked
+            locked_favorite: null,
         }
     });
 
@@ -25,7 +29,7 @@ const lockLines = async () => {
         }
     }
 
-    // 2. Missed picks — bulk query instead of N×M findOne calls
+    // 2. Missed picks — bulk query
     const startedGamesPickem = await GamesPickem.findAll({
         where: { game_date: { [Op.lt]: now } }
     });
@@ -35,16 +39,13 @@ const lockLines = async () => {
     const startedGameIds = startedGamesPickem.map(g => g.id);
     const allUsers = await UsersPickem.findAll();
 
-    // Fetch ALL existing picks for started games in one query
     const existingPicks = await PicksPickem.findAll({
         where: { game_id: { [Op.in]: startedGameIds } },
         attributes: ["user_id", "game_id"]
     });
 
-    // Build a Set for O(1) lookup
     const pickSet = new Set(existingPicks.map(p => `${p.user_id}||${p.game_id}`));
 
-    // Build missed picks array
     const missedPicks = [];
     for (const game of startedGamesPickem) {
         for (const user of allUsers) {
@@ -52,7 +53,7 @@ const lockLines = async () => {
                 missedPicks.push({
                     user_id: user.id,
                     game_id: game.id,
-                    pick: game.underdog,
+                    pick: game.underdog, // Automatically gives them the underdog
                     game_date: game.game_date,
                     missed_pick_flag: true,
                 });
@@ -60,12 +61,11 @@ const lockLines = async () => {
         }
     }
 
-    // One bulk insert instead of N×M individual creates
     if (missedPicks.length > 0) {
         await PicksPickem.bulkCreate(missedPicks, {
             ignoreDuplicates: true
         });
-        console.log(`Created ${missedPicks.length} missed picks`);
+        console.log(`[Job] Created ${missedPicks.length} missed picks`);
     }
 };
 

@@ -1,70 +1,31 @@
 const axios = require("axios");
-const { NbaSeries } = require("../../models/nba");
+const db = require("../../models");
 
-const BRACKET_URL =
-    "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?&dates=20260418-20260620";
+const BRACKET_URL = "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?&dates=20260418-20260620";
 
-const LOCK_BUFFER_MS = 60 * 60 * 1000; // 1 hour before tip
-
-const ROUND_CONFIG = {
-    1: { label: "First Round", maxPoints: 32, seriesCount: 8 },
-    2: { label: "Second Round", maxPoints: 24, seriesCount: 4 },
-    3: { label: "Conference Finals", maxPoints: 16, seriesCount: 2 },
-    4: { label: "Finals", maxPoints: 8, seriesCount: 1 },
+const TEAM_TO_SEED = {
+    // East
+    "Detroit Pistons": 1, "Boston Celtics": 2, "New York Knicks": 3, "Cleveland Cavaliers": 4,
+    "Toronto Raptors": 5, "Atlanta Hawks": 6, "Philadelphia 76ers": 7, "Orlando Magic": 7, "76ers/Magic": 7,
+    // West
+    "Oklahoma City Thunder": 1, "San Antonio Spurs": 2, "Denver Nuggets": 3, "Los Angeles Lakers": 4,
+    "Houston Rockets": 5, "Minnesota Timberwolves": 6, "Phoenix Suns": 7, "Portland Trail Blazers": 7, "Suns/Trail Blazers": 7,
+    // Play-in Placeholder
+    "Play-in 8 seed": 8
 };
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-function safeDate(val) {
-    if (!val) return null;
-    const d = new Date(val);
-    return isNaN(d.getTime()) ? null : d;
-}
-
-/**
- * Parse a single series competitor block from ESPN.
- * Returns { team, logo, seed, wins }
- */
-function parseCompetitor(comp) {
-    return {
-        team: comp?.team?.displayName || comp?.team?.name || null,
-        logo: comp?.team?.logos?.[0]?.href || comp?.team?.logo || null,
-        seed: comp?.curatedRank?.current ?? comp?.seed ?? null,
-        wins: comp?.wins ?? 0,
-    };
-}
-
-/**
- * Determine the next game date from a series' future games list.
- * ESPN bracket series have a `games` array; pick the first scheduled one.
- */
-function nextGameDate(seriesGames = []) {
-    const upcoming = seriesGames
-        .filter(g => g.status?.type?.state === "pre")
-        .map(g => safeDate(g.date))
-        .filter(Boolean)
-        .sort((a, b) => a - b);
-    return upcoming[0] || null;
-}
-
-/**
- * Determine winner and series_length when status is FINAL.
- * Winner is the competitor with 4 wins.
- */
-function resolveWinner(home, away, totalGames) {
-    if (home.wins === 4) return { winner: home.team, series_length: totalGames };
-    if (away.wins === 4) return { winner: away.team, series_length: totalGames };
-    return { winner: null, series_length: null };
-}
-
-// ── Main sync ─────────────────────────────────────────────────────────────────
+const ROUND_CONFIG = {
+    1: { label: "First Round", maxPoints: 32 },
+    2: { label: "Second Round", maxPoints: 24 },
+    3: { label: "Conference Finals", maxPoints: 16 },
+    4: { label: "Finals", maxPoints: 8 },
+};
 
 async function syncNba() {
     try {
         const { data } = await axios.get(BRACKET_URL, { timeout: 10000 });
 
-        // ESPN bracket structure: data.bracket.series[]  (varies by season)
-        // Also try data.seasons[0].types[0].series or data.rounds
+        // 1. DEDUPLICATE: Filter the API response so we only get one event per series
         const rawSeries = extractSeries(data);
 
         if (!rawSeries || rawSeries.length === 0) {
@@ -72,25 +33,17 @@ async function syncNba() {
             return;
         }
 
-        console.log(`[NBA sync] Processing ${rawSeries.length} series`);
+        // 2. PROCESS: Upsert only the unique series entries
+        await Promise.all(rawSeries.map(s => processSeries(s)));
 
-        for (const s of rawSeries) {
-            await processSeries(s);
-        }
-
-        console.log("[NBA sync] Done");
+        console.log(`[NBA sync] Done. Synced ${rawSeries.length} unique series.`);
     } catch (err) {
         console.error("[NBA sync] Failed:", err.message);
     }
 }
 
-/**
- * ESPN's bracket endpoint has changed structure across seasons.
- * This tries the most common shapes and returns a flat array of series objects.
- */
 function extractSeries(data) {
     if (!data?.events) return [];
-
     const seriesMap = new Map();
 
     data.events.forEach(event => {
@@ -101,13 +54,15 @@ function extractSeries(data) {
         const awayComp = comp.competitors.find(c => c.homeAway === "away");
         const headline = comp.notes?.[0]?.headline || "";
 
-        // Grouping key: Matchup + Round (e.g., "TOR-CLE-Round 1")
+        // The "roundPart" (e.g., "Western Conference Finals") helps distinguish 
+        // the same matchup if it somehow happened in different rounds.
         const roundPart = headline.split(' - ')[0];
         const groupKey = `${awayComp.team.abbreviation}-${homeComp.team.abbreviation}-${roundPart}`;
 
+        // Map ensures we only keep the FIRST time we see this specific matchup/round combo
         if (!seriesMap.has(groupKey)) {
             seriesMap.set(groupKey, {
-                id: comp.id, // Use the ESPN Competition ID (e.g., 401869187)
+                id: comp.id,
                 headline: headline,
                 home: homeComp,
                 away: awayComp,
@@ -116,55 +71,62 @@ function extractSeries(data) {
             });
         }
     });
-
     return Array.from(seriesMap.values());
 }
+
 async function processSeries(s) {
+    const { NbaSeries } = db;
+
     try {
         const headline = s.headline || "";
-        const homeTeam = s.home.team;
-        const awayTeam = s.away.team;
+        let homeTeamName = s.home.team.displayName;
+        let awayTeamName = s.away.team.displayName;
+        let homeLogo = `https://a.espncdn.com/i/teamlogos/nba/500/${s.home.team.abbreviation?.toLowerCase()}.png`;
+        let awayLogo = `https://a.espncdn.com/i/teamlogos/nba/500/${s.away.team.abbreviation?.toLowerCase()}.png`;
 
-        // Round Inference
+        // Determine Round
         let roundNum = 1;
-        if (headline.includes("Finals")) roundNum = 4;
+        if (headline.includes("Finals") && !headline.includes("Conf.")) roundNum = 4;
         else if (headline.includes("Conf. Finals")) roundNum = 3;
         else if (headline.includes("2nd Round")) roundNum = 2;
 
         const roundCfg = ROUND_CONFIG[roundNum];
 
-        const seriesData = {
-            id: s.id, // Now storing "401869187"
+        // --- TBD FIX FOR ROUND 1 ---
+        // If it's Round 1 and a team is "TBD", rename it for selection
+        if (roundNum === 1) {
+            if (homeTeamName === "TBD") {
+                homeTeamName = "Play-in 8 seed";
+                homeLogo = "https://a.espncdn.com/i/teamlogos/leagues/500/nba.png"; // NBA logo placeholder
+            }
+            if (awayTeamName === "TBD") {
+                awayTeamName = "Play-in 8 seed";
+                awayLogo = "https://a.espncdn.com/i/teamlogos/leagues/500/nba.png";
+            }
+            if (awayTeamName.indexOf('/') > -1) {
+                awayLogo = "https://a.espncdn.com/i/teamlogos/leagues/500/nba.png";
+            }
+        }
+
+        await NbaSeries.upsert({
+            id: s.id,
             round: roundNum,
             round_label: roundCfg.label,
             round_points_max: roundCfg.maxPoints,
-            home_team: homeTeam.displayName,
-            away_team: awayTeam.displayName,
-            // Logic to build logos (avoids broken unpkg/espn links)
-            home_logo: `https://a.espncdn.com/i/teamlogos/nba/500/${homeTeam.abbreviation.toLowerCase()}.png`,
-            away_logo: `https://a.espncdn.com/i/teamlogos/nba/500/${awayTeam.abbreviation.toLowerCase()}.png`,
+            home_team: homeTeamName,
+            away_team: awayTeamName,
+            home_seed: TEAM_TO_SEED[homeTeamName] || null,
+            away_seed: TEAM_TO_SEED[awayTeamName] || null,
+            home_logo: homeLogo,
+            away_logo: awayLogo,
             status: s.status.type.name,
             game_date: s.startDate,
             locked: false
-        };
-
-        await NbaSeries.upsert(seriesData);
+        });
 
     } catch (err) {
-        console.error(`[NBA Sync] Error:`, err);
+        console.error(`[NBA Sync] Error processing series ${s.id}:`, err.message);
     }
-}
-
-/**
- * Fallback conference inference from team names / series context.
- * ESPN usually provides this but just in case.
- */
-function inferConference(s) {
-    const title = s.name || s.title || s.note || "";
-    if (/east/i.test(title)) return "East";
-    if (/west/i.test(title)) return "West";
-    if (/final/i.test(title)) return "Finals";
-    return null;
 }
 
 module.exports = syncNba;

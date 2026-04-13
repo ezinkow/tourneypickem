@@ -28,8 +28,8 @@ module.exports = function (sequelize, DataTypes) {
         },
         home_team: { type: DataTypes.STRING, allowNull: true },
         away_team: { type: DataTypes.STRING, allowNull: true },
-        home_logo: { type: DataTypes.TEXT,   allowNull: true },
-        away_logo: { type: DataTypes.TEXT,   allowNull: true },
+        home_logo: { type: DataTypes.TEXT, allowNull: true },
+        away_logo: { type: DataTypes.TEXT, allowNull: true },
         home_seed: { type: DataTypes.INTEGER, allowNull: true },
         away_seed: { type: DataTypes.INTEGER, allowNull: true },
         home_wins: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
@@ -59,5 +59,12 @@ module.exports = function (sequelize, DataTypes) {
         tableName: "nba_series",
         timestamps: true,
     });
+    
+    NbaSeries.associate = function (models) {
+        NbaSeries.hasMany(models.NbaPicks, {
+            foreignKey: "series_id"
+        });
+    };
+
     return NbaSeries;
 };
