@@ -1,28 +1,27 @@
-// Dependencies
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const bodyParser = require("body-parser");
 
-// Initialize app
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Middleware
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(bodyParser.json());
 
-// Static React build (production)
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
 }
 
-// Routes
+// ── Routes ────────────────────────────────────────────────────────────────────
 
-//bracket
+// Shared auth (single login for all games)
+require("./routes/shared/auth-api-routes.js")(app);
+
+// Bracket
 require("./routes/bracket/picks-api-routes.js")(app);
 require("./routes/bracket/games-api-routes.js")(app);
 require("./routes/bracket/users-api-routes.js")(app);
@@ -32,7 +31,7 @@ require("./routes/bracket/adminRefreshGames.js")(app);
 require("./routes/bracket/picksdisplay-api-routes.js")(app);
 require("./routes/bracket/tiebreaker-api-routes.js")(app);
 
-//pickem
+// Pickem
 require("./routes/pickem/picks-api-routes.js")(app);
 require("./routes/pickem/games-api-routes.js")(app);
 require("./routes/pickem/users-api-routes.js")(app);
@@ -41,39 +40,45 @@ require("./routes/pickem/scoreboard-api-routes.js")(app);
 require("./routes/pickem/adminRefreshGames.js")(app);
 require("./routes/pickem/picksdisplay-api-routes.js")(app);
 
-//squares
+// Squares
 require("./routes/squares/users-api-routes.js")(app);
 require("./routes/squares/grid-api-routes.js")(app);
 
+// NBA
+require("./routes/nba/entries-api-routes.js")(app);
+require("./routes/nba/series-api-routes.js")(app);
+require("./routes/nba/picks-api-routes.js")(app);
+require("./routes/nba/standings-api-routes.js")(app);
+require("./routes/nba/tiebreaker-api-routes.js")(app);
+require("./routes/nba/admin-api-routes.js")(app);
+
+// ── Background jobs ───────────────────────────────────────────────────────────
+
 const syncPickem = require("./services/pickem/sync.js");
 const syncBracket = require("./services/bracket/sync.js");
+const syncNba = require("./services/nba/sync.js");
 const lockLines = require("./jobs/lockLines");
 
-// Run sync + lock every 10 minutes
 async function runSync() {
   try {
     await syncPickem();
     await syncBracket();
+    await syncNba();
     await lockLines();
   } catch (err) {
     console.error("Background job failed:", err);
   }
 }
 
-// Run once at startup
 runSync();
-
-// Every 10 min
 setInterval(runSync, 10 * 60 * 1000);
 
-// React Router fallback
 if (process.env.NODE_ENV === "production") {
   app.get("*", (req, res) => {
     res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
   });
 }
 
-// Start server after syncing
-  app.listen(PORT, () => {
-    console.log(`App listening on PORT ${PORT}`);
-  });
+app.listen(PORT, () => {
+  console.log(`App listening on PORT ${PORT}`);
+});

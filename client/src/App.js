@@ -1,13 +1,10 @@
 import React from 'react';
 import './App.css';
-import {
-  HashRouter as Router,
-  Routes,
-  Route,
-} from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 
 // Shared
 import Home from './pages/Home';
+import SignUp from './pages/SignUp';         // ← shared account creation
 import Navbar from './components/Navbar';
 
 // Pickem pages
@@ -30,7 +27,6 @@ import SquaresChangePassword from "./pages/squares/SquaresChangePassword";
 import SquaresHome from "./pages/squares/Home";
 import SquaresAdmin from "./pages/squares/SquaresAdmin";
 
-
 // Bracket pages
 import BracketHome from './pages/bracket/Home';
 import BracketChallenge from './pages/bracket/Bracket';
@@ -39,13 +35,23 @@ import BracketStandings from './pages/bracket/Standings';
 import BracketSignUp from './pages/bracket/SignUp';
 import BracketChangePassword from './pages/bracket/ChangePassword';
 
+// NBA pages
+import NbaHome from './pages/nba/Home';
+import NbaPicks from './pages/nba/Picks';
+import NbaMyPicks from './pages/nba/MyPicks';
+import NbaStandings from './pages/nba/Standings';
+import NbaGroupPicks from './pages/nba/GroupPicks';
+import NbaSignUp from './pages/nba/SignUp';       // ← pool entry, not account creation
+import NbaChangePassword from './pages/nba/ChangePassword';
+
 export default function App() {
   return (
     <Router>
       <Navbar />
       <Routes>
-        {/* Landing */}
+        {/* Landing + shared account creation */}
         <Route path="/" element={<Home />} />
+        <Route path="/signup" element={<SignUp />} />
 
         {/* Pickem */}
         <Route path="/pickem" element={<PickemHome />} />
@@ -67,8 +73,7 @@ export default function App() {
         <Route path="/bracket/change-password" element={<BracketChangePassword />} />
 
         {/* Squares */}
-        {/* <Route path="/squares/grid" element={<SquaresHome />} /> */}
-        <Route path="/squares/" element={<SquaresHome />} />
+        <Route path="/squares" element={<SquaresHome />} />
         <Route path="/squares/grid" element={<SquaresGrid />} />
         <Route path="/squares/results" element={<SquaresResults />} />
         <Route path="/squares/signup" element={<SquaresSignUp />} />
@@ -76,7 +81,15 @@ export default function App() {
         <Route path="/squares/change-password" element={<SquaresChangePassword />} />
         <Route path="/squares/admin" element={<SquaresAdmin />} />
 
+        {/* NBA */}
+        <Route path="/nba" element={<NbaHome />} />
+        <Route path="/nba/picks" element={<NbaPicks />} />
+        <Route path="/nba/mypicks" element={<NbaMyPicks />} />
+        <Route path="/nba/standings" element={<NbaStandings />} />
+        <Route path="/nba/grouppicks" element={<NbaGroupPicks />} />
+        <Route path="/nba/signup" element={<NbaSignUp />} />
+        <Route path="/nba/change-password" element={<NbaChangePassword />} />
       </Routes>
     </Router>
-  )
+  );
 }
