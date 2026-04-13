@@ -1,7 +1,7 @@
 
 const { NbaPicks, NbaSeries, NbaEntries } = require("../../models/nba");
 const { Users } = require("../../models/shared");
-const requireAuth = require("../../middleware/requireAuth");
+const requireAuth = require("../../middleware/Requireauth");
 
 const ROUND_CONFIG = {
     1: { maxPoints: 32 },
