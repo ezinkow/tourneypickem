@@ -16,24 +16,35 @@ const cardStyle = { background: "white", padding: 16, borderRadius: 10, marginBo
 const mobileBtnStyle = (active) => ({ flex: 1, padding: 10, borderRadius: 8, border: active ? `2px solid ${NAVY}` : "1px solid #ddd", background: active ? "#eff6ff" : "white", cursor: "pointer" });
 const lenBtnStyle = (active) => ({ width: 30, height: 30, borderRadius: 4, background: active ? NAVY : "white", color: active ? "white" : "#333", border: "1px solid #ddd", cursor: "pointer" });
 
+// Helper to format the ISO date string
+const formatDateTime = (iso) => {
+  if (!iso) return "TBD";
+  const date = new Date(iso);
+  return date.toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  });
+};
+
 export default function Picks() {
   const { user: authUser, loading: authLoading } = useAuth();
-  const [games, setGames] = useState([]);
+  const [series, setSeries] = useState([]);
   const [picks, setPicks] = useState([]);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [tiebreakerWin, setTiebreakerWin] = useState("");
   const [tiebreakerLoss, setTiebreakerLoss] = useState("");
 
-  // --- 1. ALL HOOKS MUST BE DECLARED HERE (BEFORE ANY RETURNS) ---
-
   useEffect(() => {
     axios.get("/api/nba/series")
-      .then(res => setGames(res.data || []))
-      .catch(err => toast.error("Error loading games"));
+      .then(res => setSeries(res.data || []))
+      .catch(err => toast.error("Error loading series"));
   }, []);
 
   useEffect(() => {
-    if (authUser && games.length > 0) {
+    if (authUser && series.length > 0) {
       const token = localStorage.getItem("token");
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
@@ -62,12 +73,12 @@ export default function Picks() {
           }
         }).catch(() => { });
     }
-  }, [authUser, games]);
+  }, [authUser, series]);
 
   const visibleGames = useMemo(() =>
-    games.filter(g => !isLocked(g.game_date) && g.home_team !== "TBD" && g.away_team !== "TBD")
+    series.filter(g => !isLocked(g.game_date) && g.home_team !== "TBD" && g.away_team !== "TBD")
       .sort((a, b) => new Date(a.game_date) - new Date(b.game_date)),
-    [games]
+    [series]
   );
 
   const roundMax = useMemo(() => visibleGames[0]?.round_points_max || 32, [visibleGames]);
@@ -77,13 +88,9 @@ export default function Picks() {
     [picks]
   );
 
-  // --- 2. EARLY RETURNS ARE NOW SAFE ---
-
   if (authLoading) return <div style={{ paddingTop: 100, textAlign: "center" }}>Verifying Session...</div>;
   if (!authUser) return <div style={{ paddingTop: 100, textAlign: "center" }}>Please log in to make picks.</div>;
-  if (!dataLoaded && games.length > 0) return <div style={{ paddingTop: 100, textAlign: "center" }}>Loading your saved picks...</div>;
-
-  // --- 3. HELPER FUNCTIONS ---
+  if (!dataLoaded && series.length > 0) return <div style={{ paddingTop: 100, textAlign: "center" }}>Loading your saved picks...</div>;
 
   const updatePickData = (gameId, field, value) => {
     const sId = String(gameId);
@@ -157,8 +164,16 @@ export default function Picks() {
                 return (
                   <tr key={series.id} style={{ borderBottom: "1px solid #eee" }}>
                     <td style={tdStyle}>
-                      <div style={{ fontSize: 11, color: "#666" }}>Series Start: {new Date(series.game_date).toLocaleDateString()}</div>
-                      <div style={{ fontWeight: 500 }}>{series.away_seed && <sup style={{ fontSize: 8, color: "#9ca3af", marginRight: 1 }}>{series.away_seed}</sup>}{series.away_team} @ {series.home_seed && <sup style={{ fontSize: 8, color: "#9ca3af", marginRight: 1 }}>{series.home_seed}</sup>}{series.home_team}</div>
+                      {/* Updated Series Start with Time */}
+                      <div style={{ fontSize: 11, color: "#d97706", fontWeight: 700, marginBottom: 2 }}>
+                        Game 1 tip-off: {formatDateTime(series.game_date)} CT
+                      </div>
+                      <div style={{ fontWeight: 500 }}>
+                        {series.away_seed && <sup style={{ fontSize: 8, color: "#9ca3af", marginRight: 1 }}>{series.away_seed}</sup>}
+                        {series.away_team} @
+                        {series.home_seed && <sup style={{ fontSize: 8, color: "#9ca3af", marginRight: 1 }}>{series.home_seed}</sup>}
+                        {series.home_team}
+                      </div>
                     </td>
                     <td style={tdStyle}>
                       <div style={{ display: "flex", gap: 8 }}>
@@ -216,7 +231,13 @@ export default function Picks() {
             const currentPick = picks.find(p => p.series === String(series.id));
             return (
               <div key={series.id} style={cardStyle}>
-                <div style={{ fontWeight: 700, marginBottom: 10 }}>{series.away_team} vs {series.home_team}</div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
+                  <div style={{ fontWeight: 700 }}>{series.away_team} vs {series.home_team}</div>
+                  {/* Updated Mobile Start Time */}
+                  <div style={{ fontSize: 10, color: "#d97706", fontWeight: 700 }}>
+                    {formatDateTime(series.game_date)}
+                  </div>
+                </div>
                 <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
                   <button onClick={() => updatePickData(series.id, 'pick', series.away_team)} style={mobileBtnStyle(currentPick?.pick === series.away_team)}>
                     <img src={series.away_logo} width={24} height={24} alt="" /> {series.away_team}
@@ -250,6 +271,6 @@ export default function Picks() {
         }
       `}</style>
       </div>
-    </NbaGatekeeper>
+    </NbaGatekeeper >
   );
 }

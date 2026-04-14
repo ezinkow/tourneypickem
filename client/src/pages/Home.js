@@ -1,12 +1,12 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const BLUE      = "#13447a";
+const BLUE = "#13447a";
 const DARK_BLUE = "#030831";
-const GOLD      = "#c89d3c";
-const NBA_NAVY  = "#0a1628";
-const NBA_RED   = "#c8102e";
-const GRAY      = "#9ca3af";
+const GOLD = "#c89d3c";
+const NBA_NAVY = "#0a1628";
+const NBA_RED = "#c8102e";
+const GRAY = "#9ca3af";
 
 export default function Home() {
     const navigate = useNavigate();
@@ -17,12 +17,13 @@ export default function Home() {
             title: "NBA Playoffs Pool",
             description: "Pick the winner of every playoff series, assign confidence points, and guess the series length for a 2× bonus.",
             cta: "Play NBA Pool →",
-            route: "/nba/picks",
+            route: "/nba",
             accent: NBA_RED,
             ctaBg: NBA_NAVY,
             titleColor: NBA_NAVY,
-            isActive: true, // THE GATEKEEPER
+            isActive: true,
         },
+        // ... (rest of your cards stay the same)
         {
             emoji: "🏀",
             title: "Tourney Pick'em",
@@ -65,8 +66,10 @@ export default function Home() {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            justifyContent: "center",
-            padding: "24px 16px",
+            // Changed from center to flex-start to prevent "crowding" the navbar on mobile
+            justifyContent: "flex-start",
+            // Increased top padding from 24px to 60px
+            padding: "60px 16px 40px 16px",
         }}>
             <h1 style={{
                 color: GOLD,
@@ -74,7 +77,8 @@ export default function Home() {
                 fontWeight: 900,
                 textAlign: "center",
                 marginBottom: 8,
-                marginTop: 35,
+                // Adjusted marginTop for better breathing room
+                marginTop: 20,
                 letterSpacing: "2px",
                 textTransform: "uppercase",
                 textShadow: "0 2px 12px rgba(0,0,0,0.4)",
@@ -95,7 +99,7 @@ export default function Home() {
             }}>
                 {cards.map((card) => {
                     const { emoji, title, description, cta, route, accent, ctaBg, titleColor, isActive } = card;
-                    
+
                     return (
                         <div
                             key={route}
@@ -142,7 +146,7 @@ export default function Home() {
                             </p>
                             <div style={{
                                 display: "inline-block", padding: "10px 20px",
-                                backgroundColor: isActive ? ctaBg : "#d1d5db", 
+                                backgroundColor: isActive ? ctaBg : "#d1d5db",
                                 color: "white",
                                 borderRadius: 8, fontWeight: 700, fontSize: 14,
                             }}>

@@ -24,7 +24,13 @@ export default function ChangePassword() {
       return toast.error("Passwords don't match");
 
     try {
-      const res = await axios.post("/api/pickem/users/change-password", { email, newPassword });
+      // Logic to ensure we hit the 3001 backend in dev, or root in prod
+      const apiUrl = window.location.hostname === "localhost" 
+        ? "http://localhost:3001/api/auth/changepassword" 
+        : "/api/auth/change-password";
+
+      const res = await axios.post(apiUrl, { email, newPassword });
+      
       if (res.data.success) {
         setDone(true);
         toast.success("Password updated!");
@@ -42,7 +48,7 @@ export default function ChangePassword() {
         borderRadius: 16, padding: "32px 28px",
         boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
       }}>
-        <h2 style={{ color: "var(--primary-navy)", marginBottom: 6, textAlign: "center" }}>
+        <h2 style={{ color: "#13447a", marginBottom: 6, textAlign: "center" }}>
           🔑 Change Password
         </h2>
         <p style={{ color: "#6b7280", fontSize: 13, textAlign: "center", marginBottom: 24 }}>
@@ -52,6 +58,12 @@ export default function ChangePassword() {
         {done ? (
           <div style={{ textAlign: "center", color: "#16a34a", fontWeight: 600, fontSize: 15 }}>
             ✅ Password updated successfully!
+            <button 
+              onClick={() => window.location.hash = "#/login"}
+              style={{ display: "block", margin: "20px auto 0", color: "#13447a", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}
+            >
+              Back to Login
+            </button>
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
@@ -96,8 +108,8 @@ export default function ChangePassword() {
             <button
               onClick={handleSubmit}
               style={{
-                marginTop: 8, padding: "10px 0", borderRadius: 8,
-                backgroundColor: "var(--primary-navy)", color: "white",
+                marginTop: 8, padding: "12px 0", borderRadius: 8,
+                backgroundColor: "#13447a", color: "white",
                 border: "none", fontWeight: 700, fontSize: 14,
                 cursor: "pointer", width: "100%",
               }}

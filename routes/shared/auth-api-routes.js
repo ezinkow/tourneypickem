@@ -115,7 +115,7 @@ module.exports = function (app) {
     });
 
     // POST /api/auth/change-password — lookup by email, update password
-    app.post("/api/auth/change-password", async (req, res) => {
+    app.post("/api/auth/changepassword", async (req, res) => {
         try {
             const { email, newPassword } = req.body;
             if (!email || !newPassword) {

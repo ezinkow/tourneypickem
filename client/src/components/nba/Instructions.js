@@ -2,14 +2,14 @@ import React from 'react'
 
 export default function instructions() {
 
-    const GOLD = "#c89d3c";
     const BLUE = "#0369a1";
+    const NAVY = "#0a1628";
 
     return (
         <div style={{
             background: "white", borderRadius: 16, padding: "24px 28px",
             boxShadow: "0 2px 12px rgba(0,0,0,0.07)", marginBottom: 24,
-            borderTop: `4px solid ${GOLD}`,
+            borderTop: `4px solid ${NAVY}`,
         }}>
             <h3 style={{ color: BLUE, marginTop: 0, marginBottom: 16 }}>📋 Instructions</h3>
             <ul>
