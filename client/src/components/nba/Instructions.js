@@ -17,7 +17,7 @@ export default function instructions() {
                 <li>You can assign the same number of confidence points multiple times.</li>
                 <li>The only rule with confidence points is the max number of total points per round (Rd 1: 32 pts, Rd 2: 24 pts, Rd 3: 16 pts, Finals: 8 pts).</li>
                 <li>Missed series picks will default to the lower seed winning in 4 games with the average number of points (ie. A Round 2 missed series would give you the lower seed in 4 games for 8 points).</li>
-                <li>Series lock at scheduled the tip-off time of the first game.</li>
+                <li>Series lock at the scheduled tip-off time of the first game.</li>
                 <li>Series in the next round will be selectable once both teams are decided.</li>
             </ul>
         </div >
