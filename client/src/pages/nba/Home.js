@@ -48,14 +48,14 @@ export default function Home() {
                             <li>Assign <strong>Confidence Points</strong> (1–10) to each pick.</li>
                             <li>Correct winner = confidence points earned.</li>
                             <li>
-                                <strong>Double points</strong> correctly guess the series length
+                                <strong>Double points:</strong> correctly guess the series length
                                 (4, 5, 6, or 7 games).
                             </li>
                             <li>
                                 Point budgets per round:{" "}
                                 <strong>R1: 32 · R2: 24 · Conf Finals: 16 · Finals: 8</strong>
                             </li>
-                            <li>Picks lock at Game 1 tip-off for each series.</li>
+                            <li>Series lock at Game 1 tip-off for each series.</li>
                         </ul>
                     </div>
 

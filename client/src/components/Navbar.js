@@ -60,10 +60,10 @@ export default function Navbar() {
     const nbaLinks = [
         { to: "/nba", label: "Home", emoji: "🏠" },
         { to: "/nba/picks", label: "Picks", emoji: "📝" },
-        { to: "/nba/mypicks", label: "My Picks", emoji: "🗒️" },
+        { to: "/nba/mypicks", label: "My Picks", emoji: "📋" },
         { to: "/nba/standings", label: "Standings", emoji: "🏆" },
         { to: "/nba/grouppicks", label: "Group Picks", emoji: "👥" },
-        { to: "/nba/signup", label: "Join Pool", emoji: "📋" },
+        { to: "/nba/signup", label: "Join Pool", emoji: "▶️" },
     ];
 
     // Links shown specifically when on the main site homepage

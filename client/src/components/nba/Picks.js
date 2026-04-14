@@ -170,7 +170,7 @@ export default function Picks() {
                       </div>
                       <div style={{ fontWeight: 500 }}>
                         {series.away_seed && <sup style={{ fontSize: 8, color: "#9ca3af", marginRight: 1 }}>{series.away_seed}</sup>}
-                        {series.away_team} @
+                        {series.away_team} @ {" "}
                         {series.home_seed && <sup style={{ fontSize: 8, color: "#9ca3af", marginRight: 1 }}>{series.home_seed}</sup>}
                         {series.home_team}
                       </div>
@@ -187,7 +187,7 @@ export default function Picks() {
                             }}
                           >
                             <img src={team === series.home_team ? series.home_logo : series.away_logo} width={20} alt="" />
-                            <span style={{ fontSize: 12 }}>{team}</span>
+                            <span style={{ fontSize: 12 }}><sup style={{ fontSize: 8, color: "#9ca3af", marginRight: 1 }}>{team === series.home_team ? series.home_seed : series.away_seed}</sup>{team}</span>
                           </button>
                         ))}
                       </div>
@@ -232,7 +232,7 @@ export default function Picks() {
             return (
               <div key={series.id} style={cardStyle}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
-                  <div style={{ fontWeight: 700 }}>{series.away_team} vs {series.home_team}</div>
+                  <div style={{ fontWeight: 200, fontSize: '15px' }}><sup style={{ fontSize: 8, color: "#9ca3af", marginRight: 1 }}>{series.away_seed}</sup>{series.away_team} vs <sup style={{ fontSize: 8, color: "#9ca3af", marginRight: 1 }}>{series.home_seed}</sup>{series.home_team}</div>
                   {/* Updated Mobile Start Time */}
                   <div style={{ fontSize: 10, color: "#d97706", fontWeight: 700 }}>
                     {formatDateTime(series.game_date)}
@@ -240,10 +240,10 @@ export default function Picks() {
                 </div>
                 <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
                   <button onClick={() => updatePickData(series.id, 'pick', series.away_team)} style={mobileBtnStyle(currentPick?.pick === series.away_team)}>
-                    <img src={series.away_logo} width={24} height={24} alt="" /> {series.away_team}
+                    <img src={series.away_logo} width={24} height={24} alt="" /> <sup style={{ fontSize: 8, color: "#9ca3af", marginRight: 1 }}>{series.away_seed}</sup>{series.away_team}
                   </button>
                   <button onClick={() => updatePickData(series.id, 'pick', series.home_team)} style={mobileBtnStyle(currentPick?.pick === series.home_team)}>
-                    <img src={series.home_logo} width={24} height={24} alt="" /> {series.home_team}
+                    <img src={series.home_logo} width={24} height={24} alt="" /> <sup style={{ fontSize: 8, color: "#9ca3af", marginRight: 1 }}>{series.home_seed}</sup>{series.home_team}
                   </button>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
