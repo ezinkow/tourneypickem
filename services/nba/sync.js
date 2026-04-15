@@ -30,15 +30,41 @@ function getRound(headline) {
     return 1;
 }
 
-// Stable ID that is identical for every game in the same series
-function makeSeriesId(roundNum, awayAbbr, homeAbbr) {
-    const teams = [awayAbbr, homeAbbr].sort();
-    return `R${roundNum}-${teams[0]}-${teams[1]}`;
+function getConference(headline) {
+    if (!headline) return "";
+    if (headline.includes("East")) return "E";
+    if (headline.includes("West")) return "W";
+    return "";
+}
+
+function makeSeriesId(roundNum, conf, s) {
+    let hSeed = TEAM_TO_SEED[s.home.team.displayName] || s.home.seed;
+    let aSeed = TEAM_TO_SEED[s.away.team.displayName] || s.away.seed;
+
+    // --- SEED INFERENCE FOR ROUND 1 ONLY ---
+    if (roundNum === 1 && (!hSeed || !aSeed)) {
+        if (hSeed === 1 || aSeed === 1) {
+            hSeed = hSeed || 8;
+            aSeed = aSeed || 8;
+        } else if (hSeed === 2 || aSeed === 2) {
+            hSeed = hSeed || 7;
+            aSeed = aSeed || 7;
+        }
+    }
+
+    // Fallback if still undefined (for future rounds)
+    hSeed = hSeed || s.home.team.abbreviation || "TBD";
+    aSeed = aSeed || s.away.team.abbreviation || "TBD";
+
+    const pair = [hSeed, aSeed].sort((a, b) =>
+        String(a).localeCompare(String(b), undefined, { numeric: true })
+    );
+
+    return `R${roundNum}-${conf}-${pair[0]}-${pair[1]}`;
 }
 
 function extractSeries(data) {
     if (!data?.events) return [];
-
     const seriesMap = new Map();
 
     for (const event of data.events) {
@@ -51,15 +77,27 @@ function extractSeries(data) {
 
         const headline = comp.notes?.[0]?.headline || "";
         const roundNum = getRound(headline);
-        const seriesId = makeSeriesId(roundNum, awayComp.team.abbreviation, homeComp.team.abbreviation);
+        const conf = getConference(headline);
 
-        // Skip if we already have this series — only keep Game 1 (first event seen)
+        // STABLE ID
+        const seriesId = makeSeriesId(roundNum, conf, { home: homeComp, away: awayComp });
+
+        // Filter: Round 1 always passes. Future rounds must have both teams decided.
+        if (roundNum > 1) {
+            const hName = homeComp.team.displayName;
+            const aName = awayComp.team.displayName;
+            if (hName === "TBD" || hName.includes("/") || aName === "TBD" || aName.includes("/")) {
+                continue;
+            }
+        }
+
         if (seriesMap.has(seriesId)) continue;
 
         seriesMap.set(seriesId, {
             id: seriesId,
             headline,
             roundNum,
+            conf,
             home: homeComp,
             away: awayComp,
             status: comp.status,
@@ -67,7 +105,7 @@ function extractSeries(data) {
         });
     }
 
-    console.log(`[NBA sync] Unique series found: ${seriesMap.size}`);
+    console.log(`[NBA sync] Series found: ${seriesMap.size}`);
     return Array.from(seriesMap.values());
 }
 
@@ -79,76 +117,44 @@ async function processSeries(s) {
 
         let homeTeamName = s.home.team.displayName;
         let awayTeamName = s.away.team.displayName;
+
         const homeAbbr = s.home.team.abbreviation?.toLowerCase();
         const awayAbbr = s.away.team.abbreviation?.toLowerCase();
-        let homeLogo = `https://a.espncdn.com/i/teamlogos/nba/500/${homeAbbr}.png`;
-        let awayLogo = `https://a.espncdn.com/i/teamlogos/nba/500/${awayAbbr}.png`;
 
-        if (homeTeamName === "TBD" || homeTeamName.includes("/")) {
-            if (homeTeamName === "TBD") homeTeamName = "Play-in 8 seed";
-            homeLogo = tbdLogo;
-        }
-        if (awayTeamName === "TBD" || awayTeamName.includes("/")) {
-            if (awayTeamName === "TBD") awayTeamName = "Play-in 8 seed";
-            awayLogo = tbdLogo;
-        }
+        // Placeholder Names for Round 1 TBDs
+        if (s.roundNum === 1) {
+            const hSeed = TEAM_TO_SEED[homeTeamName] || s.home.seed;
+            const aSeed = TEAM_TO_SEED[awayTeamName] || s.away.seed;
 
-        const existing = await NbaSeries.findByPk(s.id);
-
-        if (existing) {
-            // Series already in DB — only update live fields, never recreate
-            const homeWins = parseInt(s.home.wins) || 0;
-            const awayWins = parseInt(s.away.wins) || 0;
-
-            const updates = {
-                status: s.status.type.name,
-                game_date: s.startDate,
-                home_wins: homeWins,
-                away_wins: awayWins,
-            };
-
-            // Set winner + series length when complete
-            if (s.status.type.name === "STATUS_FINAL" && !existing.winner) {
-                if (homeWins === 4) {
-                    updates.winner = homeTeamName;
-                    updates.series_length = homeWins + awayWins;
-                } else if (awayWins === 4) {
-                    updates.winner = awayTeamName;
-                    updates.series_length = homeWins + awayWins;
-                }
+            if (homeTeamName === "TBD") {
+                homeTeamName = aSeed === 1 ? "8 Seed (TBD)" : "7 Seed (TBD)";
             }
-
-            // Lock at tip-off (game_date = Game 1 start)
-            if (!existing.locked && new Date() >= new Date(s.startDate)) {
-                updates.locked = true;
-                console.log(`[NBA sync] Locked: ${s.id}`);
+            if (awayTeamName === "TBD") {
+                awayTeamName = hSeed === 1 ? "8 Seed (TBD)" : "7 Seed (TBD)";
             }
-
-            await existing.update(updates);
-            console.log(`[NBA sync] Updated: ${s.id} (${awayTeamName} vs ${homeTeamName})`);
-
-        } else {
-            // New series — insert once
-            await NbaSeries.create({
-                id: s.id,
-                round: s.roundNum,
-                round_label: roundCfg.label,
-                round_points_max: roundCfg.maxPoints,
-                home_team: homeTeamName,
-                away_team: awayTeamName,
-                home_logo: homeLogo,
-                away_logo: awayLogo,
-                home_seed: TEAM_TO_SEED[homeTeamName] || null,
-                away_seed: TEAM_TO_SEED[awayTeamName] || null,
-                home_wins: 0,
-                away_wins: 0,
-                status: s.status.type.name,
-                game_date: s.startDate,
-                locked: false,
-            });
-            console.log(`[NBA sync] Created: ${s.id} (${awayTeamName} vs ${homeTeamName})`);
         }
 
+        const homeLogo = homeAbbr ? `https://a.espncdn.com/i/teamlogos/nba/500/${homeAbbr}.png` : tbdLogo;
+        const awayLogo = awayAbbr ? `https://a.espncdn.com/i/teamlogos/nba/500/${awayAbbr}.png` : tbdLogo;
+
+        await NbaSeries.upsert({
+            id: s.id,
+            round: s.roundNum,
+            round_label: roundCfg.label,
+            round_points_max: roundCfg.maxPoints,
+            home_team: homeTeamName,
+            away_team: awayTeamName,
+            home_logo: homeLogo,
+            away_logo: awayLogo,
+            home_seed: TEAM_TO_SEED[homeTeamName] || s.home.seed || null,
+            away_seed: TEAM_TO_SEED[awayTeamName] || s.away.seed || null,
+            status: s.status.type.name,
+            game_date: s.startDate,
+            home_wins: parseInt(s.home.wins) || 0,
+            away_wins: parseInt(s.away.wins) || 0,
+        });
+
+        console.log(`[NBA sync] Processed: ${s.id}`);
     } catch (err) {
         console.error(`[NBA sync] Error on ${s.id}:`, err.message);
     }

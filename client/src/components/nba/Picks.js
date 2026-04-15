@@ -76,7 +76,10 @@ export default function Picks() {
   }, [authUser, series]);
 
   const visibleGames = useMemo(() =>
-    series.filter(g => !isLocked(g.game_date) && g.home_team !== "TBD" && g.away_team !== "TBD")
+    series.filter(g =>
+      !isLocked(g.game_date) &&
+      g.round === 1 // Only show the active betting round
+    )
       .sort((a, b) => new Date(a.game_date) - new Date(b.game_date)),
     [series]
   );
