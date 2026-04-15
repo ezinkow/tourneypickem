@@ -32,6 +32,25 @@ export default function Home() {
                                 <button className="btn-nba-main">🏀 Make My Picks</button>
                             </Link>
                         </div>
+                        <a href="https://www.nba.com/playoffs/2026"
+                            target="_blank"
+                            rel="noreferrer"
+                            style={{
+                                display: "inline-block",
+                                padding: "12px 24px 12px 24px",
+                                backgroundColor: "var(--primary-navy)",
+                                color: "white",
+                                border: "none",
+                                borderRadius: 8,
+                                fontSize: 15,
+                                fontWeight: 700,
+                                cursor: "pointer",
+                                textTransform: "uppercase",
+                                letterSpacing: "0.5px",
+                                textDecoration: "none",
+                            }}>
+                            ⛹🏾‍♂️ Playoff Bracket ↗
+                        </a>
                     </NbaGatekeeper>
 
                     {/* Rules card */}
