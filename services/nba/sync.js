@@ -121,7 +121,7 @@ async function processSeries(s) {
         const homeAbbr = s.home.team.abbreviation?.toLowerCase();
         const awayAbbr = s.away.team.abbreviation?.toLowerCase();
 
-        // Placeholder Names for Round 1 TBDs
+        // 1. Placeholder Names for Round 1 TBDs
         if (s.roundNum === 1) {
             const hSeed = TEAM_TO_SEED[homeTeamName] || s.home.seed;
             const aSeed = TEAM_TO_SEED[awayTeamName] || s.away.seed;
@@ -134,8 +134,13 @@ async function processSeries(s) {
             }
         }
 
-        const homeLogo = homeAbbr ? `https://a.espncdn.com/i/teamlogos/nba/500/${homeAbbr}.png` : tbdLogo;
-        const awayLogo = awayAbbr ? `https://a.espncdn.com/i/teamlogos/nba/500/${awayAbbr}.png` : tbdLogo;
+        // 2. LOGO LOGIC FIX: 
+        // Check for 'tbd' abbreviation or slashes (e.g. 'phi/mia') which don't have valid logos
+        const isHomeTBD = !homeAbbr || homeAbbr === 'tbd' || homeAbbr.includes('/');
+        const isAwayTBD = !awayAbbr || awayAbbr === 'tbd' || awayAbbr.includes('/');
+
+        const homeLogo = isHomeTBD ? tbdLogo : `https://a.espncdn.com/i/teamlogos/nba/500/${homeAbbr}.png`;
+        const awayLogo = isAwayTBD ? tbdLogo : `https://a.espncdn.com/i/teamlogos/nba/500/${awayAbbr}.png`;
 
         await NbaSeries.upsert({
             id: s.id,

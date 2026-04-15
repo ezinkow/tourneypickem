@@ -135,9 +135,8 @@ export default function MyPicks() {
                                     <tr>
                                         <th style={th("left")}>Matchup</th>
                                         <th style={th("left")}>Status</th>
-                                        <th style={th("center")}>Conf</th>
-                                        <th style={th("center")}>Your pick</th>
-                                        <th style={th("center")}>In</th>
+                                        <th style={th("center")}>Points</th>
+                                        <th style={th("center")}>Pick</th>
                                         <th style={th("center")}>Result</th>
                                     </tr>
                                 </thead>
@@ -171,12 +170,8 @@ export default function MyPicks() {
                                                 </td>
                                                 <td style={td("center")}>
                                                     <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 4 }}>
-                                                        {getPickLogo(p) && <img src={getPickLogo(p)} height={20} alt="" />}
-                                                        <span style={{ fontSize: 12 }}>{p.pick}</span>
+                                                        {getPickLogo(p) && <img src={getPickLogo(p)} height={20} alt="" />} in {p.series_length_guess ?? "—"}
                                                     </div>
-                                                </td>
-                                                <td style={{ ...td("center"), fontSize: 12, color: "#6b7280" }}>
-                                                    {p.series_length_guess ?? "—"}
                                                 </td>
                                                 <td style={{ ...td("center"), fontSize: 13 }}>
                                                     {result ? (
@@ -235,12 +230,11 @@ export default function MyPicks() {
                                             paddingTop: 8,
                                         }}>
                                             {/* Pick */}
-                                            <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                                                {getPickLogo(p) && <img src={getPickLogo(p)} height={20} alt="" />}
+                                            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                                {getPickLogo(p) && <img src={getPickLogo(p)} height={32} alt="" />}
                                                 <div>
-                                                    <div style={{ fontSize: 12, fontWeight: 700 }}>{p.pick}</div>
-                                                    <div style={{ fontSize: 11, color: "#9ca3af" }}>
-                                                        in {p.series_length_guess ?? "?"}
+                                                    <div style={{ fontSize: 15, color: "#000000" }}>
+                                                        in <strong>{p.series_length_guess ?? "?"}</strong>
                                                     </div>
                                                 </div>
                                             </div>
