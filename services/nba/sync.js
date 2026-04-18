@@ -134,13 +134,20 @@ async function processSeries(s) {
             }
         }
 
-        // 2. LOGO LOGIC FIX: 
-        // Check for 'tbd' abbreviation or slashes (e.g. 'phi/mia') which don't have valid logos
         const isHomeTBD = !homeAbbr || homeAbbr === 'tbd' || homeAbbr.includes('/');
         const isAwayTBD = !awayAbbr || awayAbbr === 'tbd' || awayAbbr.includes('/');
 
         const homeLogo = isHomeTBD ? tbdLogo : `https://a.espncdn.com/i/teamlogos/nba/500/${homeAbbr}.png`;
         const awayLogo = isAwayTBD ? tbdLogo : `https://a.espncdn.com/i/teamlogos/nba/500/${awayAbbr}.png`;
+
+        // --- LOCK LOGIC ---
+        // Lock if current time is past start date OR if the status is live/final
+        const now = new Date();
+        const startTime = new Date(s.startDate);
+        const isPastStartTime = now >= startTime;
+        const isLiveOrFinal = s.status.type.name === "STATUS_IN_PROGRESS" || s.status.type.name === "STATUS_FINAL";
+
+        const isLocked = isPastStartTime || isLiveOrFinal;
 
         await NbaSeries.upsert({
             id: s.id,
@@ -157,9 +164,14 @@ async function processSeries(s) {
             game_date: s.startDate,
             home_wins: parseInt(s.home.wins) || 0,
             away_wins: parseInt(s.away.wins) || 0,
+            locked: isLocked, // --- THIS REVEALS THE PICKS ---
         });
 
-        console.log(`[NBA sync] Processed: ${s.id}`);
+        if (isLocked) {
+            console.log(`[NBA sync] Processed & LOCKED: ${s.id}`);
+        } else {
+            console.log(`[NBA sync] Processed: ${s.id}`);
+        }
     } catch (err) {
         console.error(`[NBA sync] Error on ${s.id}:`, err.message);
     }
