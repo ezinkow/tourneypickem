@@ -26,7 +26,7 @@ export default function GroupPicks() {
         // FIX: Ensure we sort by Round and then Date to keep the grid logical
         const sortedSeries = seriesRes.data
           .filter(s => s.home_team && s.away_team)
-          .sort((a, b) => a.round - b.round || new Date(a.game_date) - new Date(b.game_date));
+          .sort((b, a) => a.round - b.round || new Date(a.game_date) - new Date(b.game_date));
 
         setSeries(sortedSeries);
         setPicks(picksRes.data);
@@ -88,15 +88,25 @@ export default function GroupPicks() {
                 </th>
                 {series.map(s => (
                   <th key={s.id} style={{ backgroundColor: NAVY, color: "white", padding: "8px 4px", width: SERIES_COL_W, textAlign: "center", borderBottom: `2px solid ${GOLD}`, borderLeft: "1px solid rgba(255,255,255,0.1)", fontSize: 10 }}>
-                    <div style={{ color: GOLD, fontSize: 8, marginBottom: 4 }}>{s.round_label?.split(' ')[0]}</div>
+                    <div style={{ color: GOLD, fontSize: 9, marginBottom: 4, fontWeight: 800 }}>{s.round_label?.split(' ')[0]}</div>
                     <div style={{ display: "flex", justifyContent: "center", gap: 4 }}>
                       <img src={s.away_logo} height={18} alt="" />
                       <img src={s.home_logo} height={18} alt="" />
                     </div>
-                    {s.status === "STATUS_IN_PROGRESS" && (
-                      <div style={{ fontSize: 9, color: "#22c55e", marginTop: 4 }}>
+                    {(s.status === "STATUS_IN_PROGRESS" || s.status === "STATUS_FINAL" || s.status === "STATUS_SCHEDULED") && (
+                      <div style={{
+                        fontSize: 10,
+                        color: s.status === "STATUS_IN_PROGRESS" ? "#22c55e" : GOLD,
+                        marginTop: 4,
+                        fontWeight: 800
+                      }}>
                         {s.away_wins}-{s.home_wins} <span className="live-dot">●</span>
+                        {s.status === "STATUS_IN_PROGRESS" && <span className="live-dot" style={{ marginLeft: 2 }}>●</span>}
                       </div>
+                    )}
+                    {/* If the series is over, show a small checkmark or "Final" */}
+                    {s.winner && (
+                      <div style={{ fontSize: 8, color: "#22c55e", fontWeight: 800 }}>SERIES FINAL</div>
                     )}
                   </th>
                 ))}
