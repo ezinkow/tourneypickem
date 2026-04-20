@@ -33,7 +33,7 @@ export default function GroupPicks() {
         setStandings(standingsRes.data.sort((a, b) => b.points - a.points));
         setTiebreakers(tbRes.data);
       } catch (err) {
-        console.error("Matrix load failed", err);
+        console.error("Group picks load failed", err);
       }
     };
 
@@ -76,7 +76,7 @@ export default function GroupPicks() {
         `}</style>
 
         <div style={{ display: "flex", gap: 16, alignItems: "center", padding: "10px 16px", background: "#f8f9fa", borderBottom: `2px solid ${GOLD}` }}>
-          <h4 style={{ margin: 0, fontSize: 15, color: NAVY }}>Group Picks Matrix</h4>
+          <h4 style={{ margin: 0, fontSize: 15, color: NAVY }}>Group Picks</h4>
         </div>
 
         <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>

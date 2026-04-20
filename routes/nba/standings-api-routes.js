@@ -1,70 +1,102 @@
 const { NbaPicks, NbaSeries, NbaEntries, NbaTiebreaker } = require("../../models");
 
 module.exports = function (app) {
-
     // GET /api/nba/standings
     app.get("/api/nba/standings", async (req, res) => {
         try {
-            const entries   = await NbaEntries.findAll();
-            const series    = await NbaSeries.findAll();
-            const tiebreakers = await NbaTiebreaker.findAll();
+            // 1. Fetch everything in parallel for speed
+            const [entries, series, tiebreakers, allPicks] = await Promise.all([
+                NbaEntries.findAll(),
+                NbaSeries.findAll(),
+                NbaTiebreaker.findAll(),
+                NbaPicks.findAll()
+            ]);
 
+            // 2. Map data for O(1) lookup
             const seriesMap = {};
-            for (const s of series) seriesMap[s.id] = s;
+            series.forEach(s => seriesMap[s.id] = s);
 
             const tbMap = {};
-            for (const t of tiebreakers) tbMap[t.user_id] = t.total_points;
+            tiebreakers.forEach(t => tbMap[t.user_id] = t.total_points);
 
-            const standings = [];
+            const picksByUser = {};
+            allPicks.forEach(p => {
+                if (!picksByUser[p.user_id]) picksByUser[p.user_id] = [];
+                picksByUser[p.user_id].push(p);
+            });
 
-            for (const entry of entries) {
-                const picks = await NbaPicks.findAll({ where: { user_id: entry.user_id } });
+            // 3. Define the absolute ceiling (32*2 + 24*2 + 16*2 + 8*2)
+            const TOTAL_TOURNAMENT_MAX = 160;
 
-                let points         = 0;
+            const standings = entries.map(entry => {
+                const picks = picksByUser[entry.user_id] || [];
+                let points = 0;
                 let correct_series = 0;
                 let correct_lengths = 0;
-                let max_possible   = 0;
+                let potential_lost = 0;
 
+                // Loop through picks to see what has been earned or lost
                 for (const pick of picks) {
                     const s = seriesMap[pick.series_id];
                     if (!s) continue;
 
                     const base = pick.confidence;
+                    const maxForThisSeries = base * 2;
 
                     if (s.winner) {
-                        // Series is final — score it
+                        // SERIES IS OVER
                         if (pick.pick === s.winner) {
-                            const earned = pick.series_length_guess === s.series_length
-                                ? base * 2
-                                : base;
+                            // User picked right winner
+                            const isPerfect = pick.series_length_guess === s.series_length;
+                            const earned = isPerfect ? maxForThisSeries : base;
+
                             points += earned;
                             correct_series += 1;
-                            if (pick.series_length_guess === s.series_length) {
-                                correct_lengths += 1;
+                            if (isPerfect) correct_lengths += 1;
+
+                            // If they got the winner right but missed the length, 
+                            // they "lost" the bonus half of the potential points
+                            if (!isPerfect) {
+                                potential_lost += (maxForThisSeries - base);
                             }
+                        } else {
+                            // User picked wrong winner - they lost all potential points here
+                            potential_lost += maxForThisSeries;
                         }
-                        // Wrong pick — 0 points, nothing to add to max_possible
                     } else {
-                        // Series still in progress — add to max possible (optimistic: correct + length bonus)
-                        max_possible += base * 2;
+                        // SERIES IN PROGRESS
+                        // Check if their picked team is already eliminated (4 losses)
+                        const homeLost = s.away_wins === 4;
+                        const awayLost = s.home_wins === 4;
+                        const pickedTeamLost = (pick.pick === s.home_team && homeLost) ||
+                            (pick.pick === s.away_team && awayLost);
+
+                        if (pickedTeamLost) {
+                            potential_lost += maxForThisSeries;
+                        }
                     }
                 }
 
-                standings.push({
-                    entry_name:      entry.entry_name,
-                    user_id:         entry.user_id,
+                return {
+                    entry_name: entry.entry_name,
+                    user_id: entry.user_id,
                     points,
                     correct_series,
                     correct_lengths,
-                    max_possible:    points + max_possible,
-                    tiebreaker:      tbMap[entry.user_id] ?? null,
-                });
-            }
+                    // The Max is the total ceiling minus points no longer obtainable
+                    max_possible: TOTAL_TOURNAMENT_MAX - potential_lost,
+                    tiebreaker: tbMap[entry.user_id] ?? null,
+                };
+            });
 
-            // Sort: points desc, then tiebreaker proximity (handled client-side if Finals active)
-            standings.sort((a, b) => b.points - a.points || b.correct_series - a.correct_series);
+            // 4. Sort: Points -> Correct Series -> Alphabetical
+            standings.sort((a, b) =>
+                b.points - a.points ||
+                b.correct_series - a.correct_series ||
+                a.entry_name.localeCompare(b.entry_name)
+            );
 
-            // Add rank (handle ties)
+            // 5. Assign Ranks (handle ties)
             let rank = 1;
             for (let i = 0; i < standings.length; i++) {
                 if (i > 0 && standings[i].points < standings[i - 1].points) rank = i + 1;
@@ -73,8 +105,8 @@ module.exports = function (app) {
 
             res.json(standings);
         } catch (err) {
-            console.error(err);
-            res.status(500).json({ error: "Failed to load standings" });
+            console.error("[Standings API Error]:", err);
+            res.status(500).json({ error: "Failed to calculate standings" });
         }
     });
 };
