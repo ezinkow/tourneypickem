@@ -63,81 +63,79 @@ function makeSeriesId(roundNum, conf, s) {
 
 function extractSeries(data) {
     if (!data?.events) return [];
+
+    // This will hold our aggregated series data
     const seriesMap = new Map();
+
+    // This will hold our manually calculated win counts for the WHOLE feed
+    const globalWinTally = {}; // e.g. { "Detroit Pistons": 1, "Orlando Magic": 0 }
+
+    // 1. FIRST PASS: Tally every COMPLETED game in the entire scoreboard response
+    for (const event of data.events) {
+        const comp = event.competitions?.[0];
+        if (!comp || comp.status.type.name !== "STATUS_FINAL") continue;
+
+        const home = comp.competitors.find(c => c.homeAway === "home");
+        const away = comp.competitors.find(c => c.homeAway === "away");
+
+        if (home.winner === true) {
+            globalWinTally[home.team.displayName] = (globalWinTally[home.team.displayName] || 0) + 1;
+        }
+        if (away.winner === true) {
+            globalWinTally[away.team.displayName] = (globalWinTally[away.team.displayName] || 0) + 1;
+        }
+    }
+
+    // 2. SECOND PASS: Identify the unique series and assign the tallied wins
+    const now = new Date();
+    const sevenDaysFromNow = new Date();
+    sevenDaysFromNow.setDate(now.getDate() + 7);
 
     for (const event of data.events) {
         const comp = event.competitions?.[0];
         if (!comp) continue;
 
+        // Skip games too far in future
+        const eventDate = new Date(event.date);
+        if (eventDate > sevenDaysFromNow) continue;
+
         const homeComp = comp.competitors.find(c => c.homeAway === "home");
         const awayComp = comp.competitors.find(c => c.homeAway === "away");
-        if (!homeComp || !awayComp) continue;
 
-        // 1. EXTRACT SERIES WINS VIA REGEX
-        const seriesSummary = comp.series?.summary || "";
-        let homeWins = 0;
-        let awayWins = 0;
-
-        if (seriesSummary) {
-            const scores = seriesSummary.match(/\d+/g);
-            if (scores && scores.length === 2) {
-                const homeAbbr = homeComp.team.abbreviation;
-                const teamLeads = seriesSummary.includes(homeAbbr);
-                const tied = seriesSummary.includes("tied");
-
-                if (tied) {
-                    homeWins = parseInt(scores[0]);
-                    awayWins = parseInt(scores[1]);
-                } else if (teamLeads) {
-                    homeWins = Math.max(scores[0], scores[1]);
-                    awayWins = Math.min(scores[0], scores[1]);
-                } else {
-                    awayWins = Math.max(scores[0], scores[1]);
-                    homeWins = Math.min(scores[0], scores[1]);
-                }
-            }
-        }
+        if (!homeComp || !awayComp || homeComp.team.displayName === "TBD") continue;
 
         const headline = comp.notes?.[0]?.headline || "";
         const roundNum = getRound(headline);
         const conf = getConference(headline);
         const seriesId = makeSeriesId(roundNum, conf, { home: homeComp, away: awayComp });
 
-        if (roundNum > 1) {
-            const hName = homeComp.team.displayName;
-            const aName = awayComp.team.displayName;
-            if (hName === "TBD" || hName.includes("/") || aName === "TBD" || aName.includes("/")) {
-                continue;
-            }
-        }
+        // Get the current wins for these two teams from our global tally
+        const hWins = globalWinTally[homeComp.team.displayName] || 0;
+        const aWins = globalWinTally[awayComp.team.displayName] || 0;
 
-        // 2. DYNAMIC NEXT GAME DATE LOGIC
-        const totalPlayed = homeWins + awayWins;
-        let nextGameDate = event.date; // Fallback
-
-        // Find the next scheduled game in the series array
-        if (comp.series?.games && comp.series.games[totalPlayed]) {
-            nextGameDate = comp.series.games[totalPlayed].date;
-        }
-
-        // Map ensures we only process each unique series once
+        // Only process the series once in the map
         if (!seriesMap.has(seriesId)) {
+            const totalPlayed = hWins + aWins;
+            let nextGameDate = event.date;
+            if (comp.series?.games && comp.series.games[totalPlayed]) {
+                nextGameDate = comp.series.games[totalPlayed].date;
+            }
+
             seriesMap.set(seriesId, {
                 id: seriesId,
-                headline,
                 roundNum,
                 conf,
                 home: homeComp,
                 away: awayComp,
                 status: comp.status,
                 startDate: nextGameDate,
-                homeWins,
-                awayWins
+                homeWins: hWins,
+                awayWins: aWins
             });
         }
     }
 
-    console.log(`[NBA sync] Unique series found: ${seriesMap.size}`);
+    console.log(`[NBA sync] Unique series identified: ${seriesMap.size}`);
     return Array.from(seriesMap.values());
 }
 
@@ -145,42 +143,19 @@ async function processSeries(s) {
     const { NbaSeries } = db;
     try {
         const roundCfg = ROUND_CONFIG[s.roundNum];
-        const tbdLogo = "https://a.espncdn.com/i/teamlogos/leagues/500/nba.png";
-
-        let homeTeamName = s.home.team.displayName;
-        let awayTeamName = s.away.team.displayName;
-        const homeAbbr = s.home.team.abbreviation?.toLowerCase();
-        const awayAbbr = s.away.team.abbreviation?.toLowerCase();
-
-        // Round 1 Placeholders
-        if (s.roundNum === 1) {
-            const hSeed = TEAM_TO_SEED[homeTeamName] || s.home.seed;
-            const aSeed = TEAM_TO_SEED[awayTeamName] || s.away.seed;
-            if (homeTeamName === "TBD") homeTeamName = aSeed === 1 ? "8 Seed (TBD)" : "7 Seed (TBD)";
-            if (awayTeamName === "TBD") awayTeamName = hSeed === 1 ? "8 Seed (TBD)" : "7 Seed (TBD)";
-        }
-
-        const isHomeTBD = !homeAbbr || homeAbbr === 'tbd' || homeAbbr.includes('/');
-        const isAwayTBD = !awayAbbr || awayAbbr === 'tbd' || awayAbbr.includes('/');
-        const homeLogo = isHomeTBD ? tbdLogo : `https://a.espncdn.com/i/teamlogos/nba/500/${homeAbbr}.png`;
-        const awayLogo = isAwayTBD ? tbdLogo : `https://a.espncdn.com/i/teamlogos/nba/500/${awayAbbr}.png`;
-
         const existing = await NbaSeries.findByPk(s.id);
 
-        const finalHomeWins = s.homeWins > 0 ? s.homeWins : (existing?.home_wins || 0);
-        const finalAwayWins = s.awayWins > 0 ? s.awayWins : (existing?.away_wins || 0);
+        // STICKY WINS: Math.max ensures we only ever go forward in games
+        const finalHomeWins = Math.max(s.homeWins, existing?.home_wins || 0);
+        const finalAwayWins = Math.max(s.awayWins, existing?.away_wins || 0);
         const seriesOver = finalHomeWins === 4 || finalAwayWins === 4;
 
-        // --- NEW SERIES-LEVEL STATUS LOGIC ---
         let seriesStatus = "STATUS_SCHEDULED";
-
         if (seriesOver) {
-            seriesStatus = "STATUS_FINAL"; // Only Final if someone has 4 wins
+            seriesStatus = "STATUS_FINAL";
         } else if (s.status.type.name === "STATUS_IN_PROGRESS") {
-            seriesStatus = "STATUS_IN_PROGRESS"; // Live game happening now
+            seriesStatus = "STATUS_IN_PROGRESS";
         }
-        // Note: If the game is 'STATUS_FINAL' but series isn't over, 
-        // we leave it as 'STATUS_SCHEDULED' because we are waiting for the next game.
 
         const now = new Date();
         const startTime = new Date(s.startDate);
@@ -191,22 +166,18 @@ async function processSeries(s) {
             round: s.roundNum,
             round_label: roundCfg.label,
             round_points_max: roundCfg.maxPoints,
-            home_team: homeTeamName,
-            away_team: awayTeamName,
-            home_logo: homeLogo,
-            away_logo: awayLogo,
-            home_seed: TEAM_TO_SEED[homeTeamName] || s.home.seed || null,
-            away_seed: TEAM_TO_SEED[awayTeamName] || s.away.seed || null,
-            status: seriesStatus, // Updated Logic
+            home_team: s.home.team.displayName,
+            away_team: s.away.team.displayName,
+            status: seriesStatus,
             game_date: s.startDate,
             home_wins: finalHomeWins,
             away_wins: finalAwayWins,
             locked: isLocked,
-            winner: finalHomeWins === 4 ? homeTeamName : (finalAwayWins === 4 ? awayTeamName : null),
+            winner: finalHomeWins === 4 ? s.home.team.displayName : (finalAwayWins === 4 ? s.away.team.displayName : null),
             series_length: seriesOver ? (finalHomeWins + finalAwayWins) : null
         });
 
-        console.log(`[NBA sync] ${s.id}: ${seriesStatus} (${finalAwayWins}-${finalHomeWins})`);
+        console.log(`[NBA sync] ${s.id}: ${finalAwayWins}-${finalHomeWins} | ${isLocked ? 'LOCKED' : 'OPEN'}`);
     } catch (err) {
         console.error(`[NBA sync] Error on ${s.id}:`, err.message);
     }
