@@ -118,8 +118,8 @@ module.exports = function (app) {
             // 4. Sort: Points -> Correct Series -> Alphabetical
             standings.sort((a, b) =>
                 b.points - a.points ||
-                b.correct_series - a.correct_series ||
-                a.entry_name.localeCompare(b.entry_name)
+                b.max_possible - a.max_possible ||
+                b.correct_series - a.correct_series
             );
 
             // 5. Assign Ranks
