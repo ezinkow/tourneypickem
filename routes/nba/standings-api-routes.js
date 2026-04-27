@@ -35,18 +35,19 @@ module.exports = function (app) {
                 let correct_lengths = 0;
                 let potential_lost = 0;
 
-                // Loop through picks to see what has been earned or lost
                 for (const pick of picks) {
                     const s = seriesMap[pick.series_id];
                     if (!s) continue;
 
                     const base = pick.confidence;
                     const maxForThisSeries = base * 2;
+                    const homeWins = s.home_wins || 0;
+                    const awayWins = s.away_wins || 0;
+                    const totalPlayed = homeWins + awayWins;
 
                     if (s.winner) {
-                        // SERIES IS OVER
+                        // --- SERIES IS OVER ---
                         if (pick.pick === s.winner) {
-                            // User picked right winner
                             const isPerfect = pick.series_length_guess === s.series_length;
                             const earned = isPerfect ? maxForThisSeries : base;
 
@@ -54,25 +55,44 @@ module.exports = function (app) {
                             correct_series += 1;
                             if (isPerfect) correct_lengths += 1;
 
-                            // If they got the winner right but missed the length, 
-                            // they "lost" the bonus half of the potential points
+                            // If they missed the length, they lost the "bonus" half
                             if (!isPerfect) {
                                 potential_lost += (maxForThisSeries - base);
                             }
                         } else {
-                            // User picked wrong winner - they lost all potential points here
+                            // Picked wrong winner - lost the whole pot
                             potential_lost += maxForThisSeries;
                         }
                     } else {
-                        // SERIES IN PROGRESS
-                        // Check if their picked team is already eliminated (4 losses)
-                        const homeLost = s.away_wins === 4;
-                        const awayLost = s.home_wins === 4;
-                        const pickedTeamLost = (pick.pick === s.home_team && homeLost) ||
-                            (pick.pick === s.away_team && awayLost);
+                        // --- SERIES IN PROGRESS ---
+                        const hWins = Number(s.home_wins || 0);
+                        const aWins = Number(s.away_wins || 0);
+                        const totalPlayed = hWins + aWins;
+                        const userLengthGuess = Number(pick.series_length_guess || 4);
+
+                        const pickedTeam = String(pick.pick || "").trim().toLowerCase();
+                        const homeTeamName = String(s.home_team || "").trim().toLowerCase();
+                        const awayTeamName = String(s.away_team || "").trim().toLowerCase();
+
+                        // 1. ELIMINATION CHECK: Is the picked team already out?
+                        const pickedTeamLost = (pickedTeam === homeTeamName && awayWins === 4) ||
+                            (pickedTeam === awayTeamName && hWins === 4);
+
+                        // 2. BONUS CHECK: Is the series length guess now impossible?
+                        // We find how many more wins the leading team needs (4 - current wins)
+                        // and add that to the total games already played.
+                        const leaderWins = Math.max(hWins, aWins);
+                        const minGamesRemaining = 4 - leaderWins;
+                        const minPossibleTotalGames = totalPlayed + minGamesRemaining;
+
+                        // If the fewest possible games remaining is ALREADY more than they guessed... bonus is dead.
+                        const lengthImpossible = minPossibleTotalGames > userLengthGuess;
 
                         if (pickedTeamLost) {
                             potential_lost += maxForThisSeries;
+                        } else if (lengthImpossible) {
+                            // Team is still alive, but they can't hit that length anymore.
+                            potential_lost += (maxForThisSeries - base);
                         }
                     }
                 }
@@ -83,7 +103,6 @@ module.exports = function (app) {
                     points,
                     correct_series,
                     correct_lengths,
-                    // The Max is the total ceiling minus points no longer obtainable
                     max_possible: TOTAL_TOURNAMENT_MAX - potential_lost,
                     tiebreaker: tbMap[entry.user_id] ?? null,
                 };
@@ -96,7 +115,7 @@ module.exports = function (app) {
                 a.entry_name.localeCompare(b.entry_name)
             );
 
-            // 5. Assign Ranks (handle ties)
+            // 5. Assign Ranks
             let rank = 1;
             for (let i = 0; i < standings.length; i++) {
                 if (i > 0 && standings[i].points < standings[i - 1].points) rank = i + 1;
