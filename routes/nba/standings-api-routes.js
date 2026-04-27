@@ -78,15 +78,22 @@ module.exports = function (app) {
                         const pickedTeamLost = (pickedTeam === homeTeamName && awayWins === 4) ||
                             (pickedTeam === awayTeamName && hWins === 4);
 
-                        // 2. BONUS CHECK: Is the series length guess now impossible?
-                        // We find how many more wins the leading team needs (4 - current wins)
-                        // and add that to the total games already played.
-                        const leaderWins = Math.max(hWins, aWins);
-                        const minGamesRemaining = 4 - leaderWins;
-                        const minPossibleTotalGames = totalPlayed + minGamesRemaining;
+                        // 2. BONUS CHECK: Can the PICKED team still win within the GUESSED length?
+                        const currentWinsForPickedTeam = (pickedTeam === homeTeamName) ? hWins : aWins;
+                        const winsNeeded = 4 - currentWinsForPickedTeam;
 
-                        // If the fewest possible games remaining is ALREADY more than they guessed... bonus is dead.
-                        const lengthImpossible = minPossibleTotalGames > userLengthGuess;
+                        // The absolute earliest the series can end with the USER's team winning
+                        const earliestPossibleWinForUser = totalPlayed + winsNeeded;
+
+                        const lengthImpossible = earliestPossibleWinForUser > userLengthGuess;
+
+                        if (pickedTeamLost) {
+                            potential_lost += maxForThisSeries;
+                        } else if (lengthImpossible) {
+                            // The user's team can still win the series, but NOT in the length they guessed.
+                            // Dock the bonus.
+                            potential_lost += (maxForThisSeries - base);
+                        }
 
                         if (pickedTeamLost) {
                             potential_lost += maxForThisSeries;
