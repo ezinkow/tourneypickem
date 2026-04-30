@@ -56,10 +56,10 @@ export default function GroupPicks() {
     const correctWinner = pick.pick === s.winner;
     if (correctWinner) {
       return pick.series_length_guess === s.series_length
-        ? { backgroundColor: "#fef9c3", borderBottom: `2px solid ${GOLD}` }
+        ? { backgroundColor: "#71ff7d" }
         : { backgroundColor: "#dcfce7" };
     }
-    return { backgroundColor: "#fee2e2" };
+    return { backgroundColor: "#fa7c7c" };
   };
 
   if (authLoading) return null;
