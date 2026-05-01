@@ -131,6 +131,7 @@ export default function Picks() {
         length: field === 'length' ? value : 4
       }];
     });
+    console.log(gameId, field, value)
   };
 
   const handleSubmitPicks = async () => {

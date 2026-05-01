@@ -25,8 +25,8 @@ const TEAM_TO_SEED = {
 
 function getRound(headline) {
     if (headline && headline.includes("Finals") && !headline.includes("Conf.")) return 4;
-    if (headline && headline.includes("Conf. Finals")) return 3;
-    if (headline && headline.includes("2nd Round")) return 2;
+    if (headline && (headline.includes("West Finals") || headline.includes("East Finals"))) return 3;
+    if (headline && (headline.includes("West Semifinals") || headline.includes("East Semifinals"))) return 2;
     return 1;
 }
 
@@ -42,13 +42,8 @@ function makeSeriesId(roundNum, conf, s) {
     let aSeed = TEAM_TO_SEED[s.away.team.displayName] || s.away.seed;
 
     if (roundNum === 1 && (!hSeed || !aSeed)) {
-        if (hSeed === 1 || aSeed === 1) {
-            hSeed = hSeed || 8;
-            aSeed = aSeed || 8;
-        } else if (hSeed === 2 || aSeed === 2) {
-            hSeed = hSeed || 7;
-            aSeed = aSeed || 7;
-        }
+        if (hSeed === 1 || aSeed === 1) { hSeed = hSeed || 8; aSeed = aSeed || 8; }
+        else if (hSeed === 2 || aSeed === 2) { hSeed = hSeed || 7; aSeed = aSeed || 7; }
     }
 
     hSeed = hSeed || s.home.team.abbreviation || "TBD";
@@ -63,79 +58,67 @@ function makeSeriesId(roundNum, conf, s) {
 
 function extractSeries(data) {
     if (!data?.events) return [];
-
-    // This will hold our aggregated series data
     const seriesMap = new Map();
 
-    // This will hold our manually calculated win counts for the WHOLE feed
-    const globalWinTally = {}; // e.g. { "Detroit Pistons": 1, "Orlando Magic": 0 }
+    // 1. We NO LONGER use a global winTally.
+    // Instead, we will calculate wins PER unique series headline.
+    const seriesWinTally = {}; // { "R2-W-2-6": { "Spurs": 0, "Wolves": 0 } }
 
-    // 1. FIRST PASS: Tally every COMPLETED game in the entire scoreboard response
-    for (const event of data.events) {
+    data.events.forEach(event => {
         const comp = event.competitions?.[0];
-        if (!comp || comp.status.type.name !== "STATUS_FINAL") continue;
-
-        const home = comp.competitors.find(c => c.homeAway === "home");
-        const away = comp.competitors.find(c => c.homeAway === "away");
-
-        if (home.winner === true) {
-            globalWinTally[home.team.displayName] = (globalWinTally[home.team.displayName] || 0) + 1;
-        }
-        if (away.winner === true) {
-            globalWinTally[away.team.displayName] = (globalWinTally[away.team.displayName] || 0) + 1;
-        }
-    }
-
-    // 2. SECOND PASS: Identify the unique series and assign the tallied wins
-    const now = new Date();
-    const sevenDaysFromNow = new Date();
-    sevenDaysFromNow.setDate(now.getDate() + 7);
-
-    for (const event of data.events) {
-        const comp = event.competitions?.[0];
-        if (!comp) continue;
-
-        // Skip games too far in future
-        const eventDate = new Date(event.date);
-        if (eventDate > sevenDaysFromNow) continue;
-
-        const homeComp = comp.competitors.find(c => c.homeAway === "home");
-        const awayComp = comp.competitors.find(c => c.homeAway === "away");
-
-        if (!homeComp || !awayComp || homeComp.team.displayName === "TBD") continue;
+        if (!comp) return;
 
         const headline = comp.notes?.[0]?.headline || "";
         const roundNum = getRound(headline);
         const conf = getConference(headline);
-        const seriesId = makeSeriesId(roundNum, conf, { home: homeComp, away: awayComp });
 
-        // Get the current wins for these two teams from our global tally
-        const hWins = globalWinTally[homeComp.team.displayName] || 0;
-        const aWins = globalWinTally[awayComp.team.displayName] || 0;
+        const home = comp.competitors.find(c => c.homeAway === "home");
+        const away = comp.competitors.find(c => c.homeAway === "away");
+        if (!home || !away || home.team.displayName === "TBD") return;
 
-        // Only process the series once in the map
+        const seriesId = makeSeriesId(roundNum, conf, { home, away });
+
+        // Initialize tally for this specific series
+        if (!seriesWinTally[seriesId]) {
+            seriesWinTally[seriesId] = {
+                [home.team.displayName]: 0,
+                [away.team.displayName]: 0
+            };
+        }
+
+        // Only count the win if THIS specific game is finished
+        if (comp.status?.type?.name === "STATUS_FINAL") {
+            if (home.winner) seriesWinTally[seriesId][home.team.displayName]++;
+            if (away.winner) seriesWinTally[seriesId][away.team.displayName]++;
+        }
+
+        // 2. Aggregate into SeriesMap
         if (!seriesMap.has(seriesId)) {
-            const totalPlayed = hWins + aWins;
-            let nextGameDate = event.date;
-            if (comp.series?.games && comp.series.games[totalPlayed]) {
-                nextGameDate = comp.series.games[totalPlayed].date;
-            }
-
             seriesMap.set(seriesId, {
                 id: seriesId,
                 roundNum,
                 conf,
-                home: homeComp,
-                away: awayComp,
+                home: home,
+                away: away,
+                homeLogo: home.team.logo,
+                awayLogo: away.team.logo,
+                homeSeed: home.seed,
+                awaySeed: away.seed,
                 status: comp.status,
-                startDate: nextGameDate,
-                homeWins: hWins,
-                awayWins: aWins
+                startDate: event.date,
+                // These are now scoped to the seriesId!
+                homeWins: seriesWinTally[seriesId][home.team.displayName],
+                awayWins: seriesWinTally[seriesId][away.team.displayName],
+                roundLabel: headline || roundNum
             });
+        } else {
+            // Update the wins for the existing series entry in the map
+            const existing = seriesMap.get(seriesId);
+            existing.homeWins = seriesWinTally[seriesId][home.team.displayName];
+            existing.awayWins = seriesWinTally[seriesId][away.team.displayName];
         }
-    }
+    });
 
-    console.log(`[NBA sync] Unique series identified: ${seriesMap.size}`);
     return Array.from(seriesMap.values());
 }
 
@@ -143,23 +126,19 @@ async function processSeries(s) {
     const { NbaSeries } = db;
     try {
         const roundCfg = ROUND_CONFIG[s.roundNum];
-        const existing = await NbaSeries.findByPk(s.id);
-
-        // STICKY WINS: Math.max ensures we only ever go forward in games
-        const finalHomeWins = Math.max(s.homeWins, existing?.home_wins || 0);
-        const finalAwayWins = Math.max(s.awayWins, existing?.away_wins || 0);
-        const seriesOver = finalHomeWins === 4 || finalAwayWins === 4;
+        const seriesOver = s.homeWins === 4 || s.awayWins === 4;
 
         let seriesStatus = "STATUS_SCHEDULED";
         if (seriesOver) {
             seriesStatus = "STATUS_FINAL";
-        } else if (s.status.type.name === "STATUS_IN_PROGRESS") {
+        } else if (s.homeWins + s.awayWins > 0) {
             seriesStatus = "STATUS_IN_PROGRESS";
         }
 
         const now = new Date();
         const startTime = new Date(s.startDate);
-        const isLocked = existing?.locked || (now >= startTime) || (s.status.type.name !== "STATUS_SCHEDULED");
+        // Lock if game has started OR if wins have already been recorded
+        const isLocked = (now >= startTime) || (s.homeWins + s.awayWins > 0);
 
         await NbaSeries.upsert({
             id: s.id,
@@ -168,16 +147,20 @@ async function processSeries(s) {
             round_points_max: roundCfg.maxPoints,
             home_team: s.home.team.displayName,
             away_team: s.away.team.displayName,
+            home_logo: s.homeLogo,
+            away_logo: s.awayLogo,
+            home_seed: s.homeSeed || TEAM_TO_SEED[s.home.team.displayName],
+            away_seed: s.awaySeed || TEAM_TO_SEED[s.away.team.displayName],
             status: seriesStatus,
             game_date: s.startDate,
-            home_wins: finalHomeWins,
-            away_wins: finalAwayWins,
+            home_wins: s.homeWins,
+            away_wins: s.awayWins,
             locked: isLocked,
-            winner: finalHomeWins === 4 ? s.home.team.displayName : (finalAwayWins === 4 ? s.away.team.displayName : null),
-            series_length: seriesOver ? (finalHomeWins + finalAwayWins) : null
+            winner: s.homeWins === 4 ? s.home.team.displayName : (s.awayWins === 4 ? s.away.team.displayName : null),
+            series_length: seriesOver ? (s.homeWins + s.awayWins) : null
         });
 
-        console.log(`[NBA sync] ${s.id}: ${finalAwayWins}-${finalHomeWins} | ${isLocked ? 'LOCKED' : 'OPEN'}`);
+        console.log(`[NBA sync] ${s.id}: ${s.awayWins}-${s.homeWins} | ${seriesStatus}`);
     } catch (err) {
         console.error(`[NBA sync] Error on ${s.id}:`, err.message);
     }
@@ -185,21 +168,21 @@ async function processSeries(s) {
 
 async function syncNba() {
     try {
-        const { data } = await axios.get(SCOREBOARD_URL, { timeout: 10000 });
+        console.log("[NBA sync] Starting fetch...");
+        const { data } = await axios.get(SCOREBOARD_URL, { timeout: 15000 });
         const series = extractSeries(data);
 
         if (!series.length) {
-            console.log("[NBA sync] No events found in range");
+            console.log("[NBA sync] No series found.");
             return;
         }
 
         for (const s of series) {
             await processSeries(s);
         }
-
-        console.log(`[NBA sync] Done — ${series.length} series updated`);
+        console.log(`[NBA sync] Finished. Updated ${series.length} series.`);
     } catch (err) {
-        console.error("[NBA sync] Failed:", err.message);
+        console.error("[NBA sync] Fatal Error:", err.message);
     }
 }
 
