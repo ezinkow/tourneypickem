@@ -83,33 +83,101 @@ export default function GroupPicks() {
           <table style={{ borderCollapse: "collapse", backgroundColor: "white", tableLayout: "fixed", width: PLAYER_COL_W + (series.length * SERIES_COL_W) }}>
             <thead>
               <tr>
-                <th style={{ position: "sticky", left: 0, top: 0, zIndex: 10, backgroundColor: NAVY, color: "white", padding: "10px", width: PLAYER_COL_W, borderBottom: `2px solid ${GOLD}`, textAlign: "left", fontSize: 12 }}>
+                <th style={{ position: "sticky", left: 0, top: 0, zIndex: 10, backgroundColor: "#f1f5f9", color: "white", padding: "10px", width: PLAYER_COL_W, borderBottom: `2px solid ${GOLD}`, textAlign: "left", fontSize: 12 }}>
                   Player
                 </th>
-                {series.map(s => (
-                  <th key={s.id} style={{ backgroundColor: NAVY, color: "white", padding: "8px 4px", width: SERIES_COL_W, textAlign: "center", borderBottom: `2px solid ${GOLD}`, borderLeft: "1px solid rgba(255,255,255,0.1)", fontSize: 10 }}>
-                    <div style={{ color: GOLD, fontSize: 9, marginBottom: 4, fontWeight: 800 }}>{s.round_label?.split(' ')[0]}</div>
-                    <div style={{ display: "flex", justifyContent: "center", gap: 4 }}>
-                      <img src={s.away_logo} height={18} alt="" />
-                      <img src={s.home_logo} height={18} alt="" />
-                    </div>
-                    {(s.status === "STATUS_IN_PROGRESS" || s.status === "STATUS_FINAL" || s.status === "STATUS_SCHEDULED") && (
+                {series.map(s => {
+                  const isFinal = s.status === "STATUS_FINAL";
+                  const homeIsWinner = isFinal && s.winner === s.home_team;
+                  const awayIsWinner = isFinal && s.winner === s.away_team;
+
+                  return (
+                    <th key={s.id} style={{
+                      backgroundColor: "#1a1d23", // Deep charcoal, better than blue for contrast
+                      color: "white",
+                      padding: "8px 4px",
+                      width: SERIES_COL_W,
+                      textAlign: "center",
+                      borderBottom: `2px solid ${GOLD}`,
+                      borderLeft: "1px solid rgba(255,255,255,0.05)",
+                      fontSize: 10
+                    }}>
+                      <div style={{ color: "#94a3b8", fontSize: 9, marginBottom: 4, fontWeight: 800 }}>
+                        {s.round_label?.split(' ')[0]}
+                      </div>
+
+                      <div style={{ display: "flex", justifyContent: "center", gap: 6 }}>
+                        {/* Away Team */}
+                        <div style={{ position: "relative", height: 18 }}>
+                          <img
+                            src={s.away_logo}
+                            height={18}
+                            alt=""
+                            style={{
+                              filter: isFinal && !awayIsWinner
+                                ? "grayscale(100%) opacity(0.2)"
+                                : "drop-shadow(0 0 2px rgba(255,255,255,0.5))", // THE HALO: Makes logos pop on dark
+                              outline: awayIsWinner ? `1.5px solid ${GOLD}` : "none",
+                              outlineOffset: "1px",
+                              borderRadius: "2px"
+                            }}
+                          />
+                          {isFinal && !awayIsWinner && (
+                            <span style={{
+                              position: "absolute", top: -4, left: 1,
+                              color: "#ff4444", fontSize: 18, fontWeight: 900,
+                              textShadow: "0px 0px 3px black",
+                              pointerEvents: "none"
+                            }}>×</span>
+                          )}
+                        </div>
+
+                        {/* Home Team */}
+                        <div style={{ position: "relative", height: 18 }}>
+                          <img
+                            src={s.home_logo}
+                            height={18}
+                            alt=""
+                            style={{
+                              filter: isFinal && !homeIsWinner
+                                ? "grayscale(100%) opacity(0.2)"
+                                : "drop-shadow(0 0 2px rgba(255,255,255,0.5))", // THE HALO
+                              outline: homeIsWinner ? `1.5px solid ${GOLD}` : "none",
+                              outlineOffset: "1px",
+                              borderRadius: "2px"
+                            }}
+                          />
+                          {isFinal && !homeIsWinner && (
+                            <span style={{
+                              position: "absolute", top: -4, left: 1,
+                              color: "#ff4444", fontSize: 18, fontWeight: 900,
+                              textShadow: "0px 0px 3px black",
+                              pointerEvents: "none"
+                            }}>×</span>
+                          )}
+                        </div>
+                      </div>
+
                       <div style={{
                         fontSize: 10,
-                        color: s.status === "STATUS_IN_PROGRESS" ? "#22c55e" : GOLD,
-                        marginTop: 4,
+                        color: s.status === "STATUS_IN_PROGRESS" ? "#4ade80" : GOLD,
+                        marginTop: 5,
                         fontWeight: 800
                       }}>
-                        {s.away_wins}-{s.home_wins} <span className="live-dot">●</span>
-                        {s.status === "STATUS_IN_PROGRESS" && <span className="live-dot" style={{ marginLeft: 2 }}>●</span>}
+                        {s.away_wins}-{s.home_wins}
+                        {s.status === "STATUS_IN_PROGRESS" && (
+                          <span className="live-dot" style={{ marginLeft: 3, color: "#ff4444" }}>●</span>
+                        )}
                       </div>
-                    )}
-                    {/* If the series is over, show a small checkmark or "Final" */}
-                    {s.winner && (
-                      <div style={{ fontSize: 8, color: "#22c55e", fontWeight: 800 }}>SERIES FINAL</div>
-                    )}
-                  </th>
-                ))}
+
+                      {isFinal && (
+                        <div style={{ fontSize: 7, color: "#4ade80", fontWeight: 900, marginTop: 1 }}>
+                          FINAL IN {s.series_length}
+                        </div>
+                      )}
+                    </th>
+                  );
+                })}
               </tr>
             </thead>
             <tbody>

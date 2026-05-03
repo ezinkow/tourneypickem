@@ -27,7 +27,7 @@ export default function ChangePassword() {
       // Logic to ensure we hit the 3001 backend in dev, or root in prod
       const apiUrl = window.location.hostname === "localhost" 
         ? "http://localhost:3001/api/auth/changepassword" 
-        : "/api/auth/change-password";
+        : "/api/auth/changepassword";
 
       const res = await axios.post(apiUrl, { email, newPassword });
       
