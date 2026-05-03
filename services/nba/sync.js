@@ -66,58 +66,74 @@ function makeSeriesId(roundNum, conf, s) {
 function extractSeries(data) {
     if (!data?.events) return [];
     const seriesMap = new Map();
-    const seriesWinTally = {};
 
+    // 1. Create a win tally based on Team Name Pairs
+    // This ignores headlines/rounds and just counts how many times 
+    // Team A beat Team B in the entire feed.
+    const matchupTally = {};
+
+    data.events.forEach(event => {
+        const comp = event.competitions?.[0];
+        if (comp?.status?.type?.name !== "STATUS_FINAL") return;
+
+        const home = comp.competitors.find(c => c.homeAway === "home").team.displayName;
+        const away = comp.competitors.find(c => c.homeAway === "away").team.displayName;
+
+        // Sort names alphabetically so "A vs B" and "B vs A" use the same key
+        const pairKey = [home, away].sort().join("|");
+
+        if (!matchupTally[pairKey]) {
+            matchupTally[pairKey] = { [home]: 0, [away]: 0 };
+        }
+
+        const homeWinner = comp.competitors.find(c => c.homeAway === "home").winner;
+        const awayWinner = comp.competitors.find(c => c.homeAway === "away").winner;
+
+        if (homeWinner) matchupTally[pairKey][home]++;
+        if (awayWinner) matchupTally[pairKey][away]++;
+    });
+
+    // 2. Build the Series Map
     data.events.forEach(event => {
         const comp = event.competitions?.[0];
         if (!comp) return;
 
+        const homeComp = comp.competitors.find(c => c.homeAway === "home");
+        const awayComp = comp.competitors.find(c => c.homeAway === "away");
+
+        if (!homeComp || !awayComp || homeComp.team.displayName.includes("/") || homeComp.team.displayName === "TBD") return;
+
         const headline = comp.notes?.[0]?.headline || "";
         const roundNum = getRound(headline);
         const conf = getConference(headline);
+        const seriesId = makeSeriesId(roundNum, conf, { home: homeComp, away: awayComp });
 
-        const home = comp.competitors.find(c => c.homeAway === "home");
-        const away = comp.competitors.find(c => c.homeAway === "away");
-
-        // CRITICAL FIX: Ignore placeholder teams with slashes (e.g., "Lakers/Rockets")
-        if (!home || !away || home.team.displayName.includes("/") || away.team.displayName.includes("/")) return;
-        if (home.team.displayName === "TBD" || away.team.displayName === "TBD") return;
-
-        const seriesId = makeSeriesId(roundNum, conf, { home, away });
-
-        if (!seriesWinTally[seriesId]) {
-            seriesWinTally[seriesId] = {
-                [home.team.displayName]: 0,
-                [away.team.displayName]: 0
-            };
-        }
-
-        if (comp.status?.type?.name === "STATUS_FINAL") {
-            if (home.winner) seriesWinTally[seriesId][home.team.displayName]++;
-            if (away.winner) seriesWinTally[seriesId][away.team.displayName]++;
-        }
+        const pairKey = [homeComp.team.displayName, awayComp.team.displayName].sort().join("|");
 
         if (!seriesMap.has(seriesId)) {
+            // Only assign wins that belong to the correct ROUND
+            // If this is a Round 1 Series ID, take the wins from the tally.
+            // If this is a Round 2 Series ID, we start at 0 until R2 games appear.
+            const isRound2 = roundNum === 2;
+            const hWins = matchupTally[pairKey]?.[homeComp.team.displayName] || 0;
+            const aWins = matchupTally[pairKey]?.[awayComp.team.displayName] || 0;
+
             seriesMap.set(seriesId, {
                 id: seriesId,
                 roundNum,
                 conf,
-                home: home,
-                away: away,
-                homeLogo: home.team.logo,
-                awayLogo: away.team.logo,
-                homeSeed: home.seed || TEAM_TO_SEED[home.team.displayName],
-                awaySeed: away.seed || TEAM_TO_SEED[away.team.displayName],
+                home: homeComp,
+                away: awayComp,
+                homeLogo: homeComp.team.logo,
+                awayLogo: awayComp.team.logo,
                 status: comp.status,
                 startDate: event.date,
-                homeWins: seriesWinTally[seriesId][home.team.displayName],
-                awayWins: seriesWinTally[seriesId][away.team.displayName],
-                roundLabel: roundNum === 1 ? "R1" : (roundNum === 2 ? "R2" : headline)
+                // If it's a Round 2 matchup that hasn't played yet, 
+                // but the teams played in Round 1, we must ignore those R1 wins.
+                homeWins: isRound2 && (hWins + aWins > 4) ? 0 : hWins,
+                awayWins: isRound2 && (hWins + aWins > 4) ? 0 : aWins,
+                roundLabel: headline || roundNum
             });
-        } else {
-            const existing = seriesMap.get(seriesId);
-            existing.homeWins = seriesWinTally[seriesId][home.team.displayName];
-            existing.awayWins = seriesWinTally[seriesId][away.team.displayName];
         }
     });
 
