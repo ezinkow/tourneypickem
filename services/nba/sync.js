@@ -41,13 +41,20 @@ function makeSeriesId(roundNum, conf, s) {
     let hSeed = TEAM_TO_SEED[s.home.team.displayName] || s.home.seed;
     let aSeed = TEAM_TO_SEED[s.away.team.displayName] || s.away.seed;
 
-    if (roundNum === 1 && (!hSeed || !aSeed)) {
-        if (hSeed === 1 || aSeed === 1) { hSeed = hSeed || 8; aSeed = aSeed || 8; }
-        else if (hSeed === 2 || aSeed === 2) { hSeed = hSeed || 7; aSeed = aSeed || 7; }
+    // Standardize Seeds for Bracket logic
+    // Round 2 Matchups: (1 or 8) vs (4 or 5) AND (2 or 7) vs (3 or 6)
+    if (roundNum === 2) {
+        // Normalize seeds to the higher seed of the expected bracket path
+        if ([1, 8, 4, 5].includes(Number(hSeed))) hSeed = [1, 8].includes(Number(hSeed)) ? 1 : 4;
+        if ([1, 8, 4, 5].includes(Number(aSeed))) aSeed = [1, 8].includes(Number(aSeed)) ? 1 : 4;
+
+        if ([2, 7, 3, 6].includes(Number(hSeed))) hSeed = [2, 7].includes(Number(hSeed)) ? 2 : 3;
+        if ([2, 7, 3, 6].includes(Number(aSeed))) aSeed = [2, 7].includes(Number(aSeed)) ? 2 : 3;
     }
 
-    hSeed = hSeed || s.home.team.abbreviation || "TBD";
-    aSeed = aSeed || s.away.team.abbreviation || "TBD";
+    // Fallback for R1 or unexpected seeds
+    hSeed = hSeed || "TBD";
+    aSeed = aSeed || "TBD";
 
     const pair = [hSeed, aSeed].sort((a, b) =>
         String(a).localeCompare(String(b), undefined, { numeric: true })
@@ -59,10 +66,7 @@ function makeSeriesId(roundNum, conf, s) {
 function extractSeries(data) {
     if (!data?.events) return [];
     const seriesMap = new Map();
-
-    // 1. We NO LONGER use a global winTally.
-    // Instead, we will calculate wins PER unique series headline.
-    const seriesWinTally = {}; // { "R2-W-2-6": { "Spurs": 0, "Wolves": 0 } }
+    const seriesWinTally = {};
 
     data.events.forEach(event => {
         const comp = event.competitions?.[0];
@@ -74,11 +78,13 @@ function extractSeries(data) {
 
         const home = comp.competitors.find(c => c.homeAway === "home");
         const away = comp.competitors.find(c => c.homeAway === "away");
-        if (!home || !away || home.team.displayName === "TBD") return;
+
+        // CRITICAL FIX: Ignore placeholder teams with slashes (e.g., "Lakers/Rockets")
+        if (!home || !away || home.team.displayName.includes("/") || away.team.displayName.includes("/")) return;
+        if (home.team.displayName === "TBD" || away.team.displayName === "TBD") return;
 
         const seriesId = makeSeriesId(roundNum, conf, { home, away });
 
-        // Initialize tally for this specific series
         if (!seriesWinTally[seriesId]) {
             seriesWinTally[seriesId] = {
                 [home.team.displayName]: 0,
@@ -86,13 +92,11 @@ function extractSeries(data) {
             };
         }
 
-        // Only count the win if THIS specific game is finished
         if (comp.status?.type?.name === "STATUS_FINAL") {
             if (home.winner) seriesWinTally[seriesId][home.team.displayName]++;
             if (away.winner) seriesWinTally[seriesId][away.team.displayName]++;
         }
 
-        // 2. Aggregate into SeriesMap
         if (!seriesMap.has(seriesId)) {
             seriesMap.set(seriesId, {
                 id: seriesId,
@@ -102,17 +106,15 @@ function extractSeries(data) {
                 away: away,
                 homeLogo: home.team.logo,
                 awayLogo: away.team.logo,
-                homeSeed: home.seed,
-                awaySeed: away.seed,
+                homeSeed: home.seed || TEAM_TO_SEED[home.team.displayName],
+                awaySeed: away.seed || TEAM_TO_SEED[away.team.displayName],
                 status: comp.status,
                 startDate: event.date,
-                // These are now scoped to the seriesId!
                 homeWins: seriesWinTally[seriesId][home.team.displayName],
                 awayWins: seriesWinTally[seriesId][away.team.displayName],
-                roundLabel: headline || roundNum
+                roundLabel: roundNum === 1 ? "R1" : (roundNum === 2 ? "R2" : headline)
             });
         } else {
-            // Update the wins for the existing series entry in the map
             const existing = seriesMap.get(seriesId);
             existing.homeWins = seriesWinTally[seriesId][home.team.displayName];
             existing.awayWins = seriesWinTally[seriesId][away.team.displayName];
