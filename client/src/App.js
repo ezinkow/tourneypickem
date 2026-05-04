@@ -30,7 +30,7 @@ import SquaresAdmin from "./pages/squares/SquaresAdmin";
 // Bracket pages
 import BracketHome from './pages/bracket/Home';
 import BracketChallenge from './pages/bracket/Bracket';
-import MyBracket from './pages/bracket/MyBracket';
+import BracketMyBracket from './pages/bracket/MyBracket';
 import BracketStandings from './pages/bracket/Standings';
 import BracketSignUp from './pages/bracket/SignUp';
 
@@ -66,7 +66,7 @@ export default function App() {
         {/* Bracket */}
         <Route path="/bracket" element={<BracketHome />} />
         <Route path="/bracket/bracket" element={<BracketChallenge />} />
-        <Route path="/bracket/mybracket" element={<MyBracket />} />
+        <Route path="/bracket/mybracket" element={<BracketMyBracket />} />
         <Route path="/bracket/standings" element={<BracketStandings />} />
         <Route path="/bracket/signup" element={<BracketSignUp />} />
 
@@ -85,6 +85,7 @@ export default function App() {
         <Route path="/nba/standings" element={<NbaStandings />} />
         <Route path="/nba/grouppicks" element={<NbaGroupPicks />} />
         <Route path="/nba/signup" element={<NbaSignUp />} />
+
       </Routes>
     </Router>
   );

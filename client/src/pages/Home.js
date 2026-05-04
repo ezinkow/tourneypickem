@@ -57,6 +57,17 @@ export default function Home() {
             titleColor: "#0369a1",
             isActive: false,
         },
+        {
+            emoji: "🏈",
+            title: "NFL Fantasy Playoffs",
+            description: "Build your roster by tiers and set your weekly lineup. Most points wins.",
+            cta: "Season Ended",
+            route: "/nfl",
+            accent: "#124d00",
+            ctaBg: GRAY,
+            titleColor: "#ffffff",
+            isActive: false,
+        },
     ];
 
     return (

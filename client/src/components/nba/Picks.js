@@ -32,8 +32,6 @@ export default function Picks() {
   const [series, setSeries] = useState([]);
   const [picks, setPicks] = useState([]);
   const [dataLoaded, setDataLoaded] = useState(false);
-  const [tiebreakerWin, setTiebreakerWin] = useState("");
-  const [tiebreakerLoss, setTiebreakerLoss] = useState("");
 
   useEffect(() => {
     axios.get("/api/nba/series")
@@ -60,33 +58,17 @@ export default function Picks() {
           setDataLoaded(true);
         })
         .catch(() => setDataLoaded(true));
-
-      axios.get("/api/nba/tiebreaker", { params: { name: authUser.name }, ...config })
-        .then(res => {
-          if (res.data) {
-            setTiebreakerWin(res.data.win_score || "");
-            setTiebreakerLoss(res.data.loss_score || "");
-          }
-        }).catch(() => { });
     }
   }, [authUser, series]);
 
-  // --- LOGIC HOOKS ---
-
-  // 1. Determine which round is currently accepting picks
   const activeRound = useMemo(() => {
     if (!series.length) return 1;
     const now = new Date();
     const unstarted = series.filter(g => new Date(g.game_date) > now);
-
-    if (unstarted.length > 0) {
-      return Math.min(...unstarted.map(g => g.round));
-    }
-    // Fallback if all rounds currently in DB have started
+    if (unstarted.length > 0) return Math.min(...unstarted.map(g => g.round));
     return Math.max(...series.map(g => g.round)) + 1;
   }, [series]);
 
-  // 2. Filter games to only show the unstarted games for the active round
   const visibleGames = useMemo(() => {
     if (!series.length) return [];
     const now = new Date();
@@ -95,7 +77,6 @@ export default function Picks() {
       .sort((a, b) => new Date(a.game_date) - new Date(b.game_date));
   }, [series, activeRound]);
 
-  // 3. Set the point ceiling (32, 24, 16, 8)
   const roundMax = useMemo(() => {
     const roundMapping = { 1: 32, 2: 24, 3: 16, 4: 8 };
     if (visibleGames.length > 0 && visibleGames[0].round_points_max) {
@@ -104,17 +85,13 @@ export default function Picks() {
     return roundMapping[activeRound] || 32;
   }, [visibleGames, activeRound]);
 
-  // 4. Calculate points used ONLY for the games visible on the current screen
   const currentPointsUsed = useMemo(() => {
     if (visibleGames.length === 0) return 0;
     const visibleIds = visibleGames.map(vg => String(vg.id));
-
     return picks
       .filter(p => visibleIds.includes(String(p.series)))
       .reduce((sum, p) => sum + (parseInt(p.confidence) || 0), 0);
   }, [picks, visibleGames]);
-
-  // --- ACTIONS ---
 
   const updatePickData = (gameId, field, value) => {
     const sId = String(gameId);
@@ -131,18 +108,25 @@ export default function Picks() {
         length: field === 'length' ? value : 4
       }];
     });
-    console.log(gameId, field, value)
   };
 
   const handleSubmitPicks = async () => {
-    if (picks.length === 0) return toast.error("No picks selected");
-    if (currentPointsUsed > roundMax) return toast.error(`Over the ${roundMax} point limit!`);
+    const visibleIds = visibleGames.map(vg => String(vg.id));
+    const picksToSubmit = picks.filter(p => visibleIds.includes(String(p.series)));
+
+    if (picksToSubmit.length === 0) return toast.error("No picks selected");
+
+    // NEW LOGIC: Enforce 1-point reserve for unselected games in the round
+    const unselectedCount = visibleGames.length - picksToSubmit.length;
+    if (currentPointsUsed + unselectedCount > roundMax) {
+      return toast.error(`You must leave at least 1 point for the remaining ${unselectedCount} series in this round.`);
+    }
 
     const token = localStorage.getItem("token");
     try {
       await axios.post("/api/nba/picks/bulk", {
         name: authUser.name,
-        picks: picks.map(p => ({
+        picks: picksToSubmit.map(p => ({
           series_id: p.series,
           pick: p.pick,
           confidence: p.confidence,
@@ -166,14 +150,13 @@ export default function Picks() {
       <div style={{ paddingTop: 68, paddingBottom: 80, maxWidth: 1200, margin: "0 auto", paddingLeft: 12, paddingRight: 12 }}>
         <Toaster />
         <Instructions />
-
         <div style={{ position: "sticky", top: 70, zIndex: 10, display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, background: "#fff", padding: "15px", borderRadius: "10px", border: `2px solid ${GOLD}`, boxShadow: "0 4px 6px rgba(0,0,0,0.1)" }}>
           <div>
             <h4 style={{ margin: 0 }}>
               {authUser.name} - {visibleGames[0]?.round_label || `Round ${activeRound} Selections`}
             </h4>
             <div style={{ fontSize: "14px", marginTop: "4px" }}>
-              Points: <span style={{ fontWeight: 700, color: currentPointsUsed > roundMax ? "red" : "#16a34a" }}>{currentPointsUsed}</span> / {roundMax}
+              Points: <span style={{ fontWeight: 700, color: currentPointsUsed > (roundMax - (visibleGames.length - picks.filter(p => visibleGames.map(vg => String(vg.id)).includes(String(p.series))).length)) ? "red" : "#16a34a" }}>{currentPointsUsed}</span> / {roundMax}
             </div>
           </div>
           <button onClick={handleSubmitPicks} style={{ padding: "12px 28px", borderRadius: 8, backgroundColor: "#16a34a", color: "white", border: "none", fontWeight: 700, cursor: "pointer" }}>Submit All Picks</button>
@@ -214,14 +197,7 @@ export default function Picks() {
                         <td style={tdStyle}>
                           <div style={{ display: "flex", gap: 8 }}>
                             {[s.away_team, s.home_team].map(team => (
-                              <button
-                                key={team}
-                                onClick={() => updatePickData(s.id, 'pick', team)}
-                                style={{
-                                  padding: "6px 12px", borderRadius: 6, border: currentPick?.pick === team ? `2px solid ${NAVY}` : "1px solid #ddd",
-                                  backgroundColor: currentPick?.pick === team ? "#eff6ff" : "white", cursor: "pointer", display: "flex", alignItems: "center", gap: 6
-                                }}
-                              >
+                              <button key={team} onClick={() => updatePickData(s.id, 'pick', team)} style={{ padding: "6px 12px", borderRadius: 6, border: currentPick?.pick === team ? `2px solid ${NAVY}` : "1px solid #ddd", backgroundColor: currentPick?.pick === team ? "#eff6ff" : "white", cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
                                 <img src={team === s.home_team ? s.home_logo : s.away_logo} width={20} alt="" />
                                 <span style={{ fontSize: 12 }}>{team}</span>
                               </button>
@@ -231,26 +207,12 @@ export default function Picks() {
                         <td style={tdStyle}>
                           <div style={{ display: "flex", gap: 4 }}>
                             {LENGTHS.map(len => (
-                              <button
-                                key={len}
-                                onClick={() => updatePickData(s.id, 'length', len)}
-                                style={{
-                                  width: 32, height: 32, borderRadius: 6, border: "1px solid #ddd",
-                                  backgroundColor: currentPick?.length === len ? NAVY : "white",
-                                  color: currentPick?.length === len ? "white" : "#333", cursor: "pointer"
-                                }}
-                              >
-                                {len}
-                              </button>
+                              <button key={len} onClick={() => updatePickData(s.id, 'length', len)} style={{ width: 32, height: 32, borderRadius: 6, border: "1px solid #ddd", backgroundColor: currentPick?.length === len ? NAVY : "white", color: currentPick?.length === len ? "white" : "#333", cursor: "pointer" }}>{len}</button>
                             ))}
                           </div>
                         </td>
                         <td style={tdStyle}>
-                          <select
-                            value={currentPick?.confidence || ""}
-                            onChange={(e) => updatePickData(s.id, 'confidence', parseInt(e.target.value))}
-                            style={{ padding: "8px", borderRadius: 6, border: "1px solid #ddd", width: "100%" }}
-                          >
+                          <select value={currentPick?.confidence || ""} onChange={(e) => updatePickData(s.id, 'confidence', parseInt(e.target.value))} style={{ padding: "8px", borderRadius: 6, border: "1px solid #ddd", width: "100%" }}>
                             <option value="" disabled>Pts</option>
                             {[...Array(10)].map((_, i) => <option key={i + 1} value={i + 1}>{i + 1}</option>)}
                           </select>
@@ -268,12 +230,8 @@ export default function Picks() {
                 return (
                   <div key={s.id} style={cardStyle}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
-                      <div style={{ fontWeight: 500, fontSize: '14px' }}>
-                        {s.away_team} vs {s.home_team}
-                      </div>
-                      <div style={{ fontSize: 10, color: "#d97706", fontWeight: 700 }}>
-                        {formatDateTime(s.game_date)}
-                      </div>
+                      <div style={{ fontWeight: 500, fontSize: '14px' }}>{s.away_team} vs {s.home_team}</div>
+                      <div style={{ fontSize: 10, color: "#d97706", fontWeight: 700 }}>{formatDateTime(s.game_date)}</div>
                     </div>
                     <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
                       <button onClick={() => updatePickData(s.id, 'pick', s.away_team)} style={mobileBtnStyle(currentPick?.pick === s.away_team)}>
@@ -300,7 +258,6 @@ export default function Picks() {
             </div>
           </>
         )}
-
         <style>{`
           .desktop-only { display: block; }
           .mobile-only { display: none; }
