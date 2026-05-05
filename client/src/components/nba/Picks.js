@@ -86,13 +86,17 @@ export default function Picks() {
   }, [visibleGames, activeRound]);
 
   const currentPointsUsed = useMemo(() => {
-    if (visibleGames.length === 0) return 0;
-    const visibleIds = visibleGames.map(vg => String(vg.id));
-    return picks
-      .filter(p => visibleIds.includes(String(p.series)))
-      .reduce((sum, p) => sum + (parseInt(p.confidence) || 0), 0);
-  }, [picks, visibleGames]);
+    // 1. Get the IDs of EVERY series in the current round from the full series list
+    const allRoundSeriesIds = series
+      .filter(s => s.round === activeRound)
+      .map(s => String(s.id));
 
+    // 2. Filter picks that match any ID in this round, started or not
+    return picks
+      .filter(p => allRoundSeriesIds.includes(String(p.series)))
+      .reduce((sum, p) => sum + (parseInt(p.confidence) || 0), 0);
+  }, [picks, series, activeRound]);
+  
   const updatePickData = (gameId, field, value) => {
     const sId = String(gameId);
     setPicks(prev => {
